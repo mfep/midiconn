@@ -1,0 +1,9 @@
+[submodule "deps/imgui"]
+	path = deps/imgui
+	url = https://github.com/ocornut/imgui.git
+[submodule "deps/imnodes"]
+	path = deps/imnodes
+	url = https://github.com/Nelarius/imnodes.git
+[submodule "deps/rtmidi"]
+	path = deps/rtmidi
+	url = https://github.com/thestk/rtmidi.git

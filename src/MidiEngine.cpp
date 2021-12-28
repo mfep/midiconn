@@ -32,6 +32,34 @@ std::vector<OutputInfo> Probe::get_outputs()
     return get_connections<RtMidiOut, OutputInfo>();
 }
 
+void InputObservable::add_observer(InputObserver* observer)
+{
+    auto found_observer = std::find(m_observers.cbegin(), m_observers.cend(), observer);
+    if (found_observer == m_observers.cend())
+    {
+        m_observers.push_back(observer);
+    }
+}
+
+void InputObservable::remove_observer(InputObserver* observer)
+{
+    auto found_observer = std::find(m_observers.cbegin(), m_observers.cend(), observer);
+    if (found_observer != m_observers.cend())
+    {
+        m_observers.erase(found_observer);
+    }
+}
+
+void InputObservable::raise_message_received(
+    size_t id,
+    const std::vector<unsigned char>& message_bytes) const
+{
+    for (auto* observer : m_observers)
+    {
+        observer->message_received(id, message_bytes);
+    }
+}
+
 Engine::MidiInput::MidiInput(const InputInfo& info) :
     m_info(info)
 {
@@ -39,8 +67,13 @@ Engine::MidiInput::MidiInput(const InputInfo& info) :
     m_midiIn.openPort(info.m_id);
 }
 
-void Engine::MidiInput::message_callback(double time_stamp, std::vector<unsigned char> *message, void *user_data)
+void Engine::MidiInput::message_callback(
+    double /*time_stamp*/,
+    std::vector<unsigned char> *message,
+    void *user_data)
 {
+    auto* instance = static_cast<MidiInput*>(user_data);
+    instance->raise_message_received(instance->m_info.m_id, *message);
 }
 
 Engine::MidiOutput::MidiOutput(const OutputInfo& info) :
@@ -143,6 +176,18 @@ void Engine::disconnect(const OutputInfo& output_info, const InputInfo& input_in
         return;
     }
     in_list.erase(in_itr);
+}
+
+void Engine::message_received(size_t id, const std::vector<unsigned char>& message_bytes)
+{
+    if (!m_connections[id].has_value())
+    {
+        return;
+    }
+    for (size_t output_id : m_connections[id].value())
+    {
+        m_outputs[output_id].value().send_message(message_bytes);
+    }
 }
 
 }   // namespace mt::midi

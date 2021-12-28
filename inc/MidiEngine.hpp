@@ -1,5 +1,6 @@
 #pragma once
 #include <optional>
+#include <shared_mutex>
 #include <string>
 #include <vector>
 #include "RtMidi.h"
@@ -79,15 +80,22 @@ public:
     void create(const OutputInfo& output_info);
     void remove(const InputInfo& input_info);
     void remove(const OutputInfo& output_info);
-    void connect(const OutputInfo& output_info, const InputInfo& input_info);
-    void disconnect(const OutputInfo& output_info, const InputInfo& input_info);
+    void connect(const InputInfo& input_info, const OutputInfo& output_info);
+    void disconnect(const InputInfo& input_info, const OutputInfo& output_info);
 
 private:
     void message_received(size_t id, const std::vector<unsigned char>& message_bytes) override;
 
-    std::vector<std::optional<MidiInput>> m_inputs;
+    std::vector<
+        std::optional<
+            std::pair<
+                MidiInput,          // input
+                std::vector<size_t> // connected outputs
+            >
+        >
+    > m_inputs;
     std::vector<std::optional<MidiOutput>> m_outputs;
-    std::vector<std::optional<std::vector<size_t>>> m_connections;
+    std::shared_mutex m_mutex;
 };
 
 }

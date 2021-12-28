@@ -9,7 +9,7 @@
 #include <d3d9.h>
 #include <tchar.h>
 
-#include "MidiEngine.hpp"
+#include "NodeEditor.hpp"
 
 // Data
 static LPDIRECT3D9              g_pD3D = NULL;
@@ -73,7 +73,7 @@ int main(int, char**)
     //io.Fonts->AddFontFromFileTTF("../../misc/fonts/ProggyTiny.ttf", 10.0f);
     //ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf", 18.0f, NULL, io.Fonts->GetGlyphRangesJapanese());
     //IM_ASSERT(font != NULL);
-
+    mc::display::NodeEditor de;
     // Main loop
     bool done = false;
     while (!done)
@@ -106,30 +106,8 @@ int main(int, char**)
             ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoSavedSettings
             | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
 
-        imnodes::BeginNodeEditor();
+        de.render();
 
-        imnodes::BeginNode(0);
-        imnodes::BeginNodeTitleBar();
-        ImGui::TextUnformatted("Title");
-        imnodes::EndNodeTitleBar();
-        imnodes::BeginOutputAttribute(0);
-        ImGui::Text("Output %i", 1);
-        imnodes::EndOutputAttribute();
-        imnodes::BeginOutputAttribute(1);
-        ImGui::TextUnformatted("Output 2");
-        imnodes::EndOutputAttribute();
-        imnodes::EndNode();
-
-        imnodes::BeginNode(1);
-        imnodes::BeginInputAttribute(2);
-        ImGui::TextUnformatted("Input 1");
-        imnodes::EndInputAttribute();
-        imnodes::EndNode();
-
-        imnodes::Link(0, 0, 2);
-        imnodes::Link(1, 1, 2);
-
-        imnodes::EndNodeEditor();
         ImGui::End();
 
         // Rendering

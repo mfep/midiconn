@@ -17,16 +17,6 @@ const std::string& NodeEditor::Node::get_name() const
         m_info);
 }
 
-const char* NodeEditor::Node::get_attribute_caption() const
-{
-    switch (m_info.index())
-    {
-        case 0: return "MIDI input (all channels)";
-        case 1: return "MIDI output (all channels)";
-        default: return nullptr;
-    }
-}
-
 void NodeEditor::render()
 {
     imnodes::BeginNodeEditor();
@@ -79,9 +69,21 @@ void NodeEditor::renderNodes()
         imnodes::BeginNodeTitleBar();
         ImGui::TextUnformatted(node.get_name().c_str());
         imnodes::EndNodeTitleBar();
-        imnodes::BeginOutputAttribute(node.m_id);
-        ImGui::TextUnformatted(node.get_attribute_caption());
-        imnodes::EndOutputAttribute();
+        switch (node.m_info.index())
+        {
+            case 0:
+                imnodes::BeginOutputAttribute(node.m_id);
+                ImGui::TextUnformatted("MIDI input (all channels)");
+                imnodes::EndOutputAttribute();
+                break;
+            case 1:
+                imnodes::BeginInputAttribute(node.m_id);
+                ImGui::TextUnformatted("MIDI output (all channels)");
+                imnodes::EndInputAttribute();
+                break;
+            default:
+                throw std::logic_error("Unexpected case");
+        }
         imnodes::EndNode();
     }
 }

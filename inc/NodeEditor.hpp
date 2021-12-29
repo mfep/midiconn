@@ -18,7 +18,6 @@ private:
         int m_id;
 
         const std::string& get_name() const;
-        const char* get_attribute_caption() const;
     };
 
     void renderContextMenu();

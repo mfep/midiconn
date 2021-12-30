@@ -24,6 +24,7 @@ void NodeEditor::render()
     renderNodes();
     imnodes::EndNodeEditor();
     handleDelete();
+    handleConnect();
 }
 
 void NodeEditor::renderContextMenu()
@@ -86,6 +87,11 @@ void NodeEditor::renderNodes()
         }
         imnodes::EndNode();
     }
+
+    for (const auto& link : m_links)
+    {
+        imnodes::Link(link.m_id, link.m_start_id, link.m_end_id);
+    }
 }
 
 void NodeEditor::handleDelete()
@@ -93,22 +99,70 @@ void NodeEditor::handleDelete()
     if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Delete))
         || ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Backspace)))
     {
-        std::vector<int> selected_node_ids;
-        selected_node_ids.resize(imnodes::NumSelectedNodes());
-        if (!selected_node_ids.empty())
+        std::vector<int> selected_ids;
+        selected_ids.resize(imnodes::NumSelectedNodes());
+        if (!selected_ids.empty())
         {
-            imnodes::GetSelectedNodes(selected_node_ids.data());
-            m_nodes.erase(
+            imnodes::GetSelectedNodes(selected_ids.data());
+            auto remove_nodes_start = std::partition(
+                m_nodes.begin(),
+                m_nodes.end(),
+                [&selected_ids](const auto& node)
+                {
+                    return selected_ids.cend() ==
+                        std::find(selected_ids.cbegin(), selected_ids.cend(), node.m_id);
+                });
+
+            // remove links connected to the removed nodes
+            m_links.erase(
                 std::remove_if(
-                    m_nodes.begin(),
-                    m_nodes.end(),
-                    [&selected_node_ids](const auto& node)
+                    m_links.begin(),
+                    m_links.end(),
+                    [this, remove_nodes_start](const auto& link)
                     {
-                        return selected_node_ids.cend() !=
-                            std::find(selected_node_ids.cbegin(), selected_node_ids.cend(), node.m_id);
+                        return m_nodes.end() != std::find_if(
+                            remove_nodes_start,
+                            m_nodes.end(),
+                            [&link](const auto& removed_node)
+                            {
+                                return link.m_start_id == removed_node.m_id || link.m_end_id == removed_node.m_id;
+                            });
                     }),
-                m_nodes.end());
+                m_links.end());
+
+            // remove nodes
+            m_nodes.erase(remove_nodes_start, m_nodes.end());
         }
+
+        selected_ids.clear();
+        selected_ids.resize(imnodes::NumSelectedLinks());
+        if (!selected_ids.empty())
+        {
+            imnodes::GetSelectedLinks(selected_ids.data());
+            // remove selected links
+            m_links.erase(
+                std::remove_if(
+                    m_links.begin(),
+                    m_links.end(),
+                    [&selected_ids](const auto& link)
+                    {
+                        return selected_ids.end() != std::find(
+                            selected_ids.begin(),
+                            selected_ids.end(),
+                            link.m_id);
+                    }),
+                m_links.end());
+        }
+    }
+}
+
+void NodeEditor::handleConnect()
+{
+    int start_attrib_id;
+    int end_attrib_id;
+    if (imnodes::IsLinkCreated(&start_attrib_id, &end_attrib_id))
+    {
+        m_links.push_back({ m_current_link_id++, start_attrib_id, end_attrib_id });
     }
 }
 

@@ -11,9 +11,9 @@ public:
     virtual ~NodeObserver() = default;
     
     virtual void node_created(const midi::InputInfo& input_info) {};
-    virtual void node_created(const midi::OutputInfo& input_info) {};
+    virtual void node_created(const midi::OutputInfo& output_info) {};
     virtual void node_destroyed(const midi::InputInfo& input_info) {};
-    virtual void node_destroyed(const midi::OutputInfo& input_info) {};
+    virtual void node_destroyed(const midi::OutputInfo& output_info) {};
     virtual void link_created(const midi::InputInfo& input_info, const midi::OutputInfo& output_info) {};
     virtual void link_destroyed(const midi::InputInfo& input_info, const midi::OutputInfo& output_info) {};
 };

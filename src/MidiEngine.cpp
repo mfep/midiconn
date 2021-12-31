@@ -63,8 +63,12 @@ void InputObservable::raise_message_received(
 Engine::MidiInput::MidiInput(const InputInfo& info) :
     m_info(info)
 {
+}
+
+void Engine::MidiInput::open()
+{
     m_midiIn.setCallback(message_callback, this);
-    m_midiIn.openPort(info.m_id);
+    m_midiIn.openPort(m_info.m_id);
 }
 
 void Engine::MidiInput::message_callback(
@@ -99,7 +103,9 @@ void Engine::create(const InputInfo& input_info)
     {
         m_inputs.resize(id + 1);
     }
-    m_inputs[id].emplace(std::make_pair<MidiInput, std::vector<size_t>>(MidiInput(input_info), {}));
+    auto& input = m_inputs[id].emplace(std::make_pair<MidiInput, std::vector<size_t>>(input_info, {}));
+    input.first.add_observer(this);
+    input.first.open();
 }
 
 void Engine::create(const OutputInfo& output_info)

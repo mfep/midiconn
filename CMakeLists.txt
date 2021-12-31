@@ -14,6 +14,7 @@ add_executable(midi_connector
     deps/imgui/backends/imgui_impl_dx9.cpp
     deps/imnodes/imnodes.cpp
     src/MidiEngine.cpp
+    src/MidiNodeObserver.cpp
     src/NodeEditor.cpp
     src/NodeObserver.cpp
     src/main.cpp)

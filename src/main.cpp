@@ -9,6 +9,7 @@
 #include <d3d9.h>
 #include <tchar.h>
 
+#include "MidiNodeObserver.hpp"
 #include "NodeEditor.hpp"
 
 // Data
@@ -74,7 +75,9 @@ int main(int, char**)
     //ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf", 18.0f, NULL, io.Fonts->GetGlyphRangesJapanese());
     //IM_ASSERT(font != NULL);
     mc::midi::Engine me;
+    mc::MidiNodeObserver mno(&me);
     mc::display::NodeEditor de;
+    de.add_observer(&mno);
     // Main loop
     bool done = false;
     while (!done)

@@ -65,7 +65,7 @@ void NodeObservable::raise_link_destroyed(const midi::InputInfo& input_info, con
 {
     for (auto* observer : m_observers)
     {
-        observer->link_created(input_info, output_info);
+        observer->link_destroyed(input_info, output_info);
     }
 }
 

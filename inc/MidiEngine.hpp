@@ -57,6 +57,7 @@ private:
     {
     public:
         MidiInput(const InputInfo& info);
+        void open();
         static void message_callback(double time_stamp, std::vector<unsigned char> *message, void *user_data);
 
     private:

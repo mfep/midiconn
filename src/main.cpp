@@ -26,10 +26,10 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 int main(int, char**)
 {
     // Create application window
-    //ImGui_ImplWin32_EnableDpiAwareness();
-    WNDCLASSEX wc = { sizeof(WNDCLASSEX), CS_CLASSDC, WndProc, 0L, 0L, GetModuleHandle(NULL), NULL, NULL, NULL, NULL, _T("ImGui Example"), NULL };
+    ImGui_ImplWin32_EnableDpiAwareness();
+    WNDCLASSEX wc = { sizeof(WNDCLASSEX), CS_CLASSDC, WndProc, 0L, 0L, GetModuleHandle(NULL), NULL, NULL, NULL, NULL, _T("midiconn"), NULL };
     ::RegisterClassEx(&wc);
-    HWND hwnd = ::CreateWindow(wc.lpszClassName, _T("Dear ImGui DirectX9 Example"), WS_OVERLAPPEDWINDOW, 100, 100, 1280, 800, NULL, NULL, wc.hInstance, NULL);
+    HWND hwnd = ::CreateWindow(wc.lpszClassName, _T("midiconn"), WS_OVERLAPPEDWINDOW, 100, 100, 1280, 800, NULL, NULL, wc.hInstance, NULL);
 
     // Initialize Direct3D
     if (!CreateDeviceD3D(hwnd))
@@ -73,6 +73,7 @@ int main(int, char**)
     //io.Fonts->AddFontFromFileTTF("../../misc/fonts/ProggyTiny.ttf", 10.0f);
     //ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf", 18.0f, NULL, io.Fonts->GetGlyphRangesJapanese());
     //IM_ASSERT(font != NULL);
+    mc::midi::Engine me;
     mc::display::NodeEditor de;
     // Main loop
     bool done = false;
@@ -106,7 +107,14 @@ int main(int, char**)
             ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoSavedSettings
             | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
 
-        de.render();
+        try
+        {
+            de.render();
+        }
+        catch(std::exception& ex)
+        {
+            std::cout << "Error: " << ex.what() << std::endl;
+        }
 
         ImGui::End();
 

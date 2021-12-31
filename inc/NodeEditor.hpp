@@ -2,11 +2,12 @@
 #include <variant>
 #include <vector>
 #include "MidiEngine.hpp"
+#include "NodeObserver.hpp"
 
 namespace mc::display
 {
 
-class NodeEditor final
+class NodeEditor final : public NodeObservable
 {
 public:
     void render();

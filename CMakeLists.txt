@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.22)
 
 find_package(rtmidi REQUIRED)
 
+set(CMAKE_CXX_STANDARD 17)
+
 project(midi_connector LANGUAGES CXX)
 
 add_executable(midi_connector
@@ -15,6 +17,7 @@ add_executable(midi_connector
     deps/imnodes/imnodes.cpp
     src/MidiEngine.cpp
     src/MidiNodeObserver.cpp
+    src/Node.cpp
     src/NodeEditor.cpp
     src/NodeObserver.cpp
     src/main.cpp)

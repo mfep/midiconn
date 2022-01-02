@@ -31,19 +31,22 @@ void NodeEditor::renderContextMenu()
 {
     auto render_contents = [this](auto& infos)
     {
-        for (const auto& item : infos)
+        for (const auto& info : infos)
         {
-            if (ImGui::Button(item.m_name.c_str()))
+            constexpr ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+            ImGui::TreeNodeEx(info.m_name.c_str(), flags);
+            if (ImGui::IsItemClicked())
             {
                 const auto node_id = m_current_node_id++;
-                m_nodes.push_back({ item, node_id });
+                m_nodes.push_back({ info, node_id });
                 imnodes::SetNodeScreenSpacePos(node_id, ImGui::GetMousePosOnOpeningCurrentPopup());
                 ImGui::CloseCurrentPopup();
-                raise_node_created(item);
+                raise_node_created(info);
             }
         }
     };
 
+    ImGui::SetNextWindowSizeConstraints({300, 0}, {500, 500});
     if (ImGui::BeginPopupContextWindow())
     {
         if (ImGui::IsWindowAppearing())
@@ -51,13 +54,15 @@ void NodeEditor::renderContextMenu()
             m_input_infos = midi::Probe::get_inputs();
             m_output_infos = midi::Probe::get_outputs();
         }
-        if (ImGui::CollapsingHeader("MIDI inputs"))
+        if (ImGui::TreeNode("MIDI inputs"))
         {
             render_contents(m_input_infos);
+            ImGui::TreePop();
         }
-        if (ImGui::CollapsingHeader("MIDI outputs"))
+        if (ImGui::TreeNode("MIDI outputs"))
         {
             render_contents(m_output_infos);
+            ImGui::TreePop();
         }
         ImGui::EndPopup();
     }

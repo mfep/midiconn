@@ -19,7 +19,10 @@ public:
     void render();
     void process(size_t length, const_data_itr in_itr);
     void connect_output(node_ptr other_node);
-    void disconnect_output(node_ptr other_node);
+    void disconnect_output(int link_id);
+    int id() const { return m_id; }
+    int in_id() const { return 2 * m_id; }
+    int out_id() const { return 2 * m_id + 1; }
 
 protected:
     virtual void render_internal() = 0;
@@ -31,6 +34,13 @@ private:
     int m_id;
     std::vector<out_conn> m_output_connections;
     data_vec m_buffer;
+};
+
+class TestNode final : public Node
+{
+private:
+    void render_internal() override;
+    void process_internal(size_t size, const_data_itr in_itr, data_itr out_itr) override;
 };
 
 }

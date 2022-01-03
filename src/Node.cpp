@@ -1,5 +1,6 @@
 #include "Node.hpp"
 #include <algorithm>
+#include "imgui.h"
 #include "imnodes.h"
 
 namespace mc
@@ -25,7 +26,7 @@ void Node::render()
 
     for (const auto&[node, link_id] : m_output_connections)
     {
-        imnodes::Link(link_id, m_id, std::shared_ptr(node)->m_id);
+        imnodes::Link(link_id, out_id(), std::shared_ptr(node)->in_id());
     }
 }
 
@@ -60,17 +61,34 @@ void Node::connect_output(node_ptr other_node)
     }
 }
 
-void Node::disconnect_output(node_ptr other_node)
+void Node::disconnect_output(int link_id)
 {
     auto found_connection = std::find_if(
         m_output_connections.cbegin(),
         m_output_connections.cend(),
-        [other_node](const auto& connection) { return std::get<0>(connection).lock() == other_node.lock(); });
+        [link_id](const auto& connection) { return std::get<1>(connection) == link_id; });
 
     if (found_connection != m_output_connections.end())
     {
         m_output_connections.erase(found_connection);
     }
+}
+
+void TestNode::render_internal()
+{
+    imnodes::BeginNodeTitleBar();
+    ImGui::TextUnformatted("Test Node");
+    imnodes::EndNodeTitleBar();
+    imnodes::BeginInputAttribute(in_id());
+    ImGui::TextUnformatted("input");
+    imnodes::EndInputAttribute();
+    imnodes::BeginOutputAttribute(out_id());
+    ImGui::TextUnformatted("output");
+    imnodes::EndOutputAttribute();
+}
+
+void TestNode::process_internal(size_t size, const_data_itr in_itr, data_itr out_itr)
+{
 }
 
 }

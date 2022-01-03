@@ -5,6 +5,9 @@
 #include "imgui.h"
 #include "imnodes.h"
 
+#include "MidiInNode.hpp"
+#include "MidiOutNode.hpp"
+
 namespace mc::display
 {
 
@@ -28,7 +31,11 @@ void NodeEditor::renderContextMenu()
             ImGui::TreeNodeEx(info.m_name.c_str(), flags);
             if (ImGui::IsItemClicked())
             {
-                const auto& node = m_nodes.emplace_back(std::make_shared<TestNode>());
+                using node_type = std::conditional_t<std::is_same_v<midi::InputInfo, std::decay_t<decltype(info)>>,
+                    MidiInNode, MidiOutNode>;
+                
+                const auto& node = m_nodes.emplace_back(std::make_shared<node_type>(info));
+
                 imnodes::SetNodeScreenSpacePos(node->id(), ImGui::GetMousePosOnOpeningCurrentPopup());
                 ImGui::CloseCurrentPopup();
             }

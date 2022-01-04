@@ -17,11 +17,9 @@ add_executable(midi_connector
     deps/imnodes/imnodes.cpp
     src/MidiEngine.cpp
     src/MidiInNode.cpp
-    src/MidiNodeObserver.cpp
     src/MidiOutNode.cpp
     src/Node.cpp
     src/NodeEditor.cpp
-    src/NodeObserver.cpp
     src/main.cpp)
 
 target_include_directories(midi_connector PRIVATE

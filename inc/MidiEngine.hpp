@@ -81,8 +81,8 @@ public:
     void create(const OutputInfo& output_info);
     void remove(const InputInfo& input_info);
     void remove(const OutputInfo& output_info);
-    void connect(const InputInfo& input_info, const OutputInfo& output_info);
-    void disconnect(const InputInfo& input_info, const OutputInfo& output_info);
+    void connect(size_t input_id, size_t output_id);
+    void disconnect(size_t input_id, size_t output_id);
 
 private:
     void message_received(size_t id, const std::vector<unsigned char>& message_bytes) override;

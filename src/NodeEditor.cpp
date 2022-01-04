@@ -11,6 +11,11 @@
 namespace mc::display
 {
 
+NodeEditor::NodeEditor(midi::Engine& midi_engine) :
+    m_midi_engine(midi_engine)
+{
+}
+
 void NodeEditor::render()
 {
     imnodes::BeginNodeEditor();
@@ -34,7 +39,7 @@ void NodeEditor::renderContextMenu()
                 using node_type = std::conditional_t<std::is_same_v<midi::InputInfo, std::decay_t<decltype(info)>>,
                     MidiInNode, MidiOutNode>;
                 
-                const auto& node = m_nodes.emplace_back(std::make_shared<node_type>(info));
+                const auto& node = m_nodes.emplace_back(std::make_shared<node_type>(info, m_midi_engine));
 
                 imnodes::SetNodeScreenSpacePos(node->id(), ImGui::GetMousePosOnOpeningCurrentPopup());
                 ImGui::CloseCurrentPopup();
@@ -121,7 +126,7 @@ void NodeEditor::handleConnect()
             [start_attrib_id](const auto& node) { return node->out_id() == start_attrib_id; });
         auto end_node_it = std::find_if(m_nodes.begin(), m_nodes.end(),
             [end_attrib_id](const auto& node) { return node->in_id() == end_attrib_id; });
-        (*start_node_it)->connect_output(std::weak_ptr(*end_node_it));
+        (*start_node_it)->connect_output(std::weak_ptr(*end_node_it), std::weak_ptr(*start_node_it));
     }
 }
 

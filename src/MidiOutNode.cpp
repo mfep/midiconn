@@ -6,10 +6,16 @@
 namespace mc
 {
 
-MidiOutNode::MidiOutNode(const midi::OutputInfo& output_info) :
-    m_output_info(output_info)
+MidiOutNode::MidiOutNode(const midi::OutputInfo& output_info, midi::Engine& midi_engine) :
+    m_output_info(output_info),
+    m_midi_engine(midi_engine)
 {
-    m_midi_output.openPort(m_output_info.m_id);
+    midi_engine.create(output_info);
+}
+
+MidiOutNode::~MidiOutNode()
+{
+    m_midi_engine.remove(m_output_info);
 }
 
 void MidiOutNode::render_internal()
@@ -22,9 +28,17 @@ void MidiOutNode::render_internal()
     imnodes::EndInputAttribute();
 }
 
-void MidiOutNode::process_internal(size_t size, const_data_itr in_itr, data_itr out_itr)
+void MidiOutNode::update_outputs()
 {
-    m_midi_output.sendMessage(const_cast<unsigned char*>(&*in_itr), size);
+    for (auto&[id, map] : m_previous_sources)
+    {
+        m_midi_engine.disconnect(id, m_output_info.m_id);
+    }
+    for (auto&[id, map] : m_sources)
+    {
+        m_midi_engine.connect(id, m_output_info.m_id);
+    }
+    m_previous_sources = m_sources;
 }
 
 }

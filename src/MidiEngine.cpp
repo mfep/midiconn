@@ -161,36 +161,32 @@ void Engine::remove(const OutputInfo& output_info)
     }
 }
 
-void Engine::connect(const InputInfo& input_info, const OutputInfo& output_info)
+void Engine::connect(size_t input_id, size_t output_id)
 {
     std::lock_guard guard(m_mutex);
-    const auto in_id = input_info.m_id;
-    const auto out_id = output_info.m_id;
 
-    if (in_id >= m_inputs.size() || !m_inputs[in_id].has_value())
+    if (input_id >= m_inputs.size() || !m_inputs[input_id].has_value())
     {
         throw std::logic_error("Cannot connect non-existent input");
     }
 
-    auto& out_list = m_inputs[in_id].value().second;
-    auto out_itr = std::find(out_list.cbegin(), out_list.cend(), out_id);
+    auto& out_list = m_inputs[input_id].value().second;
+    auto out_itr = std::find(out_list.cbegin(), out_list.cend(), output_id);
     if (out_itr == out_list.cend())
     {
-        out_list.push_back(out_id);
+        out_list.push_back(output_id);
     }
 }
 
-void Engine::disconnect(const InputInfo& input_info, const OutputInfo& output_info)
+void Engine::disconnect(size_t input_id, size_t output_id)
 {
     std::lock_guard guard(m_mutex);
-    const auto in_id = input_info.m_id;
-    const auto out_id = output_info.m_id;
-    if (in_id >= m_inputs.size() || !m_inputs[in_id].has_value())
+    if (input_id >= m_inputs.size() || !m_inputs[input_id].has_value())
     {
         throw std::logic_error("Cannot disconnect non-existent input");
     }
-    auto& out_list = m_inputs[in_id].value().second;
-    auto out_itr = std::find(out_list.cbegin(), out_list.cend(), out_id);
+    auto& out_list = m_inputs[input_id].value().second;
+    auto out_itr = std::find(out_list.cbegin(), out_list.cend(), output_id);
     if (out_itr == out_list.cend())
     {
         throw std::logic_error("Cannot disconnect not-connected output");

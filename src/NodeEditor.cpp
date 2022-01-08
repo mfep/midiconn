@@ -5,6 +5,7 @@
 #include "imgui.h"
 #include "imnodes.h"
 
+#include "MidiChannelNode.hpp"
 #include "MidiInNode.hpp"
 #include "MidiOutNode.hpp"
 
@@ -28,12 +29,12 @@ void NodeEditor::render()
 
 void NodeEditor::renderContextMenu()
 {
-    auto render_contents = [this](auto& infos)
+    constexpr ImGuiTreeNodeFlags leaf_flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+    auto render_contents = [this, leaf_flags](auto& infos)
     {
         for (const auto& info : infos)
         {
-            constexpr ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
-            ImGui::TreeNodeEx(info.m_name.c_str(), flags);
+            ImGui::TreeNodeEx(info.m_name.c_str(), leaf_flags);
             if (ImGui::IsItemClicked())
             {
                 using node_type = std::conditional_t<std::is_same_v<midi::InputInfo, std::decay_t<decltype(info)>>,
@@ -54,6 +55,13 @@ void NodeEditor::renderContextMenu()
         {
             m_input_infos = midi::Probe::get_inputs();
             m_output_infos = midi::Probe::get_outputs();
+        }
+        ImGui::TreeNodeEx("Channel map", leaf_flags);
+        if (ImGui::IsItemClicked())
+        {
+            const auto& node = m_nodes.emplace_back(std::make_shared<MidiChannelNode>());
+            imnodes::SetNodeScreenSpacePos(node->id(), ImGui::GetMousePosOnOpeningCurrentPopup());
+            ImGui::CloseCurrentPopup();
         }
         if (ImGui::TreeNode("MIDI inputs"))
         {

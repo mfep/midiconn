@@ -118,6 +118,7 @@ int main(int, char**)
         }
 
         ImGui::End();
+        ImGui::ShowDemoWindow();
 
         // Rendering
         ImGui::EndFrame();

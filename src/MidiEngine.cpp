@@ -97,15 +97,16 @@ void Engine::create(const InputInfo& input_info)
     const auto id = input_info.m_id;
     if (id < m_inputs.size() && m_inputs[id].has_value())
     {
+        ++std::get<2>(m_inputs[id].value());
         return;
     }
     if (id >= m_inputs.size())
     {
         m_inputs.resize(id + 1);
     }
-    auto& input = m_inputs[id].emplace(std::make_pair<MidiInput, std::vector<size_t>>(input_info, {}));
-    input.first.add_observer(this);
-    input.first.open();
+    auto& input = m_inputs[id].emplace(std::make_tuple<MidiInput, std::vector<size_t>>(input_info, {}, 1));
+    std::get<0>(input).add_observer(this);
+    std::get<0>(input).open();
 }
 
 void Engine::create(const OutputInfo& output_info)
@@ -114,33 +115,42 @@ void Engine::create(const OutputInfo& output_info)
     const auto id = output_info.m_id;
     if (id < m_outputs.size() && m_outputs[id].has_value())
     {
+        ++std::get<1>(m_outputs[id].value());
         return;
     }
     if (id >= m_outputs.size())
     {
         m_outputs.resize(id + 1);
     }
-    m_outputs[id].emplace(output_info);
+    m_outputs[id].emplace(std::make_tuple(output_info, 1));
 }
 
 void Engine::remove(const InputInfo& input_info)
 {
     std::lock_guard guard(m_mutex);
     const auto id = input_info.m_id;
-    if (id >= m_inputs.size())
+    if (id >= m_inputs.size() || !m_inputs[id].has_value())
     {
         throw std::logic_error("Cannot remove non-existent input");
     }
-    m_inputs[id] = std::nullopt;
+    auto& counter = std::get<2>(m_inputs[id].value());
+    if (--counter == 0)
+    {
+        m_inputs[id] = std::nullopt;
+    }
 }
 
 void Engine::remove(const OutputInfo& output_info)
 {
     std::lock_guard guard(m_mutex);
     const auto id = output_info.m_id;
-    if (id >= m_outputs.size())
+    if (id >= m_outputs.size() || !m_outputs[id].has_value())
     {
         throw std::logic_error("Cannot remove non-existent output");
+    }
+    if (--std::get<1>(m_outputs[id].value()) > 0)
+    {
+        return;
     }
     m_outputs[id] = std::nullopt;
     for (auto& input_opt : m_inputs)
@@ -149,7 +159,7 @@ void Engine::remove(const OutputInfo& output_info)
         {
             continue;
         }
-        auto& [input, connected_output_ids] = input_opt.value();
+        auto& [input, connected_output_ids, count] = input_opt.value();
         auto connected_id_iter = std::find(
             connected_output_ids.begin(),
             connected_output_ids.end(),
@@ -170,11 +180,12 @@ void Engine::connect(size_t input_id, size_t output_id)
         throw std::logic_error("Cannot connect non-existent input");
     }
 
-    auto& out_list = m_inputs[input_id].value().second;
+    auto& out_list = std::get<1>(m_inputs[input_id].value());
     auto out_itr = std::find(out_list.cbegin(), out_list.cend(), output_id);
     if (out_itr == out_list.cend())
     {
         out_list.push_back(output_id);
+        std::cout << "Connected " << input_id << " to " << output_id << std::endl;
     }
 }
 
@@ -183,15 +194,17 @@ void Engine::disconnect(size_t input_id, size_t output_id)
     std::lock_guard guard(m_mutex);
     if (input_id >= m_inputs.size() || !m_inputs[input_id].has_value())
     {
-        throw std::logic_error("Cannot disconnect non-existent input");
+        return;
     }
-    auto& out_list = m_inputs[input_id].value().second;
+    auto& out_list = std::get<1>(m_inputs[input_id].value());
     auto out_itr = std::find(out_list.cbegin(), out_list.cend(), output_id);
     if (out_itr == out_list.cend())
     {
-        throw std::logic_error("Cannot disconnect not-connected output");
+        return;
     }
     out_list.erase(out_itr);
+
+    std::cout << "Disconnected " << input_id << " from " << output_id << std::endl;
 }
 
 void Engine::message_received(size_t id, const std::vector<unsigned char>& message_bytes)
@@ -201,13 +214,13 @@ void Engine::message_received(size_t id, const std::vector<unsigned char>& messa
     {
         throw std::logic_error("Message received from non-existing input");
     }
-    for (size_t output_id : m_inputs[id].value().second)
+    for (size_t output_id : std::get<1>(m_inputs[id].value()))
     {
         if (output_id >= m_outputs.size() || !m_outputs[output_id].has_value())
         {
             throw std::logic_error("Message sent to non-existing output");
         }
-        m_outputs[output_id].value().send_message(message_bytes);
+        std::get<0>(m_outputs[output_id].value()).send_message(message_bytes);
     }
 }
 

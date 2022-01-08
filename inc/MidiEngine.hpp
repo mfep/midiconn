@@ -89,13 +89,21 @@ private:
 
     std::vector<
         std::optional<
-            std::pair<
-                MidiInput,          // input
-                std::vector<size_t> // connected outputs
+            std::tuple<
+                MidiInput,           // input
+                std::vector<size_t>, // connected outputs
+                size_t               // counter
             >
         >
     > m_inputs;
-    std::vector<std::optional<MidiOutput>> m_outputs;
+    std::vector<
+        std::optional<
+            std::tuple<
+                MidiOutput,          // output
+                size_t               // counter
+            >
+        >
+    > m_outputs;
     std::shared_mutex m_mutex;
 };
 

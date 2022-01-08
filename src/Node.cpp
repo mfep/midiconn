@@ -13,19 +13,29 @@ Node::Node() :
 
 void Node::render()
 {
-    auto purge = [](std::map<int, node_ptr>& connections)
+    auto purge = [](std::map<int, node_ptr>& connections) -> bool
     {
-        for (auto it = connections.begin(); it != connections.end(); ++it)
+        bool changed = false;
+        for (auto it = connections.begin(); it != connections.end();)
         {
             if (it->second.expired())
             {
-                connections.erase(it);
+                changed = true;
+                it = connections.erase(it);
+            }
+            else
+            {
+                ++it;
             }
         }
+        return changed;
     };
-    // ToDo
-    purge(m_input_connections);
+    const bool input_changed = purge(m_input_connections);
     purge(m_output_connections);
+    if (input_changed)
+    {
+        update_inputs();
+    }
 
     imnodes::BeginNode(m_id);
     render_internal();

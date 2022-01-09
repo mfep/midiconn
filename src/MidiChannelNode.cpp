@@ -59,7 +59,15 @@ void MidiChannelNode::render_internal()
 
 Node::channel_map MidiChannelNode::transform_channel_map(const channel_map& in_map)
 {
-    return {};
+    channel_map out_map;
+    for (size_t channel_idx = 0; channel_idx < in_map.size(); channel_idx++)
+    {
+        const auto channel_input_value = m_channels[channel_idx];
+        out_map[channel_idx] = channel_input_value == 0
+            ? -1
+            : in_map[channel_input_value - 1];
+    }
+    return out_map;
 }
 
 const char* MidiChannelNode::get_label(size_t index)

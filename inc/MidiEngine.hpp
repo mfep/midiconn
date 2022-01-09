@@ -1,4 +1,5 @@
 #pragma once
+#include <map>
 #include <optional>
 #include <shared_mutex>
 #include "InputObserver.hpp"
@@ -48,29 +49,27 @@ public:
     void create(const OutputInfo& output_info);
     void remove(const InputInfo& input_info);
     void remove(const OutputInfo& output_info);
-    void connect(size_t input_id, size_t output_id);
+    void connect(size_t input_id, size_t output_id, channel_map channels);
     void disconnect(size_t input_id, size_t output_id);
 
 private:
     void message_received(size_t id, const std::vector<unsigned char>& message_bytes) override;
 
-    std::vector<
-        std::optional<
-            std::tuple<
-                MidiInput,           // input
-                std::vector<size_t>, // connected outputs
-                size_t               // counter
-            >
-        >
-    > m_inputs;
-    std::vector<
-        std::optional<
-            std::tuple<
-                MidiOutput,          // output
-                size_t               // counter
-            >
-        >
-    > m_outputs;
+    struct InputItem
+    {
+        size_t m_counter;
+        MidiInput m_input;
+        std::map<size_t, channel_map> m_connections;
+    };
+
+    struct OutputItem
+    {
+        size_t m_counter;
+        MidiOutput m_output;
+    };
+
+    std::vector<std::optional<InputItem>> m_inputs;
+    std::vector<std::optional<OutputItem>> m_outputs;
     std::shared_mutex m_mutex;
 };
 

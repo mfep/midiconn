@@ -36,7 +36,7 @@ void MidiOutNode::update_outputs()
     }
     for (auto&[id, map] : m_sources)
     {
-        m_midi_engine.connect(id, m_output_info.m_id);
+        m_midi_engine.connect(id, m_output_info.m_id, map);
     }
     m_previous_sources = m_sources;
 }

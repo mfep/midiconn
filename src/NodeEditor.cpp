@@ -1,10 +1,8 @@
 #include "NodeEditor.hpp"
-
 #include <algorithm>
-
 #include "imgui.h"
 #include "imnodes.h"
-
+#include "MidiEngine.hpp"
 #include "MidiChannelNode.hpp"
 #include "MidiInNode.hpp"
 #include "MidiOutNode.hpp"

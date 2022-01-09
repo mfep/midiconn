@@ -1,8 +1,8 @@
 #pragma once
-#include <array>
 #include <map>
 #include <memory>
 #include <vector>
+#include "MidiInfo.hpp"
 
 namespace mc
 {
@@ -12,8 +12,7 @@ class Node
 public:
     using node_ptr = std::weak_ptr<Node>;
     using conn = std::pair<node_ptr, int>;
-    using channel_map = std::array<char, 16>;
-    using midi_sources = std::map<size_t, channel_map>;
+    using midi_sources = std::map<size_t, midi::channel_map>;
 
     Node();
     virtual ~Node() = default;
@@ -27,7 +26,7 @@ public:
 
 protected:
     virtual void render_internal() = 0;
-    virtual channel_map transform_channel_map(const channel_map& in_map);
+    virtual midi::channel_map transform_channel_map(const midi::channel_map& in_map);
     virtual void update_outputs();
 
     midi_sources m_sources;

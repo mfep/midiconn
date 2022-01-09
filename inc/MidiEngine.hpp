@@ -1,24 +1,12 @@
 #pragma once
 #include <optional>
 #include <shared_mutex>
-#include <string>
-#include <vector>
+#include "InputObserver.hpp"
+#include "MidiInfo.hpp"
 #include "RtMidi.h"
 
 namespace mc::midi
 {
-
-struct InputInfo final
-{
-    size_t m_id{};
-    std::string m_name;
-};
-
-struct OutputInfo final
-{
-    size_t m_id{};
-    std::string m_name;
-};
 
 class Probe final
 {
@@ -27,27 +15,6 @@ public:
 
     static std::vector<InputInfo> get_inputs();
     static std::vector<OutputInfo> get_outputs();
-};
-
-class InputObserver
-{
-public:
-    virtual ~InputObserver() = default;
-    virtual void message_received(size_t id, const std::vector<unsigned char>& message_bytes) = 0;
-};
-
-class InputObservable
-{
-public:
-    virtual ~InputObservable() = default;
-    void add_observer(InputObserver* observer);
-    void remove_observer(InputObserver* observer);
-
-protected:
-    void raise_message_received(size_t id, const std::vector<unsigned char>& message_bytes) const;
-
-private:
-    std::vector<InputObserver*> m_observers;
 };
 
 class Engine final : private InputObserver

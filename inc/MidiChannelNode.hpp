@@ -1,5 +1,6 @@
 #pragma once
 #include "Node.hpp"
+#include "MidiInfo.hpp"
 
 namespace mc
 {
@@ -11,7 +12,7 @@ public:
 
 private:
     void render_internal() override;
-    channel_map transform_channel_map(const channel_map& in_map) override;
+    midi::channel_map transform_channel_map(const midi::channel_map& in_map) override;
 
     static const char* get_label(size_t index);
     static const char* get_hidden_label(size_t index);

@@ -63,7 +63,7 @@ void Node::disconnect_output(int link_id)
     m_output_connections.erase(link_id);
 }
 
-Node::channel_map Node::transform_channel_map(const channel_map& in_map)
+midi::channel_map Node::transform_channel_map(const midi::channel_map& in_map)
 {
     return in_map;
 }

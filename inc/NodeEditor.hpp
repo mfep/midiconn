@@ -1,9 +1,17 @@
 #pragma once
+#include <memory>
 #include <variant>
 #include <vector>
-#include "MidiEngine.hpp"
-#include "Node.hpp"
+#include "MidiInfo.hpp"
 
+namespace mc
+{
+class Node;
+namespace midi
+{
+class Engine;
+}
+}
 namespace mc::display
 {
 

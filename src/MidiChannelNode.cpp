@@ -57,9 +57,9 @@ void MidiChannelNode::render_internal()
     }
 }
 
-Node::channel_map MidiChannelNode::transform_channel_map(const channel_map& in_map)
+midi::channel_map MidiChannelNode::transform_channel_map(const midi::channel_map& in_map)
 {
-    channel_map out_map;
+    midi::channel_map out_map;
     for (size_t channel_idx = 0; channel_idx < in_map.size(); channel_idx++)
     {
         const auto channel_input_value = m_channels[channel_idx];

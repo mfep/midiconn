@@ -9,6 +9,7 @@
 #include <d3d9.h>
 #include <tchar.h>
 
+#include "MidiEngine.hpp"
 #include "NodeEditor.hpp"
 
 // Data

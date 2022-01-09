@@ -1,9 +1,12 @@
 #pragma once
 #include "Node.hpp"
-#include "MidiEngine.hpp"
 
 namespace mc
 {
+namespace midi
+{
+class Engine;
+}
 
 class MidiOutNode final : public Node
 {

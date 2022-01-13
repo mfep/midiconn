@@ -78,7 +78,7 @@ const char* MidiChannelNode::get_label(size_t index)
         for (size_t i = 0; i < sm_num_combo_items; i++)
         {
             std::stringstream ss;
-            ss << "ch " << std::setw(2) << i + 1;
+            ss << std::setw(2) << i + 1 << " ->";
             labels.push_back(ss.str());
         }
     }

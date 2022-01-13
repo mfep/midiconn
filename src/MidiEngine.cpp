@@ -190,7 +190,7 @@ void Engine::message_received(size_t id, const std::vector<unsigned char>& messa
                 message.set_channel(channels[message.get_channel()]);
             }
         }
-        m_outputs[output_id].value().m_output.send_message(message_bytes);
+        m_outputs[output_id].value().m_output.send_message(message_bytes_copy);
     }
 }
 

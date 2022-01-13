@@ -68,7 +68,7 @@ public:
 
     MessageView end()
     {
-        return MessageView(m_buffer.data() + midi_message_bytes * m_buffer.size());
+        return MessageView(m_buffer.data() + m_buffer.size());
     }
 
 private:

@@ -31,6 +31,8 @@ void MidiChannelNode::render_internal()
     imnodes::BeginOutputAttribute(out_id());
     ImGui::TextUnformatted("MIDI out");
     imnodes::EndOutputAttribute();
+
+    const auto previous_channels = m_channels;
     for (size_t i = 0; i < 8; i++)
     {
         ImGui::TextUnformatted(get_label(i * 2));
@@ -55,17 +57,26 @@ void MidiChannelNode::render_internal()
     {
         std::fill(m_channels.begin(), m_channels.end(), 0);
     }
+    if (m_channels != previous_channels)
+    {
+        update_outputs_with_sources();
+    }
 }
 
 midi::channel_map MidiChannelNode::transform_channel_map(const midi::channel_map& in_map)
 {
     midi::channel_map out_map;
-    for (size_t channel_idx = 0; channel_idx < in_map.size(); channel_idx++)
+    for (size_t channel_input_index = 0; channel_input_index < in_map.size(); channel_input_index++)
     {
-        const auto channel_input_value = m_channels[channel_idx];
-        out_map[channel_idx] = channel_input_value == 0
-            ? -1
-            : in_map[channel_input_value - 1];
+        const auto channel_output_value = m_channels[channel_input_index];
+        const auto channel_output_index = static_cast<char>(channel_output_value - 1);
+        for (size_t i = 0; i < in_map.size(); i++)
+        {
+            if (in_map[i] == channel_input_index)
+            {
+                out_map[i] = channel_output_index;
+            }
+        }
     }
     return out_map;
 }

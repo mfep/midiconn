@@ -16,7 +16,7 @@ public:
 
 private:
     void render_internal() override;
-    void update_outputs() override;
+    void update_outputs_with_sources() override;
 
     midi::OutputInfo m_output_info;
     midi::Engine& m_midi_engine;

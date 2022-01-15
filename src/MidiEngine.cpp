@@ -1,6 +1,9 @@
 #include "MidiEngine.hpp"
 #include <algorithm>
+#include <iomanip>
+#include <sstream>
 #include "MidiBuffer.hpp"
+#include "spdlog/spdlog.h"
 
 namespace mc::midi
 {
@@ -79,6 +82,7 @@ void Engine::create(const InputInfo& input_info)
     auto& input = m_inputs[id].emplace(InputItem{ 1, input_info, {} });
     input.m_input.add_observer(this);
     input.m_input.open();
+    spdlog::info("instantiated MIDI input '{}'", input_info.m_name);
 }
 
 void Engine::create(const OutputInfo& output_info)
@@ -95,6 +99,7 @@ void Engine::create(const OutputInfo& output_info)
         m_outputs.resize(id + 1);
     }
     m_outputs[id].emplace(OutputItem{ 1, output_info });
+    spdlog::info("instantiated MIDI output '{}'", output_info.m_name);
 }
 
 void Engine::remove(const InputInfo& input_info)
@@ -109,6 +114,7 @@ void Engine::remove(const InputInfo& input_info)
     if (--counter == 0)
     {
         m_inputs[id] = std::nullopt;
+        spdlog::info("removed MIDI input '{}'", input_info.m_name);
     }
 }
 
@@ -138,6 +144,7 @@ void Engine::remove(const OutputInfo& output_info)
             connected_outputs.erase(connected_id_iter);
         }
     }
+    spdlog::info("removed MIDI output '{}'", output_info.m_name);
 }
 
 void Engine::connect(size_t input_id, size_t output_id, channel_map channels)
@@ -150,6 +157,15 @@ void Engine::connect(size_t input_id, size_t output_id, channel_map channels)
 
     auto& out_list = m_inputs[input_id].value().m_connections;
     out_list[output_id] = channels;
+
+    std::stringstream ss;
+    ss << std::hex;
+    for (int val : channels)
+    {
+        ss << val;
+    }
+    spdlog::info("connected input {} to output {} with channel mask 0x{}",
+    input_id, output_id, ss.str());
 }
 
 void Engine::disconnect(size_t input_id, size_t output_id)
@@ -165,6 +181,7 @@ void Engine::disconnect(size_t input_id, size_t output_id)
     {
         out_list.erase(out_itr);
     }
+    spdlog::info("disconnected input {} from output {}", input_id, output_id);
 }
 
 void Engine::message_received(size_t id, const std::vector<unsigned char>& message_bytes)

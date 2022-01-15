@@ -28,7 +28,7 @@ void MidiOutNode::render_internal()
     imnodes::EndInputAttribute();
 }
 
-void MidiOutNode::update_outputs()
+void MidiOutNode::update_outputs_with_sources()
 {
     for (auto&[id, map] : m_previous_sources)
     {

@@ -34,7 +34,7 @@ void Node::render()
     purge(m_output_connections);
     if (input_changed)
     {
-        update_inputs();
+        update_sources_from_inputs();
     }
 
     imnodes::BeginNode(m_id);
@@ -68,7 +68,7 @@ midi::channel_map Node::transform_channel_map(const midi::channel_map& in_map)
     return in_map;
 }
 
-void Node::update_outputs()
+void Node::update_outputs_with_sources()
 {
     for (auto it = m_output_connections.begin(); it != m_output_connections.end(); ++it)
     {
@@ -77,23 +77,23 @@ void Node::update_outputs()
         {
             continue;
         }
-        node_ptr->update_inputs(it->first);
+        node_ptr->update_sources_from_inputs(it->first);
     }
 }
 
 void Node::connect_input(node_ptr from_node, int link_id)
 {
     m_input_connections[link_id] = from_node;
-    update_inputs(link_id);
+    update_sources_from_inputs(link_id);
 }
 
 void Node::disconnect_input(int link_id)
 {
     m_input_connections.erase(link_id);
-    update_inputs();
+    update_sources_from_inputs();
 }
 
-void Node::update_inputs(int new_link_id)
+void Node::update_sources_from_inputs(int new_link_id)
 {
     m_sources.clear();
     if (new_link_id >= 0)
@@ -112,19 +112,25 @@ void Node::update_inputs(int new_link_id)
             continue;
         }
         midi_sources new_sources;
+        bool has_conflicting_input{};
         for (auto&[input_id, map] : node_ptr->get_sources())
         {
             auto found_id_it = m_sources.find(input_id);
             if (found_id_it != m_sources.end())
             {
                 node_ptr->m_output_connections.erase(it->first);
+                has_conflicting_input = true;
                 break;
             }
             new_sources[input_id] = transform_channel_map(map);
         }
-        m_sources.merge(new_sources);
+        if (!has_conflicting_input)
+        {
+            m_sources.merge(new_sources);
+        }
     }
-    update_outputs();
+    
+    update_outputs_with_sources();
 }
 
 }

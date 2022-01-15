@@ -1,10 +1,11 @@
 cmake_minimum_required(VERSION 3.22)
 
-find_package(rtmidi REQUIRED)
-
 set(CMAKE_CXX_STANDARD 17)
 
 project(midi_connector LANGUAGES CXX)
+
+find_package(rtmidi REQUIRED)
+find_package(spdlog REQUIRED)
 
 add_executable(midi_connector
     deps/imgui/imgui.cpp
@@ -31,4 +32,5 @@ target_include_directories(midi_connector PRIVATE
 target_link_libraries(midi_connector PRIVATE
     D3d9.lib
     Dwmapi.lib
-    RtMidi::rtmidi)
+    RtMidi::rtmidi
+    spdlog::spdlog)

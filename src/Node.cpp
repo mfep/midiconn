@@ -104,11 +104,12 @@ void Node::update_sources_from_inputs(int new_link_id)
             m_sources[input_id] = transform_channel_map(map);
         }
     }
-    for (auto it = m_input_connections.begin(); it != m_input_connections.end(); ++it)
+    for (auto it = m_input_connections.begin(); it != m_input_connections.end();)
     {
         auto node_ptr = it->second.lock();
         if (node_ptr == nullptr || it->first == new_link_id)
         {
+            ++it;
             continue;
         }
         midi_sources new_sources;
@@ -120,13 +121,20 @@ void Node::update_sources_from_inputs(int new_link_id)
             {
                 node_ptr->m_output_connections.erase(it->first);
                 has_conflicting_input = true;
-                break;
             }
-            new_sources[input_id] = transform_channel_map(map);
+            else
+            {
+                new_sources[input_id] = transform_channel_map(map);
+            }
         }
-        if (!has_conflicting_input)
+        if (has_conflicting_input)
+        {
+            it = m_input_connections.erase(it);
+        }
+        else
         {
             m_sources.merge(new_sources);
+            ++it;
         }
     }
     

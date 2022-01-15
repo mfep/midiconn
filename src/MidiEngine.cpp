@@ -162,7 +162,14 @@ void Engine::connect(size_t input_id, size_t output_id, channel_map channels)
     ss << std::hex;
     for (int val : channels)
     {
-        ss << val;
+        if (val < 0)
+        {
+            ss << "_";
+        }
+        else
+        {
+            ss << val;
+        }
     }
     spdlog::info("connected input {} to output {} with channel mask 0x{}",
     input_id, output_id, ss.str());
@@ -184,8 +191,9 @@ void Engine::disconnect(size_t input_id, size_t output_id)
     spdlog::info("disconnected input {} from output {}", input_id, output_id);
 }
 
-void Engine::message_received(size_t id, const std::vector<unsigned char>& message_bytes)
+void Engine::message_received(size_t id, std::vector<unsigned char>& message_bytes)
 {
+    assert(message_bytes.size() <= 3); // a message is never longer than 3 bytes
     std::shared_lock lock(m_mutex);
     if (id >= m_inputs.size() || !m_inputs[id].has_value())
     {
@@ -197,17 +205,19 @@ void Engine::message_received(size_t id, const std::vector<unsigned char>& messa
         {
             throw std::logic_error("Message sent to non-existing output");
         }
-        // ToDo check without copy
-        auto message_bytes_copy = message_bytes;
-        MidiBuffer buffer(message_bytes_copy);
-        for (auto message = buffer.begin(); message != buffer.end(); ++message)
+        MidiBuffer buffer(message_bytes);
+        auto message = buffer.begin();
+        if (!message.is_system())
         {
-            if (!message.is_system())
+            const auto message_channel = message.get_channel();
+            const auto target_channel = channels[message_channel];
+            if (target_channel < 0)
             {
-                message.set_channel(channels[message.get_channel()]);
+                return;
             }
+            message.set_channel(target_channel);
         }
-        m_outputs[output_id].value().m_output.send_message(message_bytes_copy);
+        m_outputs[output_id].value().m_output.send_message(message_bytes);
     }
 }
 

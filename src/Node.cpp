@@ -81,6 +81,16 @@ void Node::update_outputs_with_sources()
     }
 }
 
+Node::midi_sources Node::get_transformed_sources()
+{
+    midi_sources transformed_sources;
+    for (auto&[input_id, channels] : m_input_sources)
+    {
+        transformed_sources[input_id] = transform_channel_map(channels);
+    }
+    return transformed_sources;
+}
+
 void Node::connect_input(node_ptr from_node, int link_id)
 {
     m_input_connections[link_id] = from_node;
@@ -95,38 +105,46 @@ void Node::disconnect_input(int link_id)
 
 void Node::update_sources_from_inputs(int new_link_id)
 {
-    m_sources.clear();
+    m_input_sources.clear();
     if (new_link_id >= 0)
     {
-        const auto& base_sources = m_input_connections.at(new_link_id).lock()->get_sources();
+        const auto& base_sources = m_input_connections.at(new_link_id).lock()->get_transformed_sources();
         for (auto&[input_id, map] : base_sources)
         {
-            m_sources[input_id] = transform_channel_map(map);
+            m_input_sources[input_id] = map;
         }
     }
-    for (auto it = m_input_connections.begin(); it != m_input_connections.end(); ++it)
+    for (auto it = m_input_connections.begin(); it != m_input_connections.end();)
     {
         auto node_ptr = it->second.lock();
         if (node_ptr == nullptr || it->first == new_link_id)
         {
+            ++it;
             continue;
         }
         midi_sources new_sources;
         bool has_conflicting_input{};
-        for (auto&[input_id, map] : node_ptr->get_sources())
+        for (auto&[input_id, map] : node_ptr->get_transformed_sources())
         {
-            auto found_id_it = m_sources.find(input_id);
-            if (found_id_it != m_sources.end())
+            auto found_id_it = m_input_sources.find(input_id);
+            if (found_id_it != m_input_sources.end())
             {
                 node_ptr->m_output_connections.erase(it->first);
                 has_conflicting_input = true;
-                break;
             }
-            new_sources[input_id] = transform_channel_map(map);
+            else
+            {
+                new_sources[input_id] = map;
+            }
         }
-        if (!has_conflicting_input)
+        if (has_conflicting_input)
         {
-            m_sources.merge(new_sources);
+            it = m_input_connections.erase(it);
+        }
+        else
+        {
+            m_input_sources.merge(new_sources);
+            ++it;
         }
     }
     

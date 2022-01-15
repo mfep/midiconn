@@ -19,5 +19,6 @@ struct OutputInfo final
 };
 
 using channel_map = std::array<char, 16>;
+constexpr char disabled_channel = -1;
 
 }

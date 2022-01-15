@@ -29,17 +29,18 @@ protected:
     virtual midi::channel_map transform_channel_map(const midi::channel_map& in_map);
     virtual void update_outputs_with_sources();
 
-    midi_sources m_sources;
+    // sources read from inputs
+    midi_sources m_input_sources;
 
 private:
-    const midi_sources& get_sources() const { return m_sources; }
+    midi_sources get_transformed_sources();
     void connect_input(node_ptr from_node, int link_id);
     void disconnect_input(int link_id);
     void update_sources_from_inputs(int new_link_id = -1);
 
     static inline int sm_next_id{};
     static inline int sm_next_link_id{};
-    
+
     // self generated node id
     int m_id;
 

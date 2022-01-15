@@ -34,11 +34,11 @@ void MidiOutNode::update_outputs_with_sources()
     {
         m_midi_engine.disconnect(id, m_output_info.m_id);
     }
-    for (auto&[id, map] : m_sources)
+    for (auto&[id, map] : m_input_sources)
     {
         m_midi_engine.connect(id, m_output_info.m_id, map);
     }
-    m_previous_sources = m_sources;
+    m_previous_sources = m_input_sources;
 }
 
 }

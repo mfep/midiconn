@@ -53,7 +53,7 @@ public:
     void disconnect(size_t input_id, size_t output_id);
 
 private:
-    void message_received(size_t id, const std::vector<unsigned char>& message_bytes) override;
+    void message_received(size_t id, std::vector<unsigned char>& message_bytes) override;
 
     struct InputItem
     {

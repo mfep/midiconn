@@ -9,7 +9,7 @@ class InputObserver
 {
 public:
     virtual ~InputObserver() = default;
-    virtual void message_received(size_t id, const std::vector<unsigned char>& message_bytes) = 0;
+    virtual void message_received(size_t id, std::vector<unsigned char>& message_bytes) = 0;
 };
 
 class InputObservable
@@ -20,7 +20,7 @@ public:
     void remove_observer(InputObserver* observer);
 
 protected:
-    void raise_message_received(size_t id, const std::vector<unsigned char>& message_bytes) const;
+    void raise_message_received(size_t id, std::vector<unsigned char>& message_bytes) const;
 
 private:
     std::vector<InputObserver*> m_observers;

@@ -1,24 +1,13 @@
 #pragma once
+#include <map>
 #include <optional>
 #include <shared_mutex>
-#include <string>
-#include <vector>
+#include "InputObserver.hpp"
+#include "MidiInfo.hpp"
 #include "RtMidi.h"
 
 namespace mc::midi
 {
-
-struct InputInfo final
-{
-    size_t m_id{};
-    std::string m_name;
-};
-
-struct OutputInfo final
-{
-    size_t m_id{};
-    std::string m_name;
-};
 
 class Probe final
 {
@@ -27,27 +16,6 @@ public:
 
     static std::vector<InputInfo> get_inputs();
     static std::vector<OutputInfo> get_outputs();
-};
-
-class InputObserver
-{
-public:
-    virtual ~InputObserver() = default;
-    virtual void message_received(size_t id, const std::vector<unsigned char>& message_bytes) = 0;
-};
-
-class InputObservable
-{
-public:
-    virtual ~InputObservable() = default;
-    void add_observer(InputObserver* observer);
-    void remove_observer(InputObserver* observer);
-
-protected:
-    void raise_message_received(size_t id, const std::vector<unsigned char>& message_bytes) const;
-
-private:
-    std::vector<InputObserver*> m_observers;
 };
 
 class Engine final : private InputObserver
@@ -81,21 +49,27 @@ public:
     void create(const OutputInfo& output_info);
     void remove(const InputInfo& input_info);
     void remove(const OutputInfo& output_info);
-    void connect(const InputInfo& input_info, const OutputInfo& output_info);
-    void disconnect(const InputInfo& input_info, const OutputInfo& output_info);
+    void connect(size_t input_id, size_t output_id, channel_map channels);
+    void disconnect(size_t input_id, size_t output_id);
 
 private:
     void message_received(size_t id, const std::vector<unsigned char>& message_bytes) override;
 
-    std::vector<
-        std::optional<
-            std::pair<
-                MidiInput,          // input
-                std::vector<size_t> // connected outputs
-            >
-        >
-    > m_inputs;
-    std::vector<std::optional<MidiOutput>> m_outputs;
+    struct InputItem
+    {
+        size_t m_counter;
+        MidiInput m_input;
+        std::map<size_t, channel_map> m_connections;
+    };
+
+    struct OutputItem
+    {
+        size_t m_counter;
+        MidiOutput m_output;
+    };
+
+    std::vector<std::optional<InputItem>> m_inputs;
+    std::vector<std::optional<OutputItem>> m_outputs;
     std::shared_mutex m_mutex;
 };
 

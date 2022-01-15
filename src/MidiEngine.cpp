@@ -1,6 +1,9 @@
 #include "MidiEngine.hpp"
-
 #include <algorithm>
+#include <iomanip>
+#include <sstream>
+#include "MidiBuffer.hpp"
+#include "spdlog/spdlog.h"
 
 namespace mc::midi
 {
@@ -30,34 +33,6 @@ std::vector<InputInfo> Probe::get_inputs()
 std::vector<OutputInfo> Probe::get_outputs()
 {
     return get_connections<RtMidiOut, OutputInfo>();
-}
-
-void InputObservable::add_observer(InputObserver* observer)
-{
-    auto found_observer = std::find(m_observers.cbegin(), m_observers.cend(), observer);
-    if (found_observer == m_observers.cend())
-    {
-        m_observers.push_back(observer);
-    }
-}
-
-void InputObservable::remove_observer(InputObserver* observer)
-{
-    auto found_observer = std::find(m_observers.cbegin(), m_observers.cend(), observer);
-    if (found_observer != m_observers.cend())
-    {
-        m_observers.erase(found_observer);
-    }
-}
-
-void InputObservable::raise_message_received(
-    size_t id,
-    const std::vector<unsigned char>& message_bytes) const
-{
-    for (auto* observer : m_observers)
-    {
-        observer->message_received(id, message_bytes);
-    }
 }
 
 Engine::MidiInput::MidiInput(const InputInfo& info) :
@@ -97,15 +72,17 @@ void Engine::create(const InputInfo& input_info)
     const auto id = input_info.m_id;
     if (id < m_inputs.size() && m_inputs[id].has_value())
     {
+        ++m_inputs[id].value().m_counter;
         return;
     }
     if (id >= m_inputs.size())
     {
         m_inputs.resize(id + 1);
     }
-    auto& input = m_inputs[id].emplace(std::make_pair<MidiInput, std::vector<size_t>>(input_info, {}));
-    input.first.add_observer(this);
-    input.first.open();
+    auto& input = m_inputs[id].emplace(InputItem{ 1, input_info, {} });
+    input.m_input.add_observer(this);
+    input.m_input.open();
+    spdlog::info("instantiated MIDI input '{}'", input_info.m_name);
 }
 
 void Engine::create(const OutputInfo& output_info)
@@ -114,33 +91,44 @@ void Engine::create(const OutputInfo& output_info)
     const auto id = output_info.m_id;
     if (id < m_outputs.size() && m_outputs[id].has_value())
     {
+        ++m_outputs[id].value().m_counter;
         return;
     }
     if (id >= m_outputs.size())
     {
         m_outputs.resize(id + 1);
     }
-    m_outputs[id].emplace(output_info);
+    m_outputs[id].emplace(OutputItem{ 1, output_info });
+    spdlog::info("instantiated MIDI output '{}'", output_info.m_name);
 }
 
 void Engine::remove(const InputInfo& input_info)
 {
     std::lock_guard guard(m_mutex);
     const auto id = input_info.m_id;
-    if (id >= m_inputs.size())
+    if (id >= m_inputs.size() || !m_inputs[id].has_value())
     {
         throw std::logic_error("Cannot remove non-existent input");
     }
-    m_inputs[id] = std::nullopt;
+    auto& counter = m_inputs[id].value().m_counter;
+    if (--counter == 0)
+    {
+        m_inputs[id] = std::nullopt;
+        spdlog::info("removed MIDI input '{}'", input_info.m_name);
+    }
 }
 
 void Engine::remove(const OutputInfo& output_info)
 {
     std::lock_guard guard(m_mutex);
     const auto id = output_info.m_id;
-    if (id >= m_outputs.size())
+    if (id >= m_outputs.size() || !m_outputs[id].has_value())
     {
         throw std::logic_error("Cannot remove non-existent output");
+    }
+    if (--m_outputs[id].value().m_counter > 0)
+    {
+        return;
     }
     m_outputs[id] = std::nullopt;
     for (auto& input_opt : m_inputs)
@@ -149,53 +137,51 @@ void Engine::remove(const OutputInfo& output_info)
         {
             continue;
         }
-        auto& [input, connected_output_ids] = input_opt.value();
-        auto connected_id_iter = std::find(
-            connected_output_ids.begin(),
-            connected_output_ids.end(),
-            id);
-        if (connected_id_iter != connected_output_ids.end())
+        auto& connected_outputs = input_opt.value().m_connections;
+        auto connected_id_iter = connected_outputs.find(id);
+        if (connected_id_iter != connected_outputs.end())
         {
-            connected_output_ids.erase(connected_id_iter);
+            connected_outputs.erase(connected_id_iter);
         }
     }
+    spdlog::info("removed MIDI output '{}'", output_info.m_name);
 }
 
-void Engine::connect(const InputInfo& input_info, const OutputInfo& output_info)
+void Engine::connect(size_t input_id, size_t output_id, channel_map channels)
 {
     std::lock_guard guard(m_mutex);
-    const auto in_id = input_info.m_id;
-    const auto out_id = output_info.m_id;
-
-    if (in_id >= m_inputs.size() || !m_inputs[in_id].has_value())
+    if (input_id >= m_inputs.size() || !m_inputs[input_id].has_value())
     {
         throw std::logic_error("Cannot connect non-existent input");
     }
 
-    auto& out_list = m_inputs[in_id].value().second;
-    auto out_itr = std::find(out_list.cbegin(), out_list.cend(), out_id);
-    if (out_itr == out_list.cend())
+    auto& out_list = m_inputs[input_id].value().m_connections;
+    out_list[output_id] = channels;
+
+    std::stringstream ss;
+    ss << std::hex;
+    for (int val : channels)
     {
-        out_list.push_back(out_id);
+        ss << val;
     }
+    spdlog::info("connected input {} to output {} with channel mask 0x{}",
+    input_id, output_id, ss.str());
 }
 
-void Engine::disconnect(const InputInfo& input_info, const OutputInfo& output_info)
+void Engine::disconnect(size_t input_id, size_t output_id)
 {
     std::lock_guard guard(m_mutex);
-    const auto in_id = input_info.m_id;
-    const auto out_id = output_info.m_id;
-    if (in_id >= m_inputs.size() || !m_inputs[in_id].has_value())
+    if (input_id >= m_inputs.size() || !m_inputs[input_id].has_value())
     {
-        throw std::logic_error("Cannot disconnect non-existent input");
+        return;
     }
-    auto& out_list = m_inputs[in_id].value().second;
-    auto out_itr = std::find(out_list.cbegin(), out_list.cend(), out_id);
-    if (out_itr == out_list.cend())
+    auto& out_list = m_inputs[input_id].value().m_connections;
+    auto out_itr = out_list.find(output_id);
+    if (out_itr != out_list.cend())
     {
-        throw std::logic_error("Cannot disconnect not-connected output");
+        out_list.erase(out_itr);
     }
-    out_list.erase(out_itr);
+    spdlog::info("disconnected input {} from output {}", input_id, output_id);
 }
 
 void Engine::message_received(size_t id, const std::vector<unsigned char>& message_bytes)
@@ -205,13 +191,23 @@ void Engine::message_received(size_t id, const std::vector<unsigned char>& messa
     {
         throw std::logic_error("Message received from non-existing input");
     }
-    for (size_t output_id : m_inputs[id].value().second)
+    for (auto&[output_id, channels] : m_inputs[id].value().m_connections)
     {
         if (output_id >= m_outputs.size() || !m_outputs[output_id].has_value())
         {
             throw std::logic_error("Message sent to non-existing output");
         }
-        m_outputs[output_id].value().send_message(message_bytes);
+        // ToDo check without copy
+        auto message_bytes_copy = message_bytes;
+        MidiBuffer buffer(message_bytes_copy);
+        for (auto message = buffer.begin(); message != buffer.end(); ++message)
+        {
+            if (!message.is_system())
+            {
+                message.set_channel(channels[message.get_channel()]);
+            }
+        }
+        m_outputs[output_id].value().m_output.send_message(message_bytes_copy);
     }
 }
 

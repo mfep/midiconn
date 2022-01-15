@@ -1,32 +1,28 @@
 #pragma once
+#include <memory>
 #include <variant>
 #include <vector>
-#include "MidiEngine.hpp"
-#include "NodeObserver.hpp"
+#include "MidiInfo.hpp"
 
+namespace mc
+{
+class Node;
+namespace midi
+{
+class Engine;
+}
+}
 namespace mc::display
 {
 
-class NodeEditor final : public NodeObservable
+class NodeEditor final
 {
 public:
+    NodeEditor(midi::Engine& midi_engine);
+
     void render();
 
 private:
-    struct Node
-    {
-        std::variant<midi::InputInfo, midi::OutputInfo> m_info;
-        int m_id;
-        const std::string& get_name() const;
-    };
-
-    struct Link
-    {
-        int m_id;
-        int m_start_id;
-        int m_end_id;
-    };
-
     void renderContextMenu();
     void renderNodes();
     void handleDelete();
@@ -34,10 +30,8 @@ private:
 
     std::vector<midi::InputInfo> m_input_infos;
     std::vector<midi::OutputInfo> m_output_infos;
-    std::vector<Node> m_nodes;
-    std::vector<Link> m_links;
-    int m_current_node_id{};
-    int m_current_link_id{};
+    std::vector<std::shared_ptr<Node>> m_nodes;
+    midi::Engine& m_midi_engine;
 };
 
 }

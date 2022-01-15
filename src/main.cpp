@@ -9,7 +9,7 @@
 #include <d3d9.h>
 #include <tchar.h>
 
-#include "MidiNodeObserver.hpp"
+#include "MidiEngine.hpp"
 #include "NodeEditor.hpp"
 
 // Data
@@ -75,10 +75,8 @@ int main(int, char**)
     //io.Fonts->AddFontFromFileTTF("../../misc/fonts/ProggyTiny.ttf", 10.0f);
     //ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf", 18.0f, NULL, io.Fonts->GetGlyphRangesJapanese());
     //IM_ASSERT(font != NULL);
-    mc::midi::Engine me;
-    mc::MidiNodeObserver mno(&me);
-    mc::display::NodeEditor de;
-    de.add_observer(&mno);
+    mc::midi::Engine engine;
+    mc::display::NodeEditor nodeEditor(engine);
     // Main loop
     bool done = false;
     while (!done)
@@ -113,7 +111,7 @@ int main(int, char**)
 
         try
         {
-            de.render();
+            nodeEditor.render();
         }
         catch(std::exception& ex)
         {
@@ -121,6 +119,7 @@ int main(int, char**)
         }
 
         ImGui::End();
+        ImGui::ShowDemoWindow();
 
         // Rendering
         ImGui::EndFrame();

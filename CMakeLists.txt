@@ -1,8 +1,11 @@
 cmake_minimum_required(VERSION 3.22)
 
-find_package(rtmidi REQUIRED)
+set(CMAKE_CXX_STANDARD 17)
 
 project(midi_connector LANGUAGES CXX)
+
+find_package(rtmidi REQUIRED)
+find_package(spdlog REQUIRED)
 
 add_executable(midi_connector
     deps/imgui/imgui.cpp
@@ -13,10 +16,13 @@ add_executable(midi_connector
     deps/imgui/backends/imgui_impl_win32.cpp
     deps/imgui/backends/imgui_impl_dx9.cpp
     deps/imnodes/imnodes.cpp
+    src/InputObserver.cpp
+    src/MidiChannelNode.cpp
     src/MidiEngine.cpp
-    src/MidiNodeObserver.cpp
+    src/MidiInNode.cpp
+    src/MidiOutNode.cpp
+    src/Node.cpp
     src/NodeEditor.cpp
-    src/NodeObserver.cpp
     src/main.cpp)
 
 target_include_directories(midi_connector PRIVATE
@@ -26,4 +32,5 @@ target_include_directories(midi_connector PRIVATE
 target_link_libraries(midi_connector PRIVATE
     D3d9.lib
     Dwmapi.lib
-    RtMidi::rtmidi)
+    RtMidi::rtmidi
+    spdlog::spdlog)

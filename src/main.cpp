@@ -4,10 +4,8 @@
 
 #include "imgui.h"
 #include "imnodes.h"
-#include "backends/imgui_impl_dx9.h"
 #include "backends/imgui_impl_sdl.h"
-#include <d3d9.h>
-#include <tchar.h>
+#include "backends/imgui_impl_sdlrenderer.h"
 #define SDL_MAIN_HANDLED
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_syswm.h>
@@ -15,18 +13,10 @@
 #include "MidiEngine.hpp"
 #include "NodeEditor.hpp"
 
-// Data
-static LPDIRECT3D9              g_pD3D = NULL;
-static LPDIRECT3DDEVICE9        g_pd3dDevice = NULL;
-static D3DPRESENT_PARAMETERS    g_d3dpp = {};
+#if !SDL_VERSION_ATLEAST(2,0,17)
+#error This backend requires SDL 2.0.17+ because of SDL_RenderGeometry() function
+#endif
 
-// Forward declarations of helper functions
-bool CreateDeviceD3D(HWND hWnd);
-void CleanupDeviceD3D();
-void ResetDevice();
-LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-
-// Main code
 int main(int, char**)
 {
     // Setup SDL
@@ -41,16 +31,13 @@ int main(int, char**)
     // Setup window
     SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
     SDL_Window* window = SDL_CreateWindow("Dear ImGui SDL2+DirectX9 example", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 800, window_flags);
-    SDL_SysWMinfo wmInfo;
-    SDL_VERSION(&wmInfo.version);
-    SDL_GetWindowWMInfo(window, &wmInfo);
-    HWND hwnd = (HWND)wmInfo.info.win.window;
 
-    // Initialize Direct3D
-    if (!CreateDeviceD3D(hwnd))
+    // Setup SDL_Renderer instance
+    SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
+    if (renderer == NULL)
     {
-        CleanupDeviceD3D();
-        return 1;
+        SDL_Log("Error creating SDL_Renderer!");
+        return false;
     }
 
     // Setup Dear ImGui context
@@ -66,8 +53,8 @@ int main(int, char**)
     //ImGui::StyleColorsClassic();
 
     // Setup Platform/Renderer backends
-    ImGui_ImplSDL2_InitForD3D(window);
-    ImGui_ImplDX9_Init(g_pd3dDevice);
+    ImGui_ImplSDL2_InitForSDLRenderer(window);
+    ImGui_ImplSDLRenderer_Init(renderer);
 
     // Load Fonts
     // - If no fonts are loaded, dear imgui will use the default font. You can also load multiple fonts and use ImGui::PushFont()/PopFont() to select them.
@@ -108,7 +95,7 @@ int main(int, char**)
         }
 
         // Start the Dear ImGui frame
-        ImGui_ImplDX9_NewFrame();
+        ImGui_ImplSDLRenderer_NewFrame();
         ImGui_ImplSDL2_NewFrame();
         ImGui::NewFrame();
 
@@ -132,71 +119,19 @@ int main(int, char**)
         ImGui::ShowDemoWindow();
 
         // Rendering
-        ImGui::EndFrame();
-        g_pd3dDevice->SetRenderState(D3DRS_ZENABLE, FALSE);
-        g_pd3dDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
-        g_pd3dDevice->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
-        D3DCOLOR clear_col_dx = D3DCOLOR_RGBA(0, 0, 0, 0);
-        g_pd3dDevice->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, clear_col_dx, 1.0f, 0);
-        if (g_pd3dDevice->BeginScene() >= 0)
-        {
-            ImGui::Render();
-            ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
-            g_pd3dDevice->EndScene();
-        }
-        HRESULT result = g_pd3dDevice->Present(NULL, NULL, NULL, NULL);
-
-        // Handle loss of D3D9 device
-        if (result == D3DERR_DEVICELOST && g_pd3dDevice->TestCooperativeLevel() == D3DERR_DEVICENOTRESET)
-            ResetDevice();
+        ImGui::Render();
+        SDL_RenderClear(renderer);
+        ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());
+        SDL_RenderPresent(renderer);
     }
 
-    ImGui_ImplDX9_Shutdown();
+    ImGui_ImplSDLRenderer_Shutdown();
     ImGui_ImplSDL2_Shutdown();
     imnodes::DestroyContext();
     ImGui::DestroyContext();
 
-    CleanupDeviceD3D();
     SDL_DestroyWindow(window);
     SDL_Quit();
 
     return 0;
 }
-
-// Helper functions
-
-bool CreateDeviceD3D(HWND hWnd)
-{
-    if ((g_pD3D = Direct3DCreate9(D3D_SDK_VERSION)) == NULL)
-        return false;
-
-    // Create the D3DDevice
-    ZeroMemory(&g_d3dpp, sizeof(g_d3dpp));
-    g_d3dpp.Windowed = TRUE;
-    g_d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
-    g_d3dpp.BackBufferFormat = D3DFMT_UNKNOWN; // Need to use an explicit format with alpha if needing per-pixel alpha composition.
-    g_d3dpp.EnableAutoDepthStencil = TRUE;
-    g_d3dpp.AutoDepthStencilFormat = D3DFMT_D16;
-    g_d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_ONE;           // Present with vsync
-    //g_d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;   // Present without vsync, maximum unthrottled framerate
-    if (g_pD3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWnd, D3DCREATE_HARDWARE_VERTEXPROCESSING, &g_d3dpp, &g_pd3dDevice) < 0)
-        return false;
-
-    return true;
-}
-
-void CleanupDeviceD3D()
-{
-    if (g_pd3dDevice) { g_pd3dDevice->Release(); g_pd3dDevice = NULL; }
-    if (g_pD3D) { g_pD3D->Release(); g_pD3D = NULL; }
-}
-
-void ResetDevice()
-{
-    ImGui_ImplDX9_InvalidateDeviceObjects();
-    HRESULT hr = g_pd3dDevice->Reset(&g_d3dpp);
-    if (hr == D3DERR_INVALIDCALL)
-        IM_ASSERT(0);
-    ImGui_ImplDX9_CreateDeviceObjects();
-}
-

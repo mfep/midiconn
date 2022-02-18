@@ -4,7 +4,7 @@
 #include <shared_mutex>
 #include "InputObserver.hpp"
 #include "MidiInfo.hpp"
-#include "RtMidi.h"
+#include "rtmidi/RtMidi.h"
 
 namespace mc::midi
 {

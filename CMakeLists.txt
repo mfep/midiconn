@@ -6,6 +6,7 @@ project(midi_connector LANGUAGES CXX)
 
 find_package(rtmidi REQUIRED)
 find_package(spdlog REQUIRED)
+find_package(SDL2 REQUIRED)
 
 add_executable(midi_connector
     deps/imgui/imgui.cpp
@@ -13,8 +14,8 @@ add_executable(midi_connector
     deps/imgui/imgui_draw.cpp
     deps/imgui/imgui_tables.cpp
     deps/imgui/imgui_widgets.cpp
-    deps/imgui/backends/imgui_impl_win32.cpp
-    deps/imgui/backends/imgui_impl_dx9.cpp
+    deps/imgui/backends/imgui_impl_sdl.cpp
+    deps/imgui/backends/imgui_impl_sdlrenderer.cpp
     deps/imnodes/imnodes.cpp
     src/InputObserver.cpp
     src/MidiChannelNode.cpp
@@ -30,7 +31,6 @@ target_include_directories(midi_connector PRIVATE
     deps/imgui
     deps/imnodes)
 target_link_libraries(midi_connector PRIVATE
-    D3d9.lib
-    Dwmapi.lib
     RtMidi::rtmidi
-    spdlog::spdlog)
+    spdlog::spdlog
+    SDL2::SDL2)

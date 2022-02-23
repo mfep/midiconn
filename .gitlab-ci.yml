@@ -1,0 +1,6 @@
+image: registry.gitlab.com/mfep/midi-connector
+
+build:
+  stage: build
+  script:
+    - echo test

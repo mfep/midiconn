@@ -27,7 +27,7 @@ build-windows:
     - windows-1809
   script:
     - wget.exe https://github.com/Kitware/CMake/releases/download/v3.22.2/cmake-3.22.2-windows-x86_64.zip
-    - 7z e -y cmake-3.22.2-windows-x86_64.zip
+    - 7z x -y cmake-3.22.2-windows-x86_64.zip
     - git submodule update --init
     - cmake-3.22.2-windows-x86_64/bin/cmake -S deps/rtmidi -B deps/rtmidi/build -D RTMIDI_BUILD_STATIC_LIBS=ON
     - cmake-3.22.2-windows-x86_64/bin/cmake --build deps/rtmidi/build --config Release

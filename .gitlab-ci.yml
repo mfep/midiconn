@@ -26,7 +26,7 @@ build-windows:
     - windows
     - windows-1809
   script:
-    - choco install cmake
+    - choco install cmake -y
     - git submodule update --init
     - cd deps/rtmidi
     - cmake -S . -B build -D RTMIDI_BUILD_STATIC_LIBS=ON

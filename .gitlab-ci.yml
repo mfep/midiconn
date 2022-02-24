@@ -28,11 +28,8 @@ build-windows:
   script:
     - wget.exe https://github.com/Kitware/CMake/releases/download/v3.22.2/cmake-3.22.2-windows-x86_64.zip
     - 7z e -y cmake-3.22.2-windows-x86_64.zip
-    - set PATH="%PATH%;cmake-3.22.2-windows-x86_64/bin"
     - git submodule update --init
-    - cd deps/rtmidi
-    - cmake -S . -B build -D RTMIDI_BUILD_STATIC_LIBS=ON
-    - cmake --build build --config Release
-    - cd ../..
-    - cmake -S . -B build
-    - cmake --build build --config Release
+    - cmake-3.22.2-windows-x86_64/bin/cmake -S deps/rtmidi -B deps/rtmidi/build -D RTMIDI_BUILD_STATIC_LIBS=ON
+    - cmake-3.22.2-windows-x86_64/bin/cmake --build deps/rtmidi/build --config Release
+    - cmake-3.22.2-windows-x86_64/bin/cmake -S . -B build
+    - cmake-3.22.2-windows-x86_64/bin/cmake --build build --config Release

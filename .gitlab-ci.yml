@@ -1,5 +1,8 @@
 image: registry.gitlab.com/mfep/midi-connector
 
+default:
+  interruptible: true
+
 build-linux:
   stage: build
   script:
@@ -23,10 +26,11 @@ build-windows:
     - windows
     - windows-1809
   script:
+    - choco install cmake
     - git submodule update --init
     - cd deps/rtmidi
     - cmake -S . -B build -D RTMIDI_BUILD_STATIC_LIBS=ON
     - cmake --build build --config Release
     - cd ../..
-    - cmake -S . -B build -D CMAKE_CXX_FLAGS="-Wall -Wextra"
+    - cmake -S . -B build
     - cmake --build build --config Release

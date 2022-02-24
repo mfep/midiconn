@@ -66,7 +66,7 @@ void Engine::MidiOutput::send_message(const std::vector<unsigned char>& message_
     m_midiOut.sendMessage(&message_bytes);
 }
 
-void Engine::create(const InputInfo& input_info)
+void Engine::create(const InputInfo& input_info, InputObserver* observer)
 {
     std::lock_guard guard(m_mutex);
     const auto id = input_info.m_id;
@@ -81,6 +81,10 @@ void Engine::create(const InputInfo& input_info)
     }
     auto& input = m_inputs[id].emplace(InputItem{ 1, input_info, {} });
     input.m_input.add_observer(this);
+    if (observer != nullptr)
+    {
+        input.m_input.add_observer(observer);
+    }
     input.m_input.open();
     spdlog::info("instantiated MIDI input '{}'", input_info.m_name);
 }
@@ -102,7 +106,7 @@ void Engine::create(const OutputInfo& output_info)
     spdlog::info("instantiated MIDI output '{}'", output_info.m_name);
 }
 
-void Engine::remove(const InputInfo& input_info)
+void Engine::remove(const InputInfo& input_info, InputObserver* observer)
 {
     std::lock_guard guard(m_mutex);
     const auto id = input_info.m_id;
@@ -111,6 +115,10 @@ void Engine::remove(const InputInfo& input_info)
         throw std::logic_error("Cannot remove non-existent input");
     }
     auto& counter = m_inputs[id].value().m_counter;
+    if (observer != nullptr)
+    {
+        m_inputs[id].value().m_input.remove_observer(observer);
+    }
     if (--counter == 0)
     {
         m_inputs[id] = std::nullopt;

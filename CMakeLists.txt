@@ -24,7 +24,8 @@ add_executable(midi_connector
     src/MidiOutNode.cpp
     src/Node.cpp
     src/NodeEditor.cpp
-    src/main.cpp)
+    src/main.cpp
+    src/OutputObserver.cpp)
 
 target_include_directories(midi_connector PRIVATE
     inc

@@ -4,6 +4,7 @@
 #include <shared_mutex>
 #include "InputObserver.hpp"
 #include "MidiInfo.hpp"
+#include "OutputObserver.hpp"
 
 #ifdef WIN32
 #include "RtMidi.h"
@@ -38,7 +39,7 @@ private:
         RtMidiIn m_midiIn;
     };
 
-    class MidiOutput final
+    class MidiOutput final : public OutputObservable
     {
     public:
         MidiOutput(const OutputInfo& info);
@@ -51,9 +52,9 @@ private:
 
 public:
     void create(const InputInfo& input_info, InputObserver* observer = nullptr);
-    void create(const OutputInfo& output_info);
+    void create(const OutputInfo& output_info, OutputObserver* observer = nullptr);
     void remove(const InputInfo& input_info, InputObserver* observer = nullptr);
-    void remove(const OutputInfo& output_info);
+    void remove(const OutputInfo& output_info, OutputObserver* observer = nullptr);
     void connect(size_t input_id, size_t output_id, channel_map channels);
     void disconnect(size_t input_id, size_t output_id);
 

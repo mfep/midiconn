@@ -64,6 +64,7 @@ Engine::MidiOutput::MidiOutput(const OutputInfo& info) :
 void Engine::MidiOutput::send_message(const std::vector<unsigned char>& message_bytes)
 {
     m_midiOut.sendMessage(&message_bytes);
+    raise_message_sent(m_info.m_id, message_bytes);
 }
 
 void Engine::create(const InputInfo& input_info, InputObserver* observer)
@@ -72,6 +73,10 @@ void Engine::create(const InputInfo& input_info, InputObserver* observer)
     const auto id = input_info.m_id;
     if (id < m_inputs.size() && m_inputs[id].has_value())
     {
+        if (observer != nullptr)
+        {
+            m_inputs[id].value().m_input.add_observer(observer);
+        }
         ++m_inputs[id].value().m_counter;
         return;
     }
@@ -89,12 +94,16 @@ void Engine::create(const InputInfo& input_info, InputObserver* observer)
     spdlog::info("instantiated MIDI input '{}'", input_info.m_name);
 }
 
-void Engine::create(const OutputInfo& output_info)
+void Engine::create(const OutputInfo& output_info, OutputObserver* observer)
 {
     std::lock_guard guard(m_mutex);
     const auto id = output_info.m_id;
     if (id < m_outputs.size() && m_outputs[id].has_value())
     {
+        if (observer != nullptr)
+        {
+            m_outputs[id].value().m_output.add_observer(observer);
+        }
         ++m_outputs[id].value().m_counter;
         return;
     }
@@ -102,7 +111,11 @@ void Engine::create(const OutputInfo& output_info)
     {
         m_outputs.resize(id + 1);
     }
-    m_outputs[id].emplace(OutputItem{ 1, output_info });
+    auto& output = m_outputs[id].emplace(OutputItem{ 1, output_info });
+    if (observer != nullptr)
+    {
+        output.m_output.add_observer(observer);
+    }
     spdlog::info("instantiated MIDI output '{}'", output_info.m_name);
 }
 
@@ -126,7 +139,7 @@ void Engine::remove(const InputInfo& input_info, InputObserver* observer)
     }
 }
 
-void Engine::remove(const OutputInfo& output_info)
+void Engine::remove(const OutputInfo& output_info, OutputObserver* observer)
 {
     std::lock_guard guard(m_mutex);
     const auto id = output_info.m_id;
@@ -134,7 +147,12 @@ void Engine::remove(const OutputInfo& output_info)
     {
         throw std::logic_error("Cannot remove non-existent output");
     }
-    if (--m_outputs[id].value().m_counter > 0)
+    auto& output = m_outputs[id].value();
+    if (observer != nullptr)
+    {
+        output.m_output.remove_observer(observer);
+    }
+    if (--output.m_counter > 0)
     {
         return;
     }

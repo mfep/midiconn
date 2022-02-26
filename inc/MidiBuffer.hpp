@@ -58,6 +58,7 @@ public:
     MidiBuffer(std::vector<unsigned char>& buffer) :
         m_buffer(buffer)
     {
+        // ToDo check: does not seem to always hold
         assert(buffer.size() % midi_message_bytes == 0);
     }
 

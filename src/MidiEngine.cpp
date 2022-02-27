@@ -2,7 +2,7 @@
 #include <algorithm>
 #include <iomanip>
 #include <sstream>
-#include "MidiBuffer.hpp"
+#include "MidiMessageView.hpp"
 #include "spdlog/spdlog.h"
 
 namespace mc::midi
@@ -219,7 +219,7 @@ void Engine::disconnect(size_t input_id, size_t output_id)
 
 void Engine::message_received(size_t id, std::vector<unsigned char>& message_bytes)
 {
-    assert(message_bytes.size() <= 3); // a message is never longer than 3 bytes
+    assert(!message_bytes.empty() && message_bytes.size() <= 3);
     std::shared_lock lock(m_mutex);
     if (id >= m_inputs.size() || !m_inputs[id].has_value())
     {
@@ -231,8 +231,8 @@ void Engine::message_received(size_t id, std::vector<unsigned char>& message_byt
         {
             throw std::logic_error("Message sent to non-existing output");
         }
-        MidiBuffer buffer(message_bytes);
-        auto message = buffer.begin();
+        auto message_copy = message_bytes;
+        MessageView message(message_copy);
         if (!message.is_system())
         {
             const auto message_channel = message.get_channel();

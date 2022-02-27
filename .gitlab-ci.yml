@@ -27,6 +27,8 @@ build-windows:
     - windows-1809
   before_script:
     - cd C:/vcpkg
+    - git fetch
+    - git checkout master
     - git pull
   script:
     - vcpkg install spdlog:x64-windows sdl2:x64-windows

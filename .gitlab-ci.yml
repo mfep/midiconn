@@ -25,6 +25,9 @@ build-windows:
     - shared-windows
     - windows
     - windows-1809
+  before_script:
+    - cd C:/vcpkg
+    - git pull
   script:
     - vcpkg install spdlog:x64-windows sdl2:x64-windows
     - wget.exe https://github.com/Kitware/CMake/releases/download/v3.22.2/cmake-3.22.2-windows-x86_64.zip

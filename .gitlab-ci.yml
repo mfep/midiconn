@@ -1,6 +1,9 @@
 image: registry.gitlab.com/mfep/midi-connector
 
-build:
+default:
+  interruptible: true
+
+build-linux:
   stage: build
   script:
     - git submodule update --init
@@ -14,4 +17,35 @@ build:
   artifacts:
     paths:
       - build/midi_connector
+    expire_in: 1 week
+
+build-windows:
+  stage: build
+  tags:
+    - shared-windows
+    - windows
+    - windows-1809
+  only:
+    refs:
+      - master
+  before_script:
+    - pwd
+    - cd C:/vcpkg
+    - git fetch
+    - git checkout master
+    - git pull
+    - bootstrap-vcpkg.bat
+  script:
+    - cd C:/GitLab-Runner/builds/mfep/midi-connector
+    - vcpkg install spdlog:x64-windows sdl2:x64-windows
+    - wget.exe https://github.com/Kitware/CMake/releases/download/v3.22.2/cmake-3.22.2-windows-x86_64.zip
+    - 7z x -y cmake-3.22.2-windows-x86_64.zip
+    - git submodule update --init
+    - cmake-3.22.2-windows-x86_64/bin/cmake -S deps/rtmidi -B deps/rtmidi/build -D RTMIDI_BUILD_STATIC_LIBS=ON
+    - cmake-3.22.2-windows-x86_64/bin/cmake --build deps/rtmidi/build --config Release
+    - cmake-3.22.2-windows-x86_64/bin/cmake -S . -B build -D CMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake
+    - cmake-3.22.2-windows-x86_64/bin/cmake --build build --config Release
+  artifacts:
+    paths:
+      - build/Release/midi_connector.exe
     expire_in: 1 week

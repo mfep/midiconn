@@ -25,6 +25,9 @@ build-windows:
     - shared-windows
     - windows
     - windows-1809
+  only:
+    refs:
+      - master
   before_script:
     - pwd
     - cd C:/vcpkg
@@ -42,3 +45,7 @@ build-windows:
     - cmake-3.22.2-windows-x86_64/bin/cmake --build deps/rtmidi/build --config Release
     - cmake-3.22.2-windows-x86_64/bin/cmake -S . -B build -D CMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake
     - cmake-3.22.2-windows-x86_64/bin/cmake --build build --config Release
+  artifacts:
+    paths:
+      - build/Release/midi_connector.exe
+    expire_in: 1 week

@@ -26,6 +26,7 @@ build-windows:
     - windows
     - windows-1809
   before_script:
+    - pwd
     - cd C:/vcpkg
     - git fetch
     - git checkout master

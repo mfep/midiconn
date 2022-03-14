@@ -8,6 +8,11 @@ find_package(rtmidi REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(SDL2 REQUIRED)
 
+configure_file(
+    inc/Version.hpp.in
+    ${CMAKE_CURRENT_SOURCE_DIR}/inc/Version.hpp
+)
+
 add_executable(midi_connector
     deps/imgui/imgui.cpp
     deps/imgui/imgui_demo.cpp

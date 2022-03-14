@@ -1,7 +1,9 @@
 #include "Application.hpp"
 #include "imgui.h"
+#include <SDL2/SDL.h>
 #include "MidiEngine.hpp"
 #include "NodeEditor.hpp"
+#include "Version.hpp"
 
 namespace mc::display
 {
@@ -70,9 +72,13 @@ void Application::render_main_menu()
     ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
     if (ImGui::BeginPopupModal("About " MIDI_APPLICATION_NAME, NULL, ImGuiWindowFlags_AlwaysAutoResize))
     {
-        ImGui::TextUnformatted("License");
-        ImGui::TextUnformatted("Version, operating system");
-        ImGui::TextUnformatted("Website");
+        ImGui::TextUnformatted(MC_MAJOR_VERSION "." MC_MINOR_VERSION "." MC_PATCH_VERSION "." MC_BUILD_NUMBER);
+        ImGui::TextUnformatted(MC_COMMIT_HASH);
+        ImGui::TextUnformatted(MC_BUILD_OS);
+        if (ImGui::Button("Visit Website"))
+        {
+            SDL_OpenURL("https://mfeproject.itch.io");
+        }
         if (ImGui::Button("Close"))
         {
             ImGui::CloseCurrentPopup();

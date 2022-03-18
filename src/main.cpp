@@ -9,9 +9,7 @@
 #define SDL_MAIN_HANDLED
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_syswm.h>
-
-#include "MidiEngine.hpp"
-#include "NodeEditor.hpp"
+#include "Application.hpp"
 
 #if !SDL_VERSION_ATLEAST(2,0,17)
 #error This backend requires SDL 2.0.17+ because of SDL_RenderGeometry() function
@@ -30,7 +28,7 @@ int main(int, char**)
 
     // Setup window
     SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
-    SDL_Window* window = SDL_CreateWindow("Dear ImGui SDL2+DirectX9 example", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 800, window_flags);
+    SDL_Window* window = SDL_CreateWindow(MIDI_APPLICATION_NAME, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 800, window_flags);
 
     // Setup SDL_Renderer instance
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
@@ -70,9 +68,8 @@ int main(int, char**)
     //io.Fonts->AddFontFromFileTTF("../../misc/fonts/ProggyTiny.ttf", 10.0f);
     //ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf", 18.0f, NULL, io.Fonts->GetGlyphRangesJapanese());
     //IM_ASSERT(font != NULL);
-    mc::midi::Engine engine;
-    mc::display::NodeEditor nodeEditor(engine);
     // Main loop
+    mc::display::Application app;
     bool done = false;
     while (!done)
     {
@@ -99,24 +96,8 @@ int main(int, char**)
         ImGui_ImplSDL2_NewFrame();
         ImGui::NewFrame();
 
-        auto* viewport = ImGui::GetMainViewport();
-        ImGui::SetNextWindowPos(viewport->Pos);
-        ImGui::SetNextWindowSize(viewport->Size);
-        ImGui::Begin("Another Window", nullptr,
-            ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoSavedSettings
-            | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
-
-        try
-        {
-            nodeEditor.render();
-        }
-        catch(std::exception& ex)
-        {
-            std::cout << "Error: " << ex.what() << std::endl;
-        }
-
-        ImGui::End();
-        ImGui::ShowDemoWindow();
+        app.render();
+        done = done || app.is_done();
 
         // Rendering
         ImGui::Render();

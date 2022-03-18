@@ -1,6 +1,7 @@
 #include "Application.hpp"
 #include "imgui.h"
 #include <SDL2/SDL.h>
+#include "Licenses.hpp"
 #include "MidiEngine.hpp"
 #include "NodeEditor.hpp"
 #include "Version.hpp"
@@ -70,15 +71,28 @@ void Application::render_main_menu()
 
     ImVec2 center = ImGui::GetMainViewport()->GetCenter();
     ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+    ImGui::SetNextWindowSizeConstraints({600, 0}, {600, 400});
     if (ImGui::BeginPopupModal("About " MIDI_APPLICATION_NAME, NULL, ImGuiWindowFlags_AlwaysAutoResize))
     {
         ImGui::TextUnformatted(MC_MAJOR_VERSION "." MC_MINOR_VERSION "." MC_PATCH_VERSION "." MC_BUILD_NUMBER);
         ImGui::TextUnformatted(MC_COMMIT_HASH);
         ImGui::TextUnformatted(MC_BUILD_OS);
+        if (ImGui::CollapsingHeader("Open source licenses"))
+        {
+            for (auto& license : g_licenses)
+            {
+                if (ImGui::TreeNode(license.m_library_name.c_str()))
+                {
+                    ImGui::TextWrapped("%s", license.m_license_text.c_str());
+                    ImGui::TreePop();
+                }
+            }
+        }
         if (ImGui::Button("Visit Website"))
         {
             SDL_OpenURL("https://mfeproject.itch.io");
         }
+        ImGui::SameLine();
         if (ImGui::Button("Close"))
         {
             ImGui::CloseCurrentPopup();

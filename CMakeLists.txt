@@ -24,6 +24,7 @@ add_executable(midi_connector
     deps/imnodes/imnodes.cpp
     src/Application.cpp
     src/InputObserver.cpp
+    src/Licenses.cpp
     src/MidiChannelNode.cpp
     src/MidiEngine.cpp
     src/MidiInNode.cpp

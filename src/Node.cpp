@@ -37,13 +37,13 @@ void Node::render()
         update_sources_from_inputs();
     }
 
-    imnodes::BeginNode(m_id);
+    ImNodes::BeginNode(m_id);
     render_internal();
-    imnodes::EndNode();
+    ImNodes::EndNode();
 
     for (const auto&[link_id, node] : m_output_connections)
     {
-        imnodes::Link(link_id, out_id(), std::shared_ptr(node)->in_id());
+        ImNodes::Link(link_id, out_id(), std::shared_ptr(node)->in_id());
     }
 }
 

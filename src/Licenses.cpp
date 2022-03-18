@@ -74,7 +74,7 @@ std::vector<License> g_licenses{
 "SOFTWARE.\n"
     },
     {
-        "imnodes",
+        "ImNodes",
 "The MIT License (MIT)\n"
 "\n"
 "Copyright (c) 2019 Johann Muszynski\n"

@@ -24,10 +24,10 @@ MidiInNode::~MidiInNode()
 
 void MidiInNode::render_internal()
 {
-    imnodes::BeginNodeTitleBar();
+    ImNodes::BeginNodeTitleBar();
     ImGui::TextUnformatted(m_input_info.m_name.c_str());
-    imnodes::EndNodeTitleBar();
-    imnodes::BeginOutputAttribute(out_id());
+    ImNodes::EndNodeTitleBar();
+    ImNodes::BeginOutputAttribute(out_id());
 
     constexpr float r_component = 0;
     constexpr float g_component = 1;
@@ -50,7 +50,7 @@ void MidiInNode::render_internal()
     ImGui::SameLine();
 
     ImGui::TextUnformatted("all channels");
-    imnodes::EndOutputAttribute();
+    ImNodes::EndOutputAttribute();
 }
 
 void MidiInNode::message_received(size_t id, std::vector<unsigned char>& message_bytes)

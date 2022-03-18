@@ -21,10 +21,10 @@ MidiOutNode::~MidiOutNode()
 
 void MidiOutNode::render_internal()
 {
-    imnodes::BeginNodeTitleBar();
+    ImNodes::BeginNodeTitleBar();
     ImGui::TextUnformatted(m_output_info.m_name.c_str());
-    imnodes::EndNodeTitleBar();
-    imnodes::BeginInputAttribute(in_id());
+    ImNodes::EndNodeTitleBar();
+    ImNodes::BeginInputAttribute(in_id());
 
     constexpr float r_component = 0;
     constexpr float g_component = 1;
@@ -47,7 +47,7 @@ void MidiOutNode::render_internal()
     ImGui::SameLine();
     ImGui::TextUnformatted("all channels");
 
-    imnodes::EndInputAttribute();
+    ImNodes::EndInputAttribute();
 }
 
 void MidiOutNode::update_outputs_with_sources()

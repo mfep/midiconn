@@ -17,10 +17,14 @@ NodeEditor::NodeEditor(midi::Engine& midi_engine) :
 
 void NodeEditor::render()
 {
-    imnodes::BeginNodeEditor();
+    ImNodes::BeginNodeEditor();
     renderContextMenu();
     renderNodes();
-    imnodes::EndNodeEditor();
+    if (m_nodes.size() > 1)
+    {
+        ImNodes::MiniMap();
+    }
+    ImNodes::EndNodeEditor();
     handleDelete();
     handleConnect();
 }
@@ -40,7 +44,7 @@ void NodeEditor::renderContextMenu()
                 
                 const auto& node = m_nodes.emplace_back(std::make_shared<node_type>(info, m_midi_engine));
 
-                imnodes::SetNodeScreenSpacePos(node->id(), ImGui::GetMousePosOnOpeningCurrentPopup());
+                ImNodes::SetNodeScreenSpacePos(node->id(), ImGui::GetMousePosOnOpeningCurrentPopup());
                 ImGui::CloseCurrentPopup();
             }
         }
@@ -58,7 +62,7 @@ void NodeEditor::renderContextMenu()
         if (ImGui::IsItemClicked())
         {
             const auto& node = m_nodes.emplace_back(std::make_shared<MidiChannelNode>());
-            imnodes::SetNodeScreenSpacePos(node->id(), ImGui::GetMousePosOnOpeningCurrentPopup());
+            ImNodes::SetNodeScreenSpacePos(node->id(), ImGui::GetMousePosOnOpeningCurrentPopup());
             ImGui::CloseCurrentPopup();
         }
         if (ImGui::TreeNode("MIDI inputs"))
@@ -89,10 +93,10 @@ void NodeEditor::handleDelete()
         || ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Backspace)))
     {
         std::vector<int> selected_ids;
-        selected_ids.resize(imnodes::NumSelectedNodes());
+        selected_ids.resize(ImNodes::NumSelectedNodes());
         if (!selected_ids.empty())
         {
-            imnodes::GetSelectedNodes(selected_ids.data());
+            ImNodes::GetSelectedNodes(selected_ids.data());
             // get nodes to remove
             m_nodes.erase(
                 std::remove_if(
@@ -107,10 +111,10 @@ void NodeEditor::handleDelete()
         }
 
         selected_ids.clear();
-        selected_ids.resize(imnodes::NumSelectedLinks());
+        selected_ids.resize(ImNodes::NumSelectedLinks());
         if (!selected_ids.empty())
         {
-            imnodes::GetSelectedLinks(selected_ids.data());
+            ImNodes::GetSelectedLinks(selected_ids.data());
             for (const auto& node : m_nodes)
             {
                 for (int link_id : selected_ids)
@@ -126,7 +130,7 @@ void NodeEditor::handleConnect()
 {
     int start_attrib_id;
     int end_attrib_id;
-    if (imnodes::IsLinkCreated(&start_attrib_id, &end_attrib_id))
+    if (ImNodes::IsLinkCreated(&start_attrib_id, &end_attrib_id))
     {
         auto start_node_it = std::find_if(m_nodes.begin(), m_nodes.end(),
             [start_attrib_id](const auto& node) { return node->out_id() == start_attrib_id; });

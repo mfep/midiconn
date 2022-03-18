@@ -21,16 +21,16 @@ MidiChannelNode::MidiChannelNode()
 
 void MidiChannelNode::render_internal()
 {
-    imnodes::BeginNodeTitleBar();
+    ImNodes::BeginNodeTitleBar();
     ImGui::TextUnformatted("Channel map");
-    imnodes::EndNodeTitleBar();
-    imnodes::BeginInputAttribute(in_id());
+    ImNodes::EndNodeTitleBar();
+    ImNodes::BeginInputAttribute(in_id());
     ImGui::TextUnformatted("MIDI in");
-    imnodes::EndInputAttribute();
+    ImNodes::EndInputAttribute();
     ImGui::SameLine(135);
-    imnodes::BeginOutputAttribute(out_id());
+    ImNodes::BeginOutputAttribute(out_id());
     ImGui::TextUnformatted("MIDI out");
-    imnodes::EndOutputAttribute();
+    ImNodes::EndOutputAttribute();
 
     const auto previous_channels = m_channels;
     for (size_t i = 0; i < 8; i++)

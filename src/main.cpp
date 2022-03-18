@@ -41,7 +41,7 @@ int main(int, char**)
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    imnodes::CreateContext();
+    ImNodes::CreateContext();
     ImGuiIO& io = ImGui::GetIO(); (void)io;
     //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
     //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
@@ -108,7 +108,7 @@ int main(int, char**)
 
     ImGui_ImplSDLRenderer_Shutdown();
     ImGui_ImplSDL2_Shutdown();
-    imnodes::DestroyContext();
+    ImNodes::DestroyContext();
     ImGui::DestroyContext();
 
     SDL_DestroyWindow(window);

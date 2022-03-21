@@ -4,7 +4,6 @@ set(CMAKE_CXX_STANDARD 17)
 
 project(midi_connector LANGUAGES CXX)
 
-find_package(rtmidi REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(SDL2 REQUIRED)
 
@@ -12,6 +11,11 @@ configure_file(
     inc/Version.hpp.in
     ${CMAKE_CURRENT_SOURCE_DIR}/inc/Version.hpp
 )
+
+set(JSON_BuildTests OFF CACHE INTERNAL "")
+add_subdirectory(deps/json)
+set(RTMIDI_BUILD_STATIC_LIBS ON)
+add_subdirectory(deps/rtmidi)
 
 add_executable(midi_connector
     deps/imgui/imgui.cpp
@@ -39,6 +43,7 @@ target_include_directories(midi_connector PRIVATE
     deps/imgui
     deps/imnodes)
 target_link_libraries(midi_connector PRIVATE
-    RtMidi::rtmidi
+    nlohmann_json::nlohmann_json
+    rtmidi
     spdlog::spdlog
     SDL2::SDL2)

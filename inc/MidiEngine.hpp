@@ -2,15 +2,10 @@
 #include <map>
 #include <optional>
 #include <shared_mutex>
+#include "RtMidi.h"
 #include "InputObserver.hpp"
 #include "MidiInfo.hpp"
 #include "OutputObserver.hpp"
-
-#ifdef WIN32
-#include "RtMidi.h"
-#else
-#include "rtmidi/RtMidi.h"
-#endif
 
 namespace mc::midi
 {

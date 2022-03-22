@@ -1,8 +1,9 @@
 #include "MidiOutNode.hpp"
 #include "imgui.h"
 #include "imnodes.h"
-#include "MidiEngine.hpp"
 #include "spdlog/spdlog.h"
+#include "MidiEngine.hpp"
+#include "NodeSerializer.hpp"
 
 namespace mc
 {
@@ -17,6 +18,11 @@ MidiOutNode::MidiOutNode(const midi::OutputInfo& output_info, midi::Engine& midi
 MidiOutNode::~MidiOutNode()
 {
     m_midi_engine.remove(m_output_info, this);
+}
+
+void MidiOutNode::accept_serializer(nlohmann::json& j, const NodeSerializer& serializer) const
+{
+    serializer.serialize_node(j, *this);
 }
 
 void MidiOutNode::render_internal()

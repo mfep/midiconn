@@ -16,6 +16,8 @@ public:
     MidiOutNode(const midi::OutputInfo& output_info, midi::Engine& midi_engine);
     ~MidiOutNode();
 
+    void accept_serializer(nlohmann::json& j, const NodeSerializer& serializer) const override;
+
 private:
     void render_internal() override;
     void update_outputs_with_sources() override;
@@ -25,6 +27,8 @@ private:
     midi::Engine& m_midi_engine;
     Node::midi_sources m_previous_sources;
     std::chrono::time_point<std::chrono::system_clock> m_last_message_sent;
+
+    friend class NodeSerializer;
 };
 
 }

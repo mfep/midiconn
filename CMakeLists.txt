@@ -13,8 +13,9 @@ configure_file(
 )
 
 set(JSON_BuildTests OFF CACHE INTERNAL "")
+set(JSON_MultipleHeaders ON CACHE INTERNAL "")
 add_subdirectory(deps/json)
-set(RTMIDI_BUILD_STATIC_LIBS ON)
+set(RTMIDI_BUILD_STATIC_LIBS ON CACHE INTERNAL "")
 add_subdirectory(deps/rtmidi)
 
 add_executable(midi_connector
@@ -35,6 +36,7 @@ add_executable(midi_connector
     src/MidiOutNode.cpp
     src/Node.cpp
     src/NodeEditor.cpp
+    src/NodeSerializer.cpp
     src/main.cpp
     src/OutputObserver.cpp)
 

@@ -25,6 +25,14 @@ NodeSerializer::NodeSerializer(midi::Engine& midi_engine) :
 void NodeSerializer::serialize_node(json& j, const Node& node) const
 {
     node.accept_serializer(j, *this);
+    j["id"] = node.id();
+
+    std::vector<int> output_connected_node_ids;
+    for (auto[link_id, other_node] : node.m_output_connections)
+    {
+        output_connected_node_ids.push_back(other_node.lock()->id());
+    }
+    j["output_connection_ids"] = output_connected_node_ids;
 }
 
 void NodeSerializer::serialize_node(json& j, const MidiInNode& node) const

@@ -54,6 +54,8 @@ private:
 
     // maps link id received from connecting node to node
     std::map<int, node_ptr> m_input_connections;
+
+    friend class NodeSerializer;
 };
 
 }

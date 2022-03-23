@@ -1,11 +1,13 @@
 #include "NodeEditor.hpp"
 #include <algorithm>
+#include <nlohmann/json.hpp>
 #include "imgui.h"
 #include "imnodes.h"
 #include "MidiEngine.hpp"
 #include "MidiChannelNode.hpp"
 #include "MidiInNode.hpp"
 #include "MidiOutNode.hpp"
+#include "NodeSerializer.hpp"
 
 namespace mc::display
 {
@@ -27,6 +29,22 @@ void NodeEditor::render()
     ImNodes::EndNodeEditor();
     handleDelete();
     handleConnect();
+}
+
+void NodeEditor::to_json(nlohmann::json& j) const
+{
+    using nlohmann::json;
+
+    auto node_array = json::array();
+    NodeSerializer serializer(m_midi_engine);
+    for (const auto& node : m_nodes)
+    {
+        json node_json;
+        serializer.serialize_node(node_json, *node);
+        node_array.push_back(node_json);
+    }
+    const ImVec2 panning = ImNodes::EditorContextGetPanning();
+    j = json{ { "nodes", node_array }, { "panning", { "x", panning.x }, { "y", panning.y } } };
 }
 
 void NodeEditor::renderContextMenu()

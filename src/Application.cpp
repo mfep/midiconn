@@ -65,9 +65,17 @@ void Application::render_main_menu()
     {
         if (ImGui::BeginMenu("File"))
         {
-            if (ImGui::MenuItem("Export preset"))
+            if (ImGui::MenuItem("Load preset"))
             {
-                auto save_path = pfd::save_file("Export preset", ".", { "JSON files (*.json)", "*.json" }).result();
+                const auto load_path = pfd::open_file("Load preset", ".", { "JSON files (*.json)", "*.json" }).result().front();
+                std::ifstream ifs(load_path);
+                nlohmann::json j;
+                ifs >> j;
+                m_node_editor = NodeEditor::from_json(*m_midi_engine, j);
+            }
+            if (ImGui::MenuItem("Save preset"))
+            {
+                auto save_path = pfd::save_file("Save preset", ".", { "JSON files (*.json)", "*.json" }).result();
                 if (!ends_with_dot_json(save_path))
                 {
                     save_path += ".json";

@@ -23,6 +23,7 @@ public:
 
     void render();
     void to_json(nlohmann::json& j) const;
+    static std::unique_ptr<NodeEditor> from_json(midi::Engine& midi_engine, const nlohmann::json& j);
 
 private:
     void renderContextMenu();

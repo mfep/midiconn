@@ -44,7 +44,10 @@ void NodeEditor::to_json(nlohmann::json& j) const
         node_array.push_back(node_json);
     }
     const ImVec2 panning = ImNodes::EditorContextGetPanning();
-    j = json{ { "nodes", node_array }, { "panning", { "x", panning.x }, { "y", panning.y } } };
+    j = json{
+        { "nodes", node_array },
+        { "panning", { { "x", panning.x }, { "y", panning.y } } }
+    };
 }
 
 void NodeEditor::renderContextMenu()

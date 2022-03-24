@@ -1,10 +1,27 @@
 #include "Application.hpp"
+#include <fstream>
 #include "imgui.h"
 #include <SDL2/SDL.h>
+#include <nlohmann/json.hpp>
+#include "portable-file-dialogs.h"
 #include "Licenses.hpp"
 #include "MidiEngine.hpp"
 #include "NodeEditor.hpp"
 #include "Version.hpp"
+
+namespace
+{
+
+bool ends_with_dot_json(const std::string& path)
+{
+    std::string lower_path;
+    std::transform(path.begin(), path.end(), std::back_inserter(lower_path),
+        [](const auto& ch) { return std::tolower(ch); });
+    return lower_path.size() > 5
+        && 0 == lower_path.compare(lower_path.size() - 5, 5, ".json");
+}
+
+}
 
 namespace mc::display
 {
@@ -48,6 +65,18 @@ void Application::render_main_menu()
     {
         if (ImGui::BeginMenu("File"))
         {
+            if (ImGui::MenuItem("Export preset"))
+            {
+                auto save_path = pfd::save_file("Export preset", ".", { "JSON files (*.json)", "*.json" }).result();
+                if (!ends_with_dot_json(save_path))
+                {
+                    save_path += ".json";
+                }
+                nlohmann::json j;
+                m_node_editor->to_json(j);
+                std::ofstream ofs(save_path);
+                ofs << j << std::endl;
+            }
             if (ImGui::MenuItem("Exit"))
             {
                 m_is_done = true;

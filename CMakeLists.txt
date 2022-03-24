@@ -43,7 +43,8 @@ add_executable(midi_connector
 target_include_directories(midi_connector PRIVATE
     inc
     deps/imgui
-    deps/imnodes)
+    deps/imnodes
+    deps/portable-file-dialogs)
 target_link_libraries(midi_connector PRIVATE
     nlohmann_json::nlohmann_json
     rtmidi

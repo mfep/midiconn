@@ -10,3 +10,6 @@
 [submodule "deps/json"]
 	path = deps/json
 	url = https://github.com/nlohmann/json.git
+[submodule "deps/portable-file-dialogs"]
+	path = deps/portable-file-dialogs
+	url = https://github.com/samhocevar/portable-file-dialogs.git

@@ -1,5 +1,6 @@
 #include "Application.hpp"
 #include <fstream>
+#include <filesystem>
 #include "imgui.h"
 #include <SDL2/SDL.h>
 #include <nlohmann/json.hpp>
@@ -21,7 +22,15 @@ bool ends_with_dot_json(const std::string& path)
         && 0 == lower_path.compare(lower_path.size() - 5, 5, ".json");
 }
 
+std::string get_filename_component(const std::string& path)
+{
+    std::filesystem::path p(path);
+    std::stringstream ss;
+    ss << p.filename();
+    return ss.str();
 }
+
+}   // namespace
 
 namespace mc::display
 {
@@ -67,6 +76,12 @@ void Application::handle_done(bool& done)
     {
         done = m_is_done = quit();
     }
+}
+
+std::string Application::get_window_title() const
+{
+    auto prefix = is_editor_dirty() ? "* " : "";
+    return prefix + m_opened_filename + " - " MIDI_APPLICATION_NAME;
 }
 
 bool Application::is_editor_dirty() const
@@ -155,6 +170,7 @@ void Application::open_preset()
         ifs >> j;
         m_node_editor = NodeEditor::from_json(*m_midi_engine, j);
         m_last_editor_state = j;
+        m_opened_filename = get_filename_component(open_path.front());
     }
 }
 
@@ -172,6 +188,7 @@ void Application::save_preset()
         std::ofstream ofs(save_path);
         ofs << j << std::endl;
         m_last_editor_state = j;
+        m_opened_filename = get_filename_component(save_path);
     }
 }
 

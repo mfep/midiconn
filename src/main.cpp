@@ -28,7 +28,7 @@ int main(int, char**)
 
     // Setup window
     SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
-    SDL_Window* window = SDL_CreateWindow(MIDI_APPLICATION_NAME, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 800, window_flags);
+    SDL_Window* window = SDL_CreateWindow("", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 800, window_flags);
 
     // Setup SDL_Renderer instance
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
@@ -72,6 +72,7 @@ int main(int, char**)
     // Main loop
     mc::display::Application app;
     bool done = false;
+    size_t frame_idx{};
     while (!done)
     {
         // Poll and handle events (inputs, window resize, etc.)
@@ -99,6 +100,12 @@ int main(int, char**)
 
         app.render();
         app.handle_done(done);
+
+        // polling is required, imnodes cannot report if something changed
+        if (frame_idx++ % 30 == 0)
+        {
+            SDL_SetWindowTitle(window, app.get_window_title().c_str());
+        }
 
         // Rendering
         ImGui::Render();

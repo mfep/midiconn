@@ -21,9 +21,10 @@ public:
     ~Application();
     void render();
     void handle_done(bool& done);
-    bool is_editor_dirty() const;
+    std::string get_window_title() const;
 
 private:
+    bool is_editor_dirty() const;
     void render_main_menu();
     void open_preset();
     void save_preset();
@@ -33,6 +34,7 @@ private:
     std::unique_ptr<midi::Engine> m_midi_engine;
     std::unique_ptr<NodeEditor> m_node_editor;
     nlohmann::json m_last_editor_state;
+    std::string m_opened_filename{ "Untitled" };
 };
 
 }

@@ -16,6 +16,7 @@ set(JSON_BuildTests OFF CACHE INTERNAL "")
 set(JSON_MultipleHeaders ON CACHE INTERNAL "")
 add_subdirectory(deps/json)
 set(RTMIDI_BUILD_STATIC_LIBS ON CACHE INTERNAL "")
+set(RTMIDI_BUILD_TESTING OFF CACHE INTERNAL "")
 add_subdirectory(deps/rtmidi)
 
 add_executable(midi_connector

@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>
+#include <nlohmann/json.hpp>
 
 #define MIDI_APPLICATION_NAME "MIDI Connector"
 
@@ -19,14 +20,19 @@ public:
     Application();
     ~Application();
     void render();
-    bool is_done() const;
+    void handle_done(bool& done);
+    bool is_editor_dirty() const;
 
 private:
     void render_main_menu();
+    void open_preset();
+    void save_preset();
+    bool quit();
 
     bool m_is_done;
     std::unique_ptr<midi::Engine> m_midi_engine;
     std::unique_ptr<NodeEditor> m_node_editor;
+    nlohmann::json m_last_editor_state;
 };
 
 }

@@ -98,7 +98,7 @@ int main(int, char**)
         ImGui::NewFrame();
 
         app.render();
-        done = done || app.is_done();
+        app.handle_done(done);
 
         // Rendering
         ImGui::Render();

@@ -31,6 +31,7 @@ Application::Application() :
     m_midi_engine(std::make_unique<midi::Engine>()),
     m_node_editor(std::make_unique<NodeEditor>(*m_midi_engine))
 {
+    m_node_editor->to_json(m_last_editor_state);
 }
 
 Application::~Application() = default;
@@ -55,7 +56,24 @@ void Application::render()
     }
 
     ImGui::End();
+#ifndef NDEBUG
     ImGui::ShowDemoWindow();
+#endif
+}
+
+void Application::handle_done(bool& done)
+{
+    if (done || m_is_done)
+    {
+        done = m_is_done = quit();
+    }
+}
+
+bool Application::is_editor_dirty() const
+{
+    nlohmann::json current_editor_state;
+    m_node_editor->to_json(current_editor_state);
+    return current_editor_state != m_last_editor_state;
 }
 
 void Application::render_main_menu()
@@ -65,26 +83,15 @@ void Application::render_main_menu()
     {
         if (ImGui::BeginMenu("File"))
         {
-            if (ImGui::MenuItem("Load preset"))
+            if (ImGui::MenuItem("Open preset"))
             {
-                const auto load_path = pfd::open_file("Load preset", ".", { "JSON files (*.json)", "*.json" }).result().front();
-                std::ifstream ifs(load_path);
-                nlohmann::json j;
-                ifs >> j;
-                m_node_editor = NodeEditor::from_json(*m_midi_engine, j);
+                open_preset();
             }
             if (ImGui::MenuItem("Save preset"))
             {
-                auto save_path = pfd::save_file("Save preset", ".", { "JSON files (*.json)", "*.json" }).result();
-                if (!ends_with_dot_json(save_path))
-                {
-                    save_path += ".json";
-                }
-                nlohmann::json j;
-                m_node_editor->to_json(j);
-                std::ofstream ofs(save_path);
-                ofs << j << std::endl;
+                save_preset();
             }
+            ImGui::Separator();
             if (ImGui::MenuItem("Exit"))
             {
                 m_is_done = true;
@@ -138,9 +145,54 @@ void Application::render_main_menu()
     }
 }
 
-bool Application::is_done() const
+void Application::open_preset()
 {
-    return m_is_done;
+    const auto open_path = pfd::open_file("Open preset", ".", { "JSON files (*.json)", "*.json" }).result();
+    if (open_path.size() == 1 && !open_path.front().empty())
+    {
+        std::ifstream ifs(open_path.front());
+        nlohmann::json j;
+        ifs >> j;
+        m_node_editor = NodeEditor::from_json(*m_midi_engine, j);
+        m_last_editor_state = j;
+    }
+}
+
+void Application::save_preset()
+{
+    auto save_path = pfd::save_file("Save preset", ".", { "JSON files (*.json)", "*.json" }).result();
+    if (!save_path.empty())
+    {
+        if (!ends_with_dot_json(save_path))
+        {
+            save_path += ".json";
+        }
+        nlohmann::json j;
+        m_node_editor->to_json(j);
+        std::ofstream ofs(save_path);
+        ofs << j << std::endl;
+        m_last_editor_state = j;
+    }
+}
+
+bool Application::quit()
+{
+    if (is_editor_dirty())
+    {
+        const auto button = pfd::message(MIDI_APPLICATION_NAME, "Do you want to save changes?", pfd::choice::yes_no_cancel).result();
+        switch (button)
+        {
+        case pfd::button::yes:
+            save_preset();
+            break;
+        case pfd::button::no:
+        default:
+            break;
+        case pfd::button::cancel:
+            return false;
+        }
+    }
+    return true;
 }
 
 }

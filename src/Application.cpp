@@ -4,6 +4,7 @@
 #include "imgui.h"
 #include <SDL2/SDL.h>
 #include <nlohmann/json.hpp>
+#include <spdlog/spdlog.h>
 #include "portable-file-dialogs.h"
 #include "Licenses.hpp"
 #include "MidiEngine.hpp"
@@ -54,14 +55,15 @@ void Application::render()
         ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoSavedSettings
         | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_MenuBar);
 
-    render_main_menu();
     try
     {
+        render_main_menu();
         m_node_editor->render();
     }
     catch(std::exception& ex)
     {
-        std::cout << "Error: " << ex.what() << std::endl;
+        spdlog::error(ex.what());
+        pfd::message("Error", ex.what(), pfd::choice::ok, pfd::icon::error);
     }
 
     ImGui::End();
@@ -74,7 +76,14 @@ void Application::handle_done(bool& done)
 {
     if (done || m_is_done)
     {
-        done = m_is_done = quit();
+        if (is_editor_dirty())
+        {
+            done = m_is_done = query_save();
+        }
+        else
+        {
+            done = m_is_done = true;
+        }
     }
 }
 
@@ -98,6 +107,20 @@ void Application::render_main_menu()
     {
         if (ImGui::BeginMenu("File"))
         {
+            if (ImGui::MenuItem("New preset"))
+            {
+                bool new_preset = true;
+                if (is_editor_dirty())
+                {
+                    new_preset = query_save();
+                }
+                if (new_preset)
+                {
+                    m_node_editor = std::make_unique<NodeEditor>(*m_midi_engine);
+                    m_node_editor->to_json(m_last_editor_state);
+                    m_opened_filename = "Untitled";
+                }
+            }
             if (ImGui::MenuItem("Open preset"))
             {
                 open_preset();
@@ -192,22 +215,19 @@ void Application::save_preset()
     }
 }
 
-bool Application::quit()
+bool Application::query_save()
 {
-    if (is_editor_dirty())
+    const auto button = pfd::message(MIDI_APPLICATION_NAME, "Do you want to save changes?", pfd::choice::yes_no_cancel).result();
+    switch (button)
     {
-        const auto button = pfd::message(MIDI_APPLICATION_NAME, "Do you want to save changes?", pfd::choice::yes_no_cancel).result();
-        switch (button)
-        {
-        case pfd::button::yes:
-            save_preset();
-            break;
-        case pfd::button::no:
-        default:
-            break;
-        case pfd::button::cancel:
-            return false;
-        }
+    case pfd::button::yes:
+        save_preset();
+        break;
+    case pfd::button::no:
+    default:
+        break;
+    case pfd::button::cancel:
+        return false;
     }
     return true;
 }

@@ -28,7 +28,7 @@ private:
     void render_main_menu();
     void open_preset();
     void save_preset();
-    bool quit();
+    bool query_save();
 
     bool m_is_done;
     std::unique_ptr<midi::Engine> m_midi_engine;

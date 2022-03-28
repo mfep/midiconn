@@ -61,23 +61,19 @@ std::unique_ptr<NodeEditor> NodeEditor::from_json(midi::Engine& midi_engine, con
     NodeSerializer deserializer(midi_engine);
 
     // 1st iter -> create nodes
-    std::map<int, int> old_to_new_node_id;
     for (const auto& node_json : j["nodes"])
     {
-        auto& node = *editor->m_nodes.emplace_back(deserializer.deserialize_node(node_json));
-        old_to_new_node_id[node_json["id"]] = node.id();
+        editor->m_nodes.emplace_back(deserializer.deserialize_node(node_json));
     }
 
     // 2nd iter -> create connections
     for (const auto& node_json : j["nodes"])
     {
-        const int node_id = old_to_new_node_id[node_json["id"]];
         const auto source_node = *std::find_if(editor->m_nodes.begin(), editor->m_nodes.end(),
-            [node_id](const auto& node) { return node->id() == node_id; });
+            [node_id = node_json["id"]](const auto& node) { return node->id() == node_id; });
 
-        for (const int old_connected_node_id : node_json["output_connection_ids"])
+        for (const int connected_node_id : node_json["output_connection_ids"])
         {
-            const int connected_node_id = old_to_new_node_id[old_connected_node_id];
             const auto target_node = *std::find_if(editor->m_nodes.begin(), editor->m_nodes.end(),
                 [connected_node_id](const auto& node) { return node->id() == connected_node_id; });
             source_node->connect_output(std::weak_ptr(target_node), std::weak_ptr(source_node));

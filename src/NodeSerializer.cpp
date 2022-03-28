@@ -76,8 +76,10 @@ std::shared_ptr<Node> NodeSerializer::deserialize_node(const json& j) const
     }
     else
     {
-        throw std::exception();
+        throw std::logic_error("Unexpected node type");
     }
+    const auto current_id = node->m_id = j["id"];
+    Node::sm_next_id = std::max(current_id, Node::sm_next_id); // Debt, writing to global state
     ImNodes::SetNodeGridSpacePos(node->id(), j["position"]);
     return node;
 }

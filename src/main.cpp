@@ -10,12 +10,11 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_syswm.h>
 #include "Application.hpp"
-
 #if !SDL_VERSION_ATLEAST(2,0,17)
 #error This backend requires SDL 2.0.17+ because of SDL_RenderGeometry() function
 #endif
 
-int main(int, char**)
+int main(int argc, char** argv)
 {
     // Setup SDL
     // (Some versions of SDL before <2.0.10 appears to have performance/stalling issues on a minority of Windows systems,
@@ -70,7 +69,7 @@ int main(int, char**)
     //ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf", 18.0f, NULL, io.Fonts->GetGlyphRangesJapanese());
     //IM_ASSERT(font != NULL);
     // Main loop
-    mc::display::Application app;
+    mc::display::Application app(argv[0]);
     bool done = false;
     size_t frame_idx{};
     while (!done)

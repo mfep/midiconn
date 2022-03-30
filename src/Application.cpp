@@ -36,12 +36,13 @@ std::string get_filename_component(const std::string& path)
 namespace mc::display
 {
 
-Application::Application() :
+Application::Application(const char* arg0) :
     m_is_done(false),
     m_midi_engine(std::make_unique<midi::Engine>()),
     m_node_editor(std::make_unique<NodeEditor>(*m_midi_engine))
 {
     m_node_editor->to_json(m_last_editor_state);
+    try_loading_last_preset(arg0);
 }
 
 Application::~Application() = default;
@@ -123,7 +124,11 @@ void Application::render_main_menu()
             }
             if (ImGui::MenuItem("Open preset"))
             {
-                open_preset();
+                const auto open_path = pfd::open_file("Open preset", ".", { "JSON files (*.json)", "*.json" }).result();
+                if (open_path.size() == 1 && !open_path.front().empty())
+                {
+                    open_preset(open_path.front());
+                }
             }
             if (ImGui::MenuItem("Save preset"))
             {
@@ -183,18 +188,14 @@ void Application::render_main_menu()
     }
 }
 
-void Application::open_preset()
+void Application::open_preset(const std::string& open_path)
 {
-    const auto open_path = pfd::open_file("Open preset", ".", { "JSON files (*.json)", "*.json" }).result();
-    if (open_path.size() == 1 && !open_path.front().empty())
-    {
-        std::ifstream ifs(open_path.front());
-        nlohmann::json j;
-        ifs >> j;
-        m_node_editor = NodeEditor::from_json(*m_midi_engine, j);
-        m_last_editor_state = j;
-        m_opened_filename = get_filename_component(open_path.front());
-    }
+    std::ifstream ifs(open_path);
+    nlohmann::json j;
+    ifs >> j;
+    m_node_editor = NodeEditor::from_json(*m_midi_engine, j);
+    m_last_editor_state = j;
+    m_opened_filename = get_filename_component(open_path);
 }
 
 void Application::save_preset()
@@ -230,6 +231,39 @@ bool Application::query_save()
         return false;
     }
     return true;
+}
+
+void Application::try_loading_last_preset(const char* exe_path)
+{
+    std::string previous_preset_path;
+    nlohmann::json j;
+    try
+    {
+        std::filesystem::path exe_fs_path(exe_path);
+        const auto json_path = exe_fs_path.replace_extension("json");
+        {
+            std::ifstream ifs(json_path);
+            ifs >> j;
+        }
+        j["previous_preset_path"].get_to(previous_preset_path);
+    }
+    catch(std::exception& ex)
+    {
+        spdlog::info("Could not load config file. Reason: \"{}\"", ex.what());
+        return;
+    }
+    try
+    {
+        open_preset(previous_preset_path);
+    }
+    catch(std::exception& ex)
+    {
+        spdlog::info("Could not load previous preset at \"{}\". Reason: \"{}\"", previous_preset_path, ex.what());
+    }
+}
+
+void Application::try_saving_last_preset_path() const
+{
 }
 
 }

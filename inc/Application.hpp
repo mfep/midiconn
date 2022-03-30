@@ -17,7 +17,7 @@ class NodeEditor;
 class Application final
 {
 public:
-    Application();
+    Application(const char* arg0);
     ~Application();
     void render();
     void handle_done(bool& done);
@@ -26,9 +26,11 @@ public:
 private:
     bool is_editor_dirty() const;
     void render_main_menu();
-    void open_preset();
+    void open_preset(const std::string& path);
     void save_preset();
     bool query_save();
+    void try_loading_last_preset(const char* exe_path);
+    void try_saving_last_preset_path() const;
 
     bool m_is_done;
     std::unique_ptr<midi::Engine> m_midi_engine;

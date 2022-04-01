@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>
+#include <optional>
 #include <nlohmann/json.hpp>
 
 #define MIDI_APPLICATION_NAME "MIDI Connector"
@@ -17,7 +18,7 @@ class NodeEditor;
 class Application final
 {
 public:
-    Application(const char* arg0);
+    Application(const char* exe_path);
     ~Application();
     void render();
     void handle_done(bool& done);
@@ -29,14 +30,15 @@ private:
     void open_preset(const std::string& path);
     void save_preset();
     bool query_save();
-    void try_loading_last_preset(const char* exe_path);
+    void try_loading_last_preset();
     void try_saving_last_preset_path() const;
 
     bool m_is_done;
     std::unique_ptr<midi::Engine> m_midi_engine;
     std::unique_ptr<NodeEditor> m_node_editor;
     nlohmann::json m_last_editor_state;
-    std::string m_opened_filename{ "Untitled" };
+    std::optional<std::string> m_opened_path;
+    const char* m_exe_path;
 };
 
 }

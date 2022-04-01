@@ -23,26 +23,19 @@ bool ends_with_dot_json(const std::string& path)
         && 0 == lower_path.compare(lower_path.size() - 5, 5, ".json");
 }
 
-std::string get_filename_component(const std::string& path)
-{
-    std::filesystem::path p(path);
-    std::stringstream ss;
-    ss << p.filename();
-    return ss.str();
-}
-
 }   // namespace
 
 namespace mc::display
 {
 
-Application::Application(const char* arg0) :
+Application::Application(const char* exe_path) :
     m_is_done(false),
     m_midi_engine(std::make_unique<midi::Engine>()),
-    m_node_editor(std::make_unique<NodeEditor>(*m_midi_engine))
+    m_node_editor(std::make_unique<NodeEditor>(*m_midi_engine)),
+    m_exe_path(exe_path)
 {
     m_node_editor->to_json(m_last_editor_state);
-    try_loading_last_preset(arg0);
+    try_loading_last_preset();
 }
 
 Application::~Application() = default;
@@ -86,12 +79,16 @@ void Application::handle_done(bool& done)
             done = m_is_done = true;
         }
     }
+    if (done)
+    {
+        try_saving_last_preset_path();
+    }
 }
 
 std::string Application::get_window_title() const
 {
     auto prefix = is_editor_dirty() ? "* " : "";
-    return prefix + m_opened_filename + " - " MIDI_APPLICATION_NAME;
+    return prefix + m_opened_path.value_or("Untitled") + " - " MIDI_APPLICATION_NAME;
 }
 
 bool Application::is_editor_dirty() const
@@ -119,7 +116,7 @@ void Application::render_main_menu()
                 {
                     m_node_editor = std::make_unique<NodeEditor>(*m_midi_engine);
                     m_node_editor->to_json(m_last_editor_state);
-                    m_opened_filename = "Untitled";
+                    m_opened_path = std::nullopt;
                 }
             }
             if (ImGui::MenuItem("Open preset"))
@@ -195,7 +192,7 @@ void Application::open_preset(const std::string& open_path)
     ifs >> j;
     m_node_editor = NodeEditor::from_json(*m_midi_engine, j);
     m_last_editor_state = j;
-    m_opened_filename = get_filename_component(open_path);
+    m_opened_path = open_path;
 }
 
 void Application::save_preset()
@@ -212,7 +209,7 @@ void Application::save_preset()
         std::ofstream ofs(save_path);
         ofs << j << std::endl;
         m_last_editor_state = j;
-        m_opened_filename = get_filename_component(save_path);
+        m_opened_path = save_path;
     }
 }
 
@@ -233,13 +230,13 @@ bool Application::query_save()
     return true;
 }
 
-void Application::try_loading_last_preset(const char* exe_path)
+void Application::try_loading_last_preset()
 {
     std::string previous_preset_path;
     nlohmann::json j;
     try
     {
-        std::filesystem::path exe_fs_path(exe_path);
+        std::filesystem::path exe_fs_path(m_exe_path);
         const auto json_path = exe_fs_path.replace_extension("json");
         {
             std::ifstream ifs(json_path);
@@ -264,6 +261,23 @@ void Application::try_loading_last_preset(const char* exe_path)
 
 void Application::try_saving_last_preset_path() const
 {
+    if (!m_opened_path.has_value())
+    {
+        return;
+    }
+    std::filesystem::path exe_fs_path(m_exe_path);
+    const auto json_path = exe_fs_path.replace_extension("json");
+    try
+    {
+        nlohmann::json j;
+        j["previous_preset_path"] = m_opened_path.value();
+        std::ofstream ofstream(json_path);
+        ofstream << j;
+    }
+    catch(std::exception& ex)
+    {
+        spdlog::warn("Could not save previous preset. Reason: \"{}\"", ex.what());
+    }
 }
 
 }

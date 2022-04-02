@@ -123,6 +123,10 @@ void Application::render_main_menu()
             {
                 m_preset_manager.save_preset(m_node_editor);
             }
+            if (ImGui::MenuItem("Save preset as"))
+            {
+                m_preset_manager.save_preset_as(m_node_editor);
+            }
             ImGui::Separator();
             if (ImGui::MenuItem("Exit"))
             {

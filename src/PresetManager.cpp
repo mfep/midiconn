@@ -52,21 +52,14 @@ NodeEditor PresetManager::open_preset(const std::string& open_path)
 
 void PresetManager::save_preset(const NodeEditor& editor)
 {
-    auto save_path = pfd::save_file("Save preset", ".", { "JSON files (*.json)", "*.json" }).result();
-    if (!save_path.empty())
-    {
-        if (!ends_with_dot_json(save_path))
-        {
-            save_path += ".json";
-        }
-        nlohmann::json j;
-        editor.to_json(j);
-        std::ofstream ofs(save_path);
-        ofs << j << std::endl;
-        m_last_editor_state = j;
-        m_opened_path = save_path;
-    }
+    save_preset(editor, false);
 }
+
+void PresetManager::save_preset_as(const NodeEditor& editor)
+{
+    save_preset(editor, true);
+}
+
 
 std::optional<NodeEditor> PresetManager::try_loading_last_preset()
 {
@@ -116,6 +109,32 @@ void PresetManager::try_saving_last_preset_path() const
     catch(std::exception& ex)
     {
         spdlog::warn("Could not save previous preset. Reason: \"{}\"", ex.what());
+    }
+}
+
+void PresetManager::save_preset(const NodeEditor& editor, const bool save_as)
+{
+    std::string save_path;
+    if (!save_as && m_opened_path.has_value())
+    {
+        save_path = m_opened_path.value();
+    }
+    else
+    {
+        save_path = pfd::save_file("Save preset", ".", { "JSON files (*.json)", "*.json" }).result();
+    }
+    if (!save_path.empty())
+    {
+        if (!ends_with_dot_json(save_path))
+        {
+            save_path += ".json";
+        }
+        nlohmann::json j;
+        editor.to_json(j);
+        std::ofstream ofs(save_path);
+        ofs << j << std::endl;
+        m_last_editor_state = j;
+        m_opened_path = save_path;
     }
 }
 

@@ -1,5 +1,6 @@
 #include "PresetManager.hpp"
 
+#include <filesystem>
 #include <fstream>
 
 #include "nlohmann/json.hpp"

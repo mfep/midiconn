@@ -21,7 +21,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(OutputInfo, m_id, m_name);
 using nlohmann::json;
 
 NodeSerializer::NodeSerializer(midi::Engine& midi_engine) :
-    m_midi_engine(midi_engine)
+    m_midi_engine(&midi_engine)
 {
 }
 
@@ -61,12 +61,12 @@ std::shared_ptr<Node> NodeSerializer::deserialize_node(const json& j) const
     if (node_type == "midi_in")
     {
         const auto input_info = j["input_info"].get<midi::InputInfo>();
-        node = std::make_shared<MidiInNode>(input_info, m_midi_engine);
+        node = std::make_shared<MidiInNode>(input_info, *m_midi_engine);
     }
     else if (node_type == "midi_out")
     {
         const auto output_info = j["output_info"].get<midi::OutputInfo>();
-        node = std::make_shared<MidiOutNode>(output_info, m_midi_engine);
+        node = std::make_shared<MidiOutNode>(output_info, *m_midi_engine);
     }
     else if (node_type == "midi_channel")
     {

@@ -10,14 +10,14 @@ namespace mc
 
 MidiOutNode::MidiOutNode(const midi::OutputInfo& output_info, midi::Engine& midi_engine) :
     m_output_info(output_info),
-    m_midi_engine(midi_engine)
+    m_midi_engine(&midi_engine)
 {
-    midi_engine.create(output_info, this);
+    m_midi_engine->create(output_info, this);
 }
 
 MidiOutNode::~MidiOutNode()
 {
-    m_midi_engine.remove(m_output_info, this);
+    m_midi_engine->remove(m_output_info, this);
 }
 
 void MidiOutNode::accept_serializer(nlohmann::json& j, const NodeSerializer& serializer) const
@@ -60,11 +60,11 @@ void MidiOutNode::update_outputs_with_sources()
 {
     for (auto&[id, map] : m_previous_sources)
     {
-        m_midi_engine.disconnect(id, m_output_info.m_id);
+        m_midi_engine->disconnect(id, m_output_info.m_id);
     }
     for (auto&[id, map] : m_input_sources)
     {
-        m_midi_engine.connect(id, m_output_info.m_id, map);
+        m_midi_engine->connect(id, m_output_info.m_id, map);
     }
     m_previous_sources = m_input_sources;
 }

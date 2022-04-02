@@ -23,7 +23,7 @@ private:
     void message_received(size_t id, std::vector<unsigned char>& message_bytes) override;
 
     midi::InputInfo m_input_info;
-    midi::Engine& m_midi_engine;
+    midi::Engine* m_midi_engine;
     std::chrono::time_point<std::chrono::system_clock> m_last_message_received;
 
     friend class NodeSerializer;

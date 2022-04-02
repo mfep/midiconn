@@ -11,16 +11,16 @@ namespace mc
 
 MidiInNode::MidiInNode(const midi::InputInfo& input_info, midi::Engine& midi_engine) :
     m_input_info(input_info),
-    m_midi_engine(midi_engine)
+    m_midi_engine(&midi_engine)
 {
-    midi_engine.create(input_info, this);
+    m_midi_engine->create(input_info, this);
     auto& map = m_input_sources[input_info.m_id] = {};
     std::iota(map.begin(), map.end(), 0ull);
 }
 
 MidiInNode::~MidiInNode()
 {
-    m_midi_engine.remove(m_input_info, this);
+    m_midi_engine->remove(m_input_info, this);
 }
 
 void MidiInNode::accept_serializer(nlohmann::json& j, const NodeSerializer& serializer) const

@@ -28,7 +28,7 @@ public:
     std::shared_ptr<Node> deserialize_node(const nlohmann::json& j) const;
 
 private:
-    midi::Engine& m_midi_engine;
+    midi::Engine* m_midi_engine;
 };
 
 }

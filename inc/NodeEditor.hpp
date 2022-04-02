@@ -2,6 +2,7 @@
 #include <memory>
 #include <variant>
 #include <vector>
+#include <nlohmann/json_fwd.hpp>
 #include "MidiInfo.hpp"
 
 namespace mc
@@ -21,6 +22,8 @@ public:
     NodeEditor(midi::Engine& midi_engine);
 
     void render();
+    void to_json(nlohmann::json& j) const;
+    static NodeEditor from_json(midi::Engine& midi_engine, const nlohmann::json& j);
 
 private:
     void renderContextMenu();
@@ -31,7 +34,7 @@ private:
     std::vector<midi::InputInfo> m_input_infos;
     std::vector<midi::OutputInfo> m_output_infos;
     std::vector<std::shared_ptr<Node>> m_nodes;
-    midi::Engine& m_midi_engine;
+    midi::Engine* m_midi_engine;
 };
 
 }

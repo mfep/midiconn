@@ -1,5 +1,10 @@
 #pragma once
 #include <memory>
+#include <optional>
+
+#include "MidiEngine.hpp"
+#include "NodeEditor.hpp"
+#include "PresetManager.hpp"
 
 #define MIDI_APPLICATION_NAME "MIDI Connector"
 
@@ -16,17 +21,21 @@ class NodeEditor;
 class Application final
 {
 public:
-    Application();
+    Application(const char* exe_path);
     ~Application();
     void render();
-    bool is_done() const;
+    void handle_done(bool& done);
+    std::string get_window_title() const;
 
 private:
     void render_main_menu();
+    bool query_save();
 
-    bool m_is_done;
-    std::unique_ptr<midi::Engine> m_midi_engine;
-    std::unique_ptr<NodeEditor> m_node_editor;
+    const char* m_exe_path;
+    bool m_is_done{};
+    midi::Engine m_midi_engine;
+    NodeEditor m_node_editor;
+    PresetManager m_preset_manager;
 };
 
 }

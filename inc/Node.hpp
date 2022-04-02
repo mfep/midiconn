@@ -2,10 +2,13 @@
 #include <map>
 #include <memory>
 #include <vector>
+#include <nlohmann/json_fwd.hpp>
 #include "MidiInfo.hpp"
 
 namespace mc
 {
+
+class NodeSerializer;
 
 class Node
 {
@@ -23,6 +26,8 @@ public:
     int id() const { return m_id; }
     int in_id() const { return 2 * m_id; }
     int out_id() const { return 2 * m_id + 1; }
+
+    virtual void accept_serializer(nlohmann::json& j, const NodeSerializer& serializer) const = 0;
 
 protected:
     virtual void render_internal() = 0;
@@ -49,6 +54,8 @@ private:
 
     // maps link id received from connecting node to node
     std::map<int, node_ptr> m_input_connections;
+
+    friend class NodeSerializer;
 };
 
 }

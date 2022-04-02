@@ -10,6 +10,8 @@ class MidiChannelNode final : public Node
 public:
     MidiChannelNode();
 
+    void accept_serializer(nlohmann::json& j, const NodeSerializer& serializer) const;
+
 private:
     void render_internal() override;
     midi::channel_map transform_channel_map(const midi::channel_map& in_map) override;
@@ -21,6 +23,8 @@ private:
     static const char* sm_combo_items[sm_num_combo_items];
 
     std::array<int, 16> m_channels;
+
+    friend class NodeSerializer;
 };
 
 }

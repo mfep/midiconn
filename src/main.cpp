@@ -10,12 +10,11 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_syswm.h>
 #include "Application.hpp"
-
 #if !SDL_VERSION_ATLEAST(2,0,17)
 #error This backend requires SDL 2.0.17+ because of SDL_RenderGeometry() function
 #endif
 
-int main(int, char**)
+int main(int argc, char** argv)
 {
     // Setup SDL
     // (Some versions of SDL before <2.0.10 appears to have performance/stalling issues on a minority of Windows systems,
@@ -28,7 +27,7 @@ int main(int, char**)
 
     // Setup window
     SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
-    SDL_Window* window = SDL_CreateWindow(MIDI_APPLICATION_NAME, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 800, window_flags);
+    SDL_Window* window = SDL_CreateWindow("", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 800, window_flags);
 
     // Setup SDL_Renderer instance
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
@@ -42,7 +41,8 @@ int main(int, char**)
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImNodes::CreateContext();
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    ImGuiIO& io = ImGui::GetIO();
+    io.IniFilename = nullptr;
     //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
     //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 
@@ -69,8 +69,9 @@ int main(int, char**)
     //ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf", 18.0f, NULL, io.Fonts->GetGlyphRangesJapanese());
     //IM_ASSERT(font != NULL);
     // Main loop
-    mc::display::Application app;
+    mc::display::Application app(argv[0]);
     bool done = false;
+    size_t frame_idx{};
     while (!done)
     {
         // Poll and handle events (inputs, window resize, etc.)
@@ -97,7 +98,13 @@ int main(int, char**)
         ImGui::NewFrame();
 
         app.render();
-        done = done || app.is_done();
+        app.handle_done(done);
+
+        // polling is required, imnodes cannot report if something changed
+        if (frame_idx++ % 30 == 0)
+        {
+            SDL_SetWindowTitle(window, app.get_window_title().c_str());
+        }
 
         // Rendering
         ImGui::Render();

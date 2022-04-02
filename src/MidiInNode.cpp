@@ -4,6 +4,7 @@
 #include "imgui.h"
 #include "imnodes.h"
 #include "MidiEngine.hpp"
+#include "NodeSerializer.hpp"
 
 namespace mc
 {
@@ -20,6 +21,11 @@ MidiInNode::MidiInNode(const midi::InputInfo& input_info, midi::Engine& midi_eng
 MidiInNode::~MidiInNode()
 {
     m_midi_engine.remove(m_input_info, this);
+}
+
+void MidiInNode::accept_serializer(nlohmann::json& j, const NodeSerializer& serializer) const
+{
+    serializer.serialize_node(j, *this);
 }
 
 void MidiInNode::render_internal()

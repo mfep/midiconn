@@ -1,10 +1,10 @@
 #include "MidiChannelNode.hpp"
-#include "imgui.h"
-#include "imnodes.h"
-
 #include <iomanip>
 #include <numeric>
 #include <sstream>
+#include "imgui.h"
+#include "imnodes.h"
+#include "NodeSerializer.hpp"
 
 namespace mc
 {
@@ -17,6 +17,11 @@ const char* MidiChannelNode::sm_combo_items[] = {
 MidiChannelNode::MidiChannelNode()
 {
     std::iota(m_channels.begin(), m_channels.end(), 1);
+}
+
+void MidiChannelNode::accept_serializer(nlohmann::json& j, const NodeSerializer& serializer) const
+{
+    serializer.serialize_node(j, *this);
 }
 
 void MidiChannelNode::render_internal()

@@ -39,7 +39,9 @@ add_executable(midi_connector
     src/NodeEditor.cpp
     src/NodeSerializer.cpp
     src/main.cpp
-    src/OutputObserver.cpp)
+    src/OutputObserver.cpp
+    src/PresetManager.cpp
+)
 
 target_include_directories(midi_connector PRIVATE
     inc

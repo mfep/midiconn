@@ -15,7 +15,7 @@ namespace mc::display
 {
 
 NodeEditor::NodeEditor(midi::Engine& midi_engine) :
-    m_midi_engine(midi_engine)
+    m_midi_engine(&midi_engine)
 {
 }
 
@@ -38,7 +38,7 @@ void NodeEditor::to_json(nlohmann::json& j) const
     using nlohmann::json;
 
     auto node_array = json::array();
-    NodeSerializer serializer(m_midi_engine);
+    NodeSerializer serializer(*m_midi_engine);
     for (const auto& node : m_nodes)
     {
         json node_json;
@@ -52,29 +52,29 @@ void NodeEditor::to_json(nlohmann::json& j) const
     };
 }
 
-std::unique_ptr<NodeEditor> NodeEditor::from_json(midi::Engine& midi_engine, const nlohmann::json& j)
+NodeEditor NodeEditor::from_json(midi::Engine& midi_engine, const nlohmann::json& j)
 {
     const ImVec2 panning = j["panning"];
     ImNodes::EditorContextResetPanning(panning);
 
-    auto editor = std::make_unique<NodeEditor>(midi_engine);
+    NodeEditor editor(midi_engine);
     NodeSerializer deserializer(midi_engine);
 
     // 1st iter -> create nodes
     for (const auto& node_json : j["nodes"])
     {
-        editor->m_nodes.emplace_back(deserializer.deserialize_node(node_json));
+        editor.m_nodes.emplace_back(deserializer.deserialize_node(node_json));
     }
 
     // 2nd iter -> create connections
     for (const auto& node_json : j["nodes"])
     {
-        const auto source_node = *std::find_if(editor->m_nodes.begin(), editor->m_nodes.end(),
+        const auto source_node = *std::find_if(editor.m_nodes.begin(), editor.m_nodes.end(),
             [node_id = node_json["id"]](const auto& node) { return node->id() == node_id; });
 
         for (const int connected_node_id : node_json["output_connection_ids"])
         {
-            const auto target_node = *std::find_if(editor->m_nodes.begin(), editor->m_nodes.end(),
+            const auto target_node = *std::find_if(editor.m_nodes.begin(), editor.m_nodes.end(),
                 [connected_node_id](const auto& node) { return node->id() == connected_node_id; });
             source_node->connect_output(std::weak_ptr(target_node), std::weak_ptr(source_node));
         }
@@ -96,7 +96,7 @@ void NodeEditor::renderContextMenu()
                 using node_type = std::conditional_t<std::is_same_v<midi::InputInfo, std::decay_t<decltype(info)>>,
                     MidiInNode, MidiOutNode>;
                 
-                const auto& node = m_nodes.emplace_back(std::make_shared<node_type>(info, m_midi_engine));
+                const auto& node = m_nodes.emplace_back(std::make_shared<node_type>(info, *m_midi_engine));
 
                 ImNodes::SetNodeScreenSpacePos(node->id(), ImGui::GetMousePosOnOpeningCurrentPopup());
                 ImGui::CloseCurrentPopup();

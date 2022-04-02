@@ -1,7 +1,10 @@
 #pragma once
 #include <memory>
 #include <optional>
-#include <nlohmann/json.hpp>
+
+#include "MidiEngine.hpp"
+#include "NodeEditor.hpp"
+#include "PresetManager.hpp"
 
 #define MIDI_APPLICATION_NAME "MIDI Connector"
 
@@ -25,20 +28,14 @@ public:
     std::string get_window_title() const;
 
 private:
-    bool is_editor_dirty() const;
     void render_main_menu();
-    void open_preset(const std::string& path);
-    void save_preset();
     bool query_save();
-    void try_loading_last_preset();
-    void try_saving_last_preset_path() const;
 
-    bool m_is_done;
-    std::unique_ptr<midi::Engine> m_midi_engine;
-    std::unique_ptr<NodeEditor> m_node_editor;
-    nlohmann::json m_last_editor_state;
-    std::optional<std::string> m_opened_path;
     const char* m_exe_path;
+    bool m_is_done{};
+    midi::Engine m_midi_engine;
+    NodeEditor m_node_editor;
+    PresetManager m_preset_manager;
 };
 
 }

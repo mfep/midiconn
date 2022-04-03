@@ -9,20 +9,6 @@
 #include "Licenses.hpp"
 #include "Version.hpp"
 
-namespace
-{
-
-bool ends_with_dot_json(const std::string& path)
-{
-    std::string lower_path;
-    std::transform(path.begin(), path.end(), std::back_inserter(lower_path),
-        [](const auto& ch) { return std::tolower(ch); });
-    return lower_path.size() > 5
-        && 0 == lower_path.compare(lower_path.size() - 5, 5, ".json");
-}
-
-}   // namespace
-
 namespace mc::display
 {
 

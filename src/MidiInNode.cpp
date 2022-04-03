@@ -34,12 +34,7 @@ void MidiInNode::render_internal()
     ImGui::TextUnformatted(m_input_info.m_name.c_str());
     ImNodes::EndNodeTitleBar();
     ImNodes::BeginOutputAttribute(out_id());
-
-    constexpr float r_component = 0;
-    constexpr float g_component = 1;
-    constexpr float b_component = 0;
     constexpr double fade_time_ms = 1000;
-
     const auto ms_since_last_message = std::chrono::duration_cast<std::chrono::milliseconds>(
             std::chrono::system_clock::now() - m_last_message_received).count();
     const double percent = 1 - std::min(1., ms_since_last_message / fade_time_ms);
@@ -59,7 +54,7 @@ void MidiInNode::render_internal()
     ImNodes::EndOutputAttribute();
 }
 
-void MidiInNode::message_received(size_t id, std::vector<unsigned char>& message_bytes)
+void MidiInNode::message_received(size_t /*id*/, std::vector<unsigned char>& /*message_bytes*/)
 {
     m_last_message_received = std::chrono::system_clock::now();
 }

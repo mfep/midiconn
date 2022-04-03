@@ -17,7 +17,7 @@ MidiInNode::MidiInNode(const midi::InputInfo& input_info, midi::Engine& midi_eng
 {
     m_midi_engine->create(input_info, this);
     auto& map = m_input_sources[input_info.m_id] = {};
-    std::iota(map.begin(), map.end(), 0ull);
+    std::iota(map.begin(), map.end(), 0);
 }
 
 MidiInNode::~MidiInNode()

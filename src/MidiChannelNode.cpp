@@ -19,7 +19,7 @@ const char* MidiChannelNode::sm_combo_items[] = {
 
 MidiChannelNode::MidiChannelNode()
 {
-    std::iota(m_channels.begin(), m_channels.end(), 1ull);
+    std::iota(m_channels.begin(), m_channels.end(), 1);
 }
 
 void MidiChannelNode::accept_serializer(nlohmann::json& j, const NodeSerializer& serializer) const

@@ -20,9 +20,10 @@ build-windows:
     - shared-windows
     - windows
     - windows-1809
-  only:
-    refs:
-      - master
+  rules:
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+    - when: manual
+      allow_failure: true
   before_script:
     - pwd
     - cd C:/vcpkg

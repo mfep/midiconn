@@ -1,8 +1,10 @@
 #include "MidiInNode.hpp"
-#include <algorithm>
+
 #include <numeric>
+
 #include "imgui.h"
 #include "imnodes.h"
+
 #include "MidiEngine.hpp"
 #include "NodeSerializer.hpp"
 

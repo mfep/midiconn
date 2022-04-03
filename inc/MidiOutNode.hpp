@@ -1,7 +1,8 @@
 #pragma once
+#include <chrono>
+
 #include "Node.hpp"
 #include "OutputObserver.hpp"
-#include <chrono>
 
 namespace mc
 {

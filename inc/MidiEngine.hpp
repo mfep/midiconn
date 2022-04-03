@@ -1,8 +1,12 @@
 #pragma once
+#include <cstdlib>
 #include <map>
 #include <optional>
 #include <shared_mutex>
+#include <vector>
+
 #include "RtMidi.h"
+
 #include "InputObserver.hpp"
 #include "MidiInfo.hpp"
 #include "OutputObserver.hpp"

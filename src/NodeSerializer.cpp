@@ -1,8 +1,10 @@
 #include "NodeSerializer.hpp"
-#include <nlohmann/json.hpp>
+
 #include "imnodes.h"
-#include "MidiInfo.hpp"
+#include "nlohmann/json.hpp"
+
 #include "MidiChannelNode.hpp"
+#include "MidiInfo.hpp"
 #include "MidiInNode.hpp"
 #include "MidiOutNode.hpp"
 

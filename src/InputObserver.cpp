@@ -1,4 +1,5 @@
 #include "InputObserver.hpp"
+
 #include <algorithm>
 
 namespace mc::midi

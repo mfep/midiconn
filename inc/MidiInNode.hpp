@@ -1,6 +1,8 @@
 #pragma once
 #include <chrono>
+
 #include "InputObserver.hpp"
+#include "MidiInfo.hpp"
 #include "Node.hpp"
 
 namespace mc

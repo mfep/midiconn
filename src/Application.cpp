@@ -1,11 +1,15 @@
 #include "Application.hpp"
+
 #include <fstream>
 #include <filesystem>
+
+// for some unknown reason, SDL must be included first
+#include "SDL2/SDL.h"
 #include "imgui.h"
-#include <SDL2/SDL.h>
-#include <nlohmann/json.hpp>
-#include <spdlog/spdlog.h>
+#include "nlohmann/json.hpp"
 #include "portable-file-dialogs.h"
+#include "spdlog/spdlog.h"
+
 #include "Licenses.hpp"
 #include "Version.hpp"
 

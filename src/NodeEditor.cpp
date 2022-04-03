@@ -1,10 +1,11 @@
 #include "NodeEditor.hpp"
-#include <algorithm>
-#include <nlohmann/json.hpp>
+
 #include "imgui.h"
 #include "imnodes.h"
-#include "MidiEngine.hpp"
+#include "nlohmann/json.hpp"
+
 #include "MidiChannelNode.hpp"
+#include "MidiEngine.hpp"
 #include "MidiInNode.hpp"
 #include "MidiOutNode.hpp"
 #include "NodeSerializer.hpp"

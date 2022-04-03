@@ -1,9 +1,12 @@
 #include "MidiChannelNode.hpp"
+
 #include <iomanip>
 #include <numeric>
 #include <sstream>
+
 #include "imgui.h"
 #include "imnodes.h"
+
 #include "NodeSerializer.hpp"
 
 namespace mc

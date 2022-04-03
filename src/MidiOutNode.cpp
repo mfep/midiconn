@@ -1,7 +1,9 @@
 #include "MidiOutNode.hpp"
+
 #include "imgui.h"
 #include "imnodes.h"
 #include "spdlog/spdlog.h"
+
 #include "MidiEngine.hpp"
 #include "NodeSerializer.hpp"
 
@@ -10,14 +12,14 @@ namespace mc
 
 MidiOutNode::MidiOutNode(const midi::OutputInfo& output_info, midi::Engine& midi_engine) :
     m_output_info(output_info),
-    m_midi_engine(midi_engine)
+    m_midi_engine(&midi_engine)
 {
-    midi_engine.create(output_info, this);
+    m_midi_engine->create(output_info, this);
 }
 
 MidiOutNode::~MidiOutNode()
 {
-    m_midi_engine.remove(m_output_info, this);
+    m_midi_engine->remove(m_output_info, this);
 }
 
 void MidiOutNode::accept_serializer(nlohmann::json& j, const NodeSerializer& serializer) const
@@ -31,12 +33,7 @@ void MidiOutNode::render_internal()
     ImGui::TextUnformatted(m_output_info.m_name.c_str());
     ImNodes::EndNodeTitleBar();
     ImNodes::BeginInputAttribute(in_id());
-
-    constexpr float r_component = 0;
-    constexpr float g_component = 1;
-    constexpr float b_component = 0;
     constexpr double fade_time_ms = 1000;
-
     const auto ms_since_last_message = std::chrono::duration_cast<std::chrono::milliseconds>(
             std::chrono::system_clock::now() - m_last_message_sent).count();
     const double percent = 1 - std::min(1., ms_since_last_message / fade_time_ms);
@@ -60,11 +57,11 @@ void MidiOutNode::update_outputs_with_sources()
 {
     for (auto&[id, map] : m_previous_sources)
     {
-        m_midi_engine.disconnect(id, m_output_info.m_id);
+        m_midi_engine->disconnect(id, m_output_info.m_id);
     }
     for (auto&[id, map] : m_input_sources)
     {
-        m_midi_engine.connect(id, m_output_info.m_id, map);
+        m_midi_engine->connect(id, m_output_info.m_id, map);
     }
     m_previous_sources = m_input_sources;
 }

@@ -1,6 +1,5 @@
 #pragma once
-#include <memory>
-#include <optional>
+#include <string>
 
 #include "MidiEngine.hpp"
 #include "NodeEditor.hpp"

@@ -1,8 +1,9 @@
 #pragma once
 #include <memory>
-#include <variant>
 #include <vector>
-#include <nlohmann/json_fwd.hpp>
+
+#include "nlohmann/json_fwd.hpp"
+
 #include "MidiInfo.hpp"
 
 namespace mc

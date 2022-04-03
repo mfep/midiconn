@@ -1,9 +1,11 @@
 #include "MidiEngine.hpp"
-#include <algorithm>
+
 #include <iomanip>
 #include <sstream>
-#include "MidiMessageView.hpp"
+
 #include "spdlog/spdlog.h"
+
+#include "MidiMessageView.hpp"
 
 namespace mc::midi
 {

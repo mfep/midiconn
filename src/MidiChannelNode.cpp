@@ -1,9 +1,12 @@
 #include "MidiChannelNode.hpp"
+
 #include <iomanip>
 #include <numeric>
 #include <sstream>
+
 #include "imgui.h"
 #include "imnodes.h"
+
 #include "NodeSerializer.hpp"
 
 namespace mc
@@ -55,7 +58,7 @@ void MidiChannelNode::render_internal()
     }
     if (ImGui::Button("Default"))
     {
-        std::iota(m_channels.begin(), m_channels.end(), 1);
+        std::iota(m_channels.begin(), m_channels.end(), 1ull);
     }
     ImGui::SameLine();
     if (ImGui::Button("Disable all"))
@@ -77,7 +80,7 @@ midi::channel_map MidiChannelNode::transform_channel_map(const midi::channel_map
         const auto channel_output_index = static_cast<char>(channel_output_value - 1);
         for (size_t i = 0; i < in_map.size(); i++)
         {
-            if (in_map[i] == channel_input_index)
+            if (in_map[i] == static_cast<char>(channel_input_index))
             {
                 out_map[i] = channel_output_index;
             }

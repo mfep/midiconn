@@ -42,4 +42,5 @@ build-windows:
   artifacts:
     paths:
       - build/Release/midi_connector.exe
+      - build/Release/*.dll
     expire_in: 1 week

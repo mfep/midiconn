@@ -15,7 +15,6 @@ configure_file(
 set(JSON_BuildTests OFF CACHE INTERNAL "")
 set(JSON_MultipleHeaders ON CACHE INTERNAL "")
 add_subdirectory(deps/json)
-set(RTMIDI_BUILD_STATIC_LIBS ON CACHE INTERNAL "")
 set(RTMIDI_BUILD_TESTING OFF CACHE INTERNAL "")
 add_subdirectory(deps/rtmidi)
 
@@ -53,3 +52,14 @@ target_link_libraries(midi_connector PRIVATE
     rtmidi
     spdlog::spdlog
     SDL2::SDL2)
+
+if (WIN32)
+    add_custom_command (TARGET midi_connector POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        $<TARGET_FILE:rtmidi>
+        $<TARGET_FILE:spdlog::spdlog>
+        $<TARGET_FILE:fmt::fmt>
+        $<TARGET_FILE:SDL2::SDL2>
+        $<TARGET_FILE_DIR:midi_connector>
+    )
+endif()

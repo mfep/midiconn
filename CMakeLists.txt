@@ -28,6 +28,7 @@ add_executable(midi_connector
     deps/imgui/backends/imgui_impl_sdlrenderer.cpp
     deps/imnodes/imnodes.cpp
     src/Application.cpp
+    src/DisconnectedMidiInNode.cpp
     src/InputObserver.cpp
     src/Licenses.cpp
     src/MidiChannelNode.cpp

@@ -10,10 +10,11 @@ namespace midi
 class Engine;
 }
 
-class Node;
+class DisconnectedMidiInNode;
+class MidiChannelNode;
 class MidiInNode;
 class MidiOutNode;
-class MidiChannelNode;
+class Node;
 
 class NodeSerializer final
 {
@@ -23,6 +24,7 @@ public:
     void serialize_node(nlohmann::json& j, const Node& node) const;
 
     void serialize_node(nlohmann::json& j, const MidiInNode& node) const;
+    void serialize_node(nlohmann::json& j, const DisconnectedMidiInNode& node) const;
     void serialize_node(nlohmann::json& j, const MidiOutNode& node) const;
     void serialize_node(nlohmann::json& j, const MidiChannelNode& node) const;
 

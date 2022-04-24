@@ -1,9 +1,13 @@
 #include "NodeSerializer.hpp"
 
+#include <optional>
+
 #include "imnodes.h"
 #include "nlohmann/json.hpp"
 
+#include "DisconnectedMidiInNode.hpp"
 #include "MidiChannelNode.hpp"
+#include "MidiEngine.hpp"
 #include "MidiInfo.hpp"
 #include "MidiInNode.hpp"
 #include "MidiOutNode.hpp"
@@ -21,6 +25,22 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(OutputInfo, m_id, m_name);
 }
 
 using nlohmann::json;
+
+namespace
+{
+
+template<typename Info>
+std::optional<Info> get_valid_info(const std::string& name, const std::vector<Info>& infos)
+{
+    auto found_it = std::find_if(infos.begin(), infos.end(), [&](const auto& info) { return info.m_name == name; });
+    if (found_it != infos.end())
+    {
+        return *found_it;
+    }
+    return std::nullopt;
+}
+
+}
 
 NodeSerializer::NodeSerializer(midi::Engine& midi_engine) :
     m_midi_engine(&midi_engine)
@@ -43,12 +63,17 @@ void NodeSerializer::serialize_node(json& j, const Node& node) const
 
 void NodeSerializer::serialize_node(json& j, const MidiInNode& node) const
 {
-    j = json{ { "type", "midi_in" }, { "input_info", node.m_input_info } };
+    j = json{ { "type", "midi_in" }, { "input_name", node.m_input_info.m_name } };
+}
+
+void NodeSerializer::serialize_node(json& j, const DisconnectedMidiInNode& node) const
+{
+    j = json{ { "type", "midi_in" }, { "input_name", node.m_input_name } };
 }
 
 void NodeSerializer::serialize_node(json& j, const MidiOutNode& node) const
 {
-    j = json{ { "type", "midi_out" }, { "output_info", node.m_output_info } };
+    j = json{ { "type", "midi_out" }, { "output_name", node.m_output_info.m_name } };
 }
 
 void NodeSerializer::serialize_node(json& j, const MidiChannelNode& node) const
@@ -62,13 +87,25 @@ std::shared_ptr<Node> NodeSerializer::deserialize_node(const json& j) const
     std::shared_ptr<Node> node;
     if (node_type == "midi_in")
     {
-        const auto input_info = j["input_info"].get<midi::InputInfo>();
-        node = std::make_shared<MidiInNode>(input_info, *m_midi_engine);
+        const auto input_name = j["input_name"].get<std::string>();
+        const auto input_info_opt = get_valid_info(input_name, midi::Probe::get_inputs());
+        if (input_info_opt.has_value())
+        {
+            node = std::make_shared<MidiInNode>(input_info_opt.value(), *m_midi_engine);
+        }
+        else
+        {
+            node = std::make_shared<DisconnectedMidiInNode>(input_name);
+        }
     }
     else if (node_type == "midi_out")
     {
-        const auto output_info = j["output_info"].get<midi::OutputInfo>();
-        node = std::make_shared<MidiOutNode>(output_info, *m_midi_engine);
+        const auto output_name = j["output_name"].get<std::string>();
+        const auto output_info_opt = get_valid_info(output_name, midi::Probe::get_outputs());
+        if (output_info_opt.has_value())
+        {
+            node = std::make_shared<MidiOutNode>(output_info_opt.value(), *m_midi_engine);
+        }
     }
     else if (node_type == "midi_channel")
     {

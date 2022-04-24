@@ -25,6 +25,22 @@ std::vector<InfoT> get_connections()
     return infoList;
 }
 
+void check_input_port_name(unsigned id, const InputInfo& input_info)
+{
+    if (input_info.m_name != RtMidiIn{}.getPortName(id))
+    {
+        throw std::logic_error("Input port name does not match expected.");
+    }
+}
+
+void check_output_port_name(unsigned id, const OutputInfo& output_info)
+{
+    if (output_info.m_name != RtMidiOut{}.getPortName(id))
+    {
+        throw std::logic_error("Output port name does not match expected.");
+    }
+}
+
 }   // namespace
 
 std::vector<InputInfo> Probe::get_inputs()
@@ -73,6 +89,7 @@ void Engine::create(const InputInfo& input_info, InputObserver* observer)
 {
     std::lock_guard guard(m_mutex);
     const auto id = input_info.m_id;
+    check_input_port_name(id, input_info);
     if (id < m_inputs.size() && m_inputs[id] != nullptr)
     {
         if (observer != nullptr)
@@ -100,6 +117,7 @@ void Engine::create(const OutputInfo& output_info, OutputObserver* observer)
 {
     std::lock_guard guard(m_mutex);
     const auto id = output_info.m_id;
+    check_output_port_name(id, output_info);
     if (id < m_outputs.size() && m_outputs[id] != nullptr)
     {
         if (observer != nullptr)
@@ -125,6 +143,7 @@ void Engine::remove(const InputInfo& input_info, InputObserver* observer)
 {
     std::lock_guard guard(m_mutex);
     const auto id = input_info.m_id;
+    check_input_port_name(id, input_info);
     if (id >= m_inputs.size() || m_inputs[id] == nullptr)
     {
         throw std::logic_error("Cannot remove non-existent input");
@@ -145,6 +164,7 @@ void Engine::remove(const OutputInfo& output_info, OutputObserver* observer)
 {
     std::lock_guard guard(m_mutex);
     const auto id = output_info.m_id;
+    check_output_port_name(id, output_info);
     if (id >= m_outputs.size() || m_outputs[id] == nullptr)
     {
         throw std::logic_error("Cannot remove non-existent output");
@@ -225,13 +245,15 @@ void Engine::message_received(size_t id, std::vector<unsigned char>& message_byt
     std::shared_lock lock(m_mutex);
     if (id >= m_inputs.size() || m_inputs[id] == nullptr)
     {
-        throw std::logic_error("Message received from non-existing input");
+        spdlog::error("Message received from non-existing input");
+        return;
     }
     for (auto&[output_id, channels] : m_inputs[id]->m_connections)
     {
         if (output_id >= m_outputs.size() || m_outputs[output_id] == nullptr)
         {
-            throw std::logic_error("Message sent to non-existing output");
+            spdlog::error("Message sent to non-existing output");
+            continue;
         }
         auto message_copy = message_bytes;
         MessageView message(message_copy);
@@ -241,7 +263,7 @@ void Engine::message_received(size_t id, std::vector<unsigned char>& message_byt
             const auto target_channel = channels[message_channel];
             if (target_channel < 0)
             {
-                return;
+                continue;
             }
             message.set_channel(target_channel);
         }

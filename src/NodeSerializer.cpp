@@ -30,7 +30,7 @@ using nlohmann::json;
 namespace
 {
 
-template<typename Info>
+template<class Info>
 std::optional<Info> get_valid_info(const std::string& name, const std::vector<Info>& infos)
 {
     auto found_it = std::find_if(infos.begin(), infos.end(), [&](const auto& info) { return info.m_name == name; });

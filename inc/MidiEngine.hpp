@@ -35,7 +35,7 @@ private:
 
     private:
         InputInfo m_info;
-        RtMidiIn m_midiIn;
+        RtMidiIn m_midi_in;
     };
 
     class MidiOutput final : public OutputObservable
@@ -46,7 +46,7 @@ private:
 
     private:
         OutputInfo m_info;
-        RtMidiOut m_midiOut;
+        RtMidiOut m_midi_out;
     };
 
 public:

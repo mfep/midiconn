@@ -15,14 +15,14 @@ namespace
 template<class RtMidiT, class InfoT>
 std::vector<InfoT> get_connections()
 {
-    RtMidiT midiConn;
-    const auto portCount = midiConn.getPortCount();
-    std::vector<InfoT> infoList;
-    for (unsigned i = 0; i < portCount; i++)
+    RtMidiT midi_conn;
+    const auto port_count = midi_conn.getPortCount();
+    std::vector<InfoT> info_list;
+    for (unsigned i = 0; i < port_count; i++)
     {
-        infoList.push_back({i, midiConn.getPortName(i)});
+        info_list.push_back({i, midi_conn.getPortName(i)});
     }
-    return infoList;
+    return info_list;
 }
 
 void check_input_port_name(unsigned id, const InputInfo& input_info)
@@ -60,8 +60,8 @@ Engine::MidiInput::MidiInput(const InputInfo& info) :
 
 void Engine::MidiInput::open()
 {
-    m_midiIn.setCallback(message_callback, this);
-    m_midiIn.openPort(m_info.m_id);
+    m_midi_in.setCallback(message_callback, this);
+    m_midi_in.openPort(m_info.m_id);
 }
 
 void Engine::MidiInput::message_callback(
@@ -76,12 +76,12 @@ void Engine::MidiInput::message_callback(
 Engine::MidiOutput::MidiOutput(const OutputInfo& info) :
     m_info(info)
 {
-    m_midiOut.openPort(info.m_id);
+    m_midi_out.openPort(info.m_id);
 }
 
 void Engine::MidiOutput::send_message(const std::vector<unsigned char>& message_bytes)
 {
-    m_midiOut.sendMessage(&message_bytes);
+    m_midi_out.sendMessage(&message_bytes);
     raise_message_sent(m_info.m_id, message_bytes);
 }
 

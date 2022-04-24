@@ -37,9 +37,11 @@ void Node::render()
         update_sources_from_inputs();
     }
 
+    push_style();
     ImNodes::BeginNode(m_id);
     render_internal();
     ImNodes::EndNode();
+    pop_style();
 
     for (const auto&[link_id, node] : m_output_connections)
     {

@@ -3,19 +3,12 @@
 #include "imgui.h"
 #include "imnodes.h"
 
-#include "NodeSerializer.hpp"
-
 namespace mc
 {
 
 DisconnectedMidiInNode::DisconnectedMidiInNode(const std::string& input_name) :
     m_input_name(input_name)
 {
-}
-
-void DisconnectedMidiInNode::accept_serializer(nlohmann::json& j, const NodeSerializer& serializer) const
-{
-    serializer.serialize_node(j, *this);
 }
 
 void DisconnectedMidiInNode::render_internal()

@@ -33,6 +33,8 @@ public:
 
 protected:
     virtual void render_internal() = 0;
+    virtual void push_style() const { };
+    virtual void pop_style() const { };
     virtual midi::channel_map transform_channel_map(const midi::channel_map& in_map);
     virtual void update_outputs_with_sources();
 

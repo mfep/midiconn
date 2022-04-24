@@ -1,14 +1,13 @@
 #pragma once
-#include "Node.hpp"
+#include "DisconnectedNode.hpp"
 
 namespace mc
 {
 
-class DisconnectedMidiInNode final : public Node
+class DisconnectedMidiInNode final : public DisconnectedNode<DisconnectedMidiInNode>
 {
 public:
     DisconnectedMidiInNode(const std::string& input_name);
-    void accept_serializer(nlohmann::json& j, const NodeSerializer& serializer) const override;
 
 private:
     void render_internal() override;

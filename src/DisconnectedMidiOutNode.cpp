@@ -13,11 +13,6 @@ DisconnectedMidiOutNode::DisconnectedMidiOutNode(const std::string& output_name)
 {
 }
 
-void DisconnectedMidiOutNode::accept_serializer(nlohmann::json& j, const NodeSerializer& serializer) const
-{
-    serializer.serialize_node(j, *this);
-}
-
 void DisconnectedMidiOutNode::render_internal()
 {
     ImNodes::BeginNodeTitleBar();

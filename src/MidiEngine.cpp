@@ -12,19 +12,6 @@ namespace mc::midi
 namespace
 {
 
-template<class RtMidiT, class InfoT>
-std::vector<InfoT> get_connections()
-{
-    RtMidiT midi_conn;
-    const auto port_count = midi_conn.getPortCount();
-    std::vector<InfoT> info_list;
-    for (unsigned i = 0; i < port_count; i++)
-    {
-        info_list.push_back({i, midi_conn.getPortName(i)});
-    }
-    return info_list;
-}
-
 void check_input_port_name(unsigned id, const InputInfo& input_info)
 {
     if (input_info.m_name != RtMidiIn{}.getPortName(id))
@@ -42,16 +29,6 @@ void check_output_port_name(unsigned id, const OutputInfo& output_info)
 }
 
 }   // namespace
-
-std::vector<InputInfo> Probe::get_inputs()
-{
-    return get_connections<RtMidiIn, InputInfo>();
-}
-
-std::vector<OutputInfo> Probe::get_outputs()
-{
-    return get_connections<RtMidiOut, OutputInfo>();
-}
 
 Engine::MidiInput::MidiInput(const InputInfo& info) :
     m_info(info)

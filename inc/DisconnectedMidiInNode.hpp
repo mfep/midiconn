@@ -8,6 +8,7 @@ class DisconnectedMidiInNode final : public DisconnectedNode<DisconnectedMidiInN
 {
 public:
     DisconnectedMidiInNode(const std::string& input_name);
+    const std::string& get_name() const { return m_input_name; }
 
 private:
     void render_internal() override;

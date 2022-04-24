@@ -14,15 +14,6 @@
 namespace mc::midi
 {
 
-class Probe final
-{
-public:
-    Probe() = delete;
-
-    static std::vector<InputInfo> get_inputs();
-    static std::vector<OutputInfo> get_outputs();
-};
-
 class Engine final : private InputObserver
 {
 private:

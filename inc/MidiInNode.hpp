@@ -19,6 +19,7 @@ public:
     ~MidiInNode();
 
     void accept_serializer(nlohmann::json& j, const NodeSerializer& serializer) const override;
+    const midi::InputInfo& get_info() const { return m_input_info; }
 
 private:
     void render_internal() override;

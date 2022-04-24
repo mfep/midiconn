@@ -8,6 +8,7 @@ class DisconnectedMidiOutNode final : public DisconnectedNode<DisconnectedMidiOu
 {
 public:
     DisconnectedMidiOutNode(const std::string& output_name);
+    const std::string& get_name() const { return m_output_name; }
 
 private:
     void render_internal() override;

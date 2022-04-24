@@ -36,6 +36,8 @@ add_executable(midi_connector
     src/MidiEngine.cpp
     src/MidiInNode.cpp
     src/MidiOutNode.cpp
+    src/MidiPortWatchdog.cpp
+    src/MidiProbe.cpp
     src/Node.cpp
     src/NodeEditor.cpp
     src/NodeSerializer.cpp

@@ -267,7 +267,7 @@ void Engine::message_received(size_t id, std::vector<unsigned char>& message_byt
             }
             message.set_channel(target_channel);
         }
-        m_outputs[output_id]->m_output.send_message(message_bytes);
+        m_outputs[output_id]->m_output.send_message(message_copy);
     }
 }
 

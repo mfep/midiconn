@@ -6,6 +6,7 @@
 #include "nlohmann/json.hpp"
 
 #include "DisconnectedMidiInNode.hpp"
+#include "DisconnectedMidiOutNode.hpp"
 #include "MidiChannelNode.hpp"
 #include "MidiEngine.hpp"
 #include "MidiInfo.hpp"
@@ -76,6 +77,11 @@ void NodeSerializer::serialize_node(json& j, const MidiOutNode& node) const
     j = json{ { "type", "midi_out" }, { "output_name", node.m_output_info.m_name } };
 }
 
+void NodeSerializer::serialize_node(json& j, const DisconnectedMidiOutNode& node) const
+{
+    j = json{ { "type", "midi_out" }, { "output_name", node.m_output_name } };
+}
+
 void NodeSerializer::serialize_node(json& j, const MidiChannelNode& node) const
 {
     j = json{ { "type", "midi_channel" }, { "channels", node.m_channels } };
@@ -105,6 +111,10 @@ std::shared_ptr<Node> NodeSerializer::deserialize_node(const json& j) const
         if (output_info_opt.has_value())
         {
             node = std::make_shared<MidiOutNode>(output_info_opt.value(), *m_midi_engine);
+        }
+        else
+        {
+            node = std::make_shared<DisconnectedMidiOutNode>(output_name);
         }
     }
     else if (node_type == "midi_channel")

@@ -12,16 +12,24 @@ namespace mc::midi
 namespace
 {
 
-void check_input_port_name(unsigned id, const InputInfo& input_info)
+void check_input_port(unsigned id, const InputInfo& input_info)
 {
+    if (id >= RtMidiIn{}.getPortCount())
+    {
+        throw std::logic_error("Input port does not exist.");
+    }
     if (input_info.m_name != RtMidiIn{}.getPortName(id))
     {
         throw std::logic_error("Input port name does not match expected.");
     }
 }
 
-void check_output_port_name(unsigned id, const OutputInfo& output_info)
+void check_output_port(unsigned id, const OutputInfo& output_info)
 {
+    if (id >= RtMidiOut{}.getPortCount())
+    {
+        throw std::logic_error("Output port does not exist.");
+    }
     if (output_info.m_name != RtMidiOut{}.getPortName(id))
     {
         throw std::logic_error("Output port name does not match expected.");
@@ -66,7 +74,7 @@ void Engine::create(const InputInfo& input_info, InputObserver* observer)
 {
     std::lock_guard guard(m_mutex);
     const auto id = input_info.m_id;
-    check_input_port_name(id, input_info);
+    check_input_port(id, input_info);
     if (id < m_inputs.size() && m_inputs[id] != nullptr)
     {
         if (observer != nullptr)
@@ -94,7 +102,7 @@ void Engine::create(const OutputInfo& output_info, OutputObserver* observer)
 {
     std::lock_guard guard(m_mutex);
     const auto id = output_info.m_id;
-    check_output_port_name(id, output_info);
+    check_output_port(id, output_info);
     if (id < m_outputs.size() && m_outputs[id] != nullptr)
     {
         if (observer != nullptr)
@@ -120,7 +128,6 @@ void Engine::remove(const InputInfo& input_info, InputObserver* observer)
 {
     std::lock_guard guard(m_mutex);
     const auto id = input_info.m_id;
-    check_input_port_name(id, input_info);
     if (id >= m_inputs.size() || m_inputs[id] == nullptr)
     {
         throw std::logic_error("Cannot remove non-existent input");
@@ -141,7 +148,6 @@ void Engine::remove(const OutputInfo& output_info, OutputObserver* observer)
 {
     std::lock_guard guard(m_mutex);
     const auto id = output_info.m_id;
-    check_output_port_name(id, output_info);
     if (id >= m_outputs.size() || m_outputs[id] == nullptr)
     {
         throw std::logic_error("Cannot remove non-existent output");

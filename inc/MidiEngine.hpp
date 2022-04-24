@@ -1,7 +1,7 @@
 #pragma once
 #include <cstdlib>
 #include <map>
-#include <optional>
+#include <memory>
 #include <shared_mutex>
 #include <vector>
 
@@ -73,8 +73,8 @@ private:
         MidiOutput m_output;
     };
 
-    std::vector<std::optional<InputItem>> m_inputs;
-    std::vector<std::optional<OutputItem>> m_outputs;
+    std::vector<std::unique_ptr<InputItem>> m_inputs;
+    std::vector<std::unique_ptr<OutputItem>> m_outputs;
     std::shared_mutex m_mutex;
 };
 

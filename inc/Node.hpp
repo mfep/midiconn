@@ -28,6 +28,8 @@ public:
     int id() const { return m_id; }
     int in_id() const { return 2 * m_id; }
     int out_id() const { return 2 * m_id + 1; }
+    std::vector<node_ptr> get_output_connections() const;
+    std::vector<node_ptr> get_input_connections() const;
 
     virtual void accept_serializer(nlohmann::json& j, const NodeSerializer& serializer) const = 0;
 

@@ -5,6 +5,20 @@
 
 namespace mc
 {
+namespace
+{
+
+std::vector<Node::node_ptr> get_connections(const std::map<int, Node::node_ptr>& node_map)
+{
+    std::vector<Node::node_ptr> connections;
+    for (auto[link_id, other_node_ptr] : node_map)
+    {
+        connections.push_back(other_node_ptr);
+    }
+    return connections;
+}
+
+}   // namespace
 
 Node::Node() :
     m_id(sm_next_id++)
@@ -63,6 +77,16 @@ void Node::disconnect_output(int link_id)
         ptr->disconnect_input(link_id);
     }
     m_output_connections.erase(link_id);
+}
+
+std::vector<Node::node_ptr> Node::get_output_connections() const
+{
+    return get_connections(m_output_connections);
+}
+
+std::vector<Node::node_ptr> Node::get_input_connections() const
+{
+    return get_connections(m_input_connections);
 }
 
 midi::channel_map Node::transform_channel_map(const midi::channel_map& in_map)

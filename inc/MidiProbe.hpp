@@ -17,6 +17,9 @@ public:
 
     static std::optional<midi::InputInfo> get_valid_input(const std::string& input_name);
     static std::optional<midi::OutputInfo> get_valid_output(const std::string& output_name);
+
+    static std::optional<std::string> get_valid_input_port_name(unsigned id);
+    static std::optional<std::string> get_valid_output_port_name(unsigned id);
 };
 
 }

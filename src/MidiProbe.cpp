@@ -1,6 +1,7 @@
 #include "MidiProbe.hpp"
 
 #include <algorithm>
+#include <sstream>
 
 #include "RtMidi.h"
 
@@ -12,6 +13,24 @@ using namespace midi;
 namespace
 {
 
+// ToDo check on linux
+std::string truncate_port_name(const std::string& port_name)
+{
+    const auto last_space_idx = port_name.find_last_of(' ');
+    if (last_space_idx == std::string::npos)
+    {
+        return port_name;
+    }
+    for (size_t idx = last_space_idx + 1; idx < port_name.size(); idx++)
+    {
+        if (!std::isdigit(port_name[idx]))
+        {
+            return port_name;
+        }
+    }
+    return port_name.substr(0, last_space_idx);
+}
+
 template<class RtMidiT, class InfoT>
 std::vector<InfoT> get_connections()
 {
@@ -20,7 +39,7 @@ std::vector<InfoT> get_connections()
     std::vector<InfoT> info_list;
     for (unsigned i = 0; i < port_count; i++)
     {
-        info_list.push_back({i, midi_conn.getPortName(i)});
+        info_list.push_back({i, truncate_port_name(midi_conn.getPortName(i))});
     }
     return info_list;
 }
@@ -56,6 +75,24 @@ std::optional<InputInfo> MidiProbe::get_valid_input(const std::string& input_nam
 std::optional<OutputInfo> MidiProbe::get_valid_output(const std::string& output_name)
 {
     return get_valid_info(output_name, get_outputs());
+}
+
+std::optional<std::string> MidiProbe::get_valid_input_port_name(unsigned id)
+{
+    if (RtMidiIn{}.getPortCount() <= id)
+    {
+        return std::nullopt;
+    }
+    return truncate_port_name(RtMidiIn{}.getPortName(id));
+}
+
+std::optional<std::string> MidiProbe::get_valid_output_port_name(unsigned id)
+{
+    if (RtMidiOut{}.getPortCount() <= id)
+    {
+        return std::nullopt;
+    }
+    return truncate_port_name(RtMidiOut{}.getPortName(id));
 }
 
 }

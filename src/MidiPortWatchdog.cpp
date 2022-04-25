@@ -53,20 +53,49 @@ bool update_node(std::shared_ptr<Node>& node_ptr, ValidGetterFun valid_getter_fu
             midi_port_name = midi_ptr->get_info().m_name;
         }
 
+        const auto get_memo = [](std::shared_ptr<Node>& old_node)
+        {
+            return std::tuple{
+                old_node->get_input_connections(),
+                old_node->get_output_connections(),
+                ImNodes::GetNodeGridSpacePos(old_node->id())
+            };
+        };
+        const auto set_memo = [](std::shared_ptr<Node>& new_node, const auto& memo)
+        {
+            for (const auto& outputting_node : std::get<0>(memo))
+            {
+                auto outputting_node_ptr = outputting_node.lock();
+                if (outputting_node_ptr != nullptr)
+                {
+                    outputting_node_ptr->connect_output(new_node, outputting_node);
+                }
+            }
+            for (const auto& connected_node : std::get<1>(memo))
+            {
+                new_node->connect_output(connected_node, new_node);
+            }
+            ImNodes::SetNodeGridSpacePos(new_node->id(), std::get<2>(memo));
+        };
+
         const auto valid_info = valid_getter_fun(midi_port_name);
 
         if constexpr (MidiNodeTraits<MidiNode>::is_disconnected)
         {
             if (valid_info.has_value())
             {
+                const auto memo = get_memo(node_ptr);
                 node_ptr = std::make_shared<ReplacingMidiNode>(valid_info.value(), std::forward<Args>(args)...);
+                set_memo(node_ptr, memo);
             }
         }
         else
         {
             if (!valid_info.has_value() || valid_info.value().m_id != midi_ptr->get_info().m_id)
             {
+                const auto memo = get_memo(node_ptr);
                 node_ptr = std::make_shared<ReplacingMidiNode>(midi_port_name);
+                set_memo(node_ptr, memo);
             }
         }
         return true;

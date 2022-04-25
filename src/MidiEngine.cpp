@@ -6,6 +6,7 @@
 #include "spdlog/spdlog.h"
 
 #include "MidiMessageView.hpp"
+#include "MidiProbe.hpp"
 
 namespace mc::midi
 {
@@ -14,11 +15,12 @@ namespace
 
 void check_input_port(unsigned id, const InputInfo& input_info)
 {
-    if (id >= RtMidiIn{}.getPortCount())
+    const auto valid_port_name = MidiProbe::get_valid_input_port_name(id);
+    if (!valid_port_name.has_value())
     {
         throw std::logic_error("Input port does not exist.");
     }
-    if (input_info.m_name != RtMidiIn{}.getPortName(id))
+    if (input_info.m_name != valid_port_name.value())
     {
         throw std::logic_error("Input port name does not match expected.");
     }
@@ -26,11 +28,12 @@ void check_input_port(unsigned id, const InputInfo& input_info)
 
 void check_output_port(unsigned id, const OutputInfo& output_info)
 {
-    if (id >= RtMidiOut{}.getPortCount())
+    const auto valid_port_name = MidiProbe::get_valid_output_port_name(id);
+    if (!valid_port_name.has_value())
     {
         throw std::logic_error("Output port does not exist.");
     }
-    if (output_info.m_name != RtMidiOut{}.getPortName(id))
+    if (output_info.m_name != valid_port_name.value())
     {
         throw std::logic_error("Output port name does not match expected.");
     }

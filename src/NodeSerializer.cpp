@@ -17,13 +17,6 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ImVec2, x, y);
 
 namespace mc
 {
-namespace midi
-{
-
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(InputInfo, m_id, m_name);
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(OutputInfo, m_id, m_name);
-
-}
 
 using nlohmann::json;
 

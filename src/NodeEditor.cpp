@@ -5,9 +5,10 @@
 #include "nlohmann/json.hpp"
 
 #include "MidiChannelNode.hpp"
-#include "MidiEngine.hpp"
 #include "MidiInNode.hpp"
 #include "MidiOutNode.hpp"
+#include "MidiPortWatchdog.hpp"
+#include "MidiProbe.hpp"
 #include "NodeSerializer.hpp"
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ImVec2, x, y);
@@ -110,8 +111,8 @@ void NodeEditor::renderContextMenu()
     {
         if (ImGui::IsWindowAppearing())
         {
-            m_input_infos = midi::Probe::get_inputs();
-            m_output_infos = midi::Probe::get_outputs();
+            m_input_infos = MidiProbe::get_inputs();
+            m_output_infos = MidiProbe::get_outputs();
         }
         ImGui::TreeNodeEx("Channel map", leaf_flags);
         if (ImGui::IsItemClicked())
@@ -136,6 +137,7 @@ void NodeEditor::renderContextMenu()
 
 void NodeEditor::renderNodes()
 {
+    MidiPortWatchdog::check_nodes(m_nodes, *m_midi_engine);
     for (const auto& node : m_nodes)
     {
         node->render();

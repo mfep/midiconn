@@ -28,11 +28,15 @@ public:
     int id() const { return m_id; }
     int in_id() const { return 2 * m_id; }
     int out_id() const { return 2 * m_id + 1; }
+    std::vector<node_ptr> get_output_connections() const;
+    std::vector<node_ptr> get_input_connections() const;
 
     virtual void accept_serializer(nlohmann::json& j, const NodeSerializer& serializer) const = 0;
 
 protected:
     virtual void render_internal() = 0;
+    virtual void push_style() const { };
+    virtual void pop_style() const { };
     virtual midi::channel_map transform_channel_map(const midi::channel_map& in_map);
     virtual void update_outputs_with_sources();
 

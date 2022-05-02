@@ -6,36 +6,40 @@
 #include "spdlog/spdlog.h"
 
 #include "MidiMessageView.hpp"
+#include "MidiProbe.hpp"
 
 namespace mc::midi
 {
 namespace
 {
 
-template<class RtMidiT, class InfoT>
-std::vector<InfoT> get_connections()
+void check_input_port(unsigned id, const InputInfo& input_info)
 {
-    RtMidiT midiConn;
-    const auto portCount = midiConn.getPortCount();
-    std::vector<InfoT> infoList;
-    for (unsigned i = 0; i < portCount; i++)
+    const auto valid_port_name = MidiProbe::get_valid_input_port_name(id);
+    if (!valid_port_name.has_value())
     {
-        infoList.push_back({i, midiConn.getPortName(i)});
+        throw std::logic_error("Input port does not exist.");
     }
-    return infoList;
+    if (input_info.m_name != valid_port_name.value())
+    {
+        throw std::logic_error("Input port name does not match expected.");
+    }
+}
+
+void check_output_port(unsigned id, const OutputInfo& output_info)
+{
+    const auto valid_port_name = MidiProbe::get_valid_output_port_name(id);
+    if (!valid_port_name.has_value())
+    {
+        throw std::logic_error("Output port does not exist.");
+    }
+    if (output_info.m_name != valid_port_name.value())
+    {
+        throw std::logic_error("Output port name does not match expected.");
+    }
 }
 
 }   // namespace
-
-std::vector<InputInfo> Probe::get_inputs()
-{
-    return get_connections<RtMidiIn, InputInfo>();
-}
-
-std::vector<OutputInfo> Probe::get_outputs()
-{
-    return get_connections<RtMidiOut, OutputInfo>();
-}
 
 Engine::MidiInput::MidiInput(const InputInfo& info) :
     m_info(info)
@@ -44,8 +48,8 @@ Engine::MidiInput::MidiInput(const InputInfo& info) :
 
 void Engine::MidiInput::open()
 {
-    m_midiIn.setCallback(message_callback, this);
-    m_midiIn.openPort(m_info.m_id);
+    m_midi_in.setCallback(message_callback, this);
+    m_midi_in.openPort(m_info.m_id);
 }
 
 void Engine::MidiInput::message_callback(
@@ -60,12 +64,12 @@ void Engine::MidiInput::message_callback(
 Engine::MidiOutput::MidiOutput(const OutputInfo& info) :
     m_info(info)
 {
-    m_midiOut.openPort(info.m_id);
+    m_midi_out.openPort(info.m_id);
 }
 
 void Engine::MidiOutput::send_message(const std::vector<unsigned char>& message_bytes)
 {
-    m_midiOut.sendMessage(&message_bytes);
+    m_midi_out.sendMessage(&message_bytes);
     raise_message_sent(m_info.m_id, message_bytes);
 }
 
@@ -73,6 +77,7 @@ void Engine::create(const InputInfo& input_info, InputObserver* observer)
 {
     std::lock_guard guard(m_mutex);
     const auto id = input_info.m_id;
+    check_input_port(id, input_info);
     if (id < m_inputs.size() && m_inputs[id] != nullptr)
     {
         if (observer != nullptr)
@@ -100,6 +105,7 @@ void Engine::create(const OutputInfo& output_info, OutputObserver* observer)
 {
     std::lock_guard guard(m_mutex);
     const auto id = output_info.m_id;
+    check_output_port(id, output_info);
     if (id < m_outputs.size() && m_outputs[id] != nullptr)
     {
         if (observer != nullptr)
@@ -225,13 +231,15 @@ void Engine::message_received(size_t id, std::vector<unsigned char>& message_byt
     std::shared_lock lock(m_mutex);
     if (id >= m_inputs.size() || m_inputs[id] == nullptr)
     {
-        throw std::logic_error("Message received from non-existing input");
+        spdlog::error("Message received from non-existing input");
+        return;
     }
     for (auto&[output_id, channels] : m_inputs[id]->m_connections)
     {
         if (output_id >= m_outputs.size() || m_outputs[output_id] == nullptr)
         {
-            throw std::logic_error("Message sent to non-existing output");
+            spdlog::error("Message sent to non-existing output");
+            continue;
         }
         auto message_copy = message_bytes;
         MessageView message(message_copy);
@@ -241,11 +249,11 @@ void Engine::message_received(size_t id, std::vector<unsigned char>& message_byt
             const auto target_channel = channels[message_channel];
             if (target_channel < 0)
             {
-                return;
+                continue;
             }
             message.set_channel(target_channel);
         }
-        m_outputs[output_id]->m_output.send_message(message_bytes);
+        m_outputs[output_id]->m_output.send_message(message_copy);
     }
 }
 

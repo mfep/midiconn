@@ -28,12 +28,16 @@ add_executable(midi_connector
     deps/imgui/backends/imgui_impl_sdlrenderer.cpp
     deps/imnodes/imnodes.cpp
     src/Application.cpp
+    src/DisconnectedMidiInNode.cpp
+    src/DisconnectedMidiOutNode.cpp
     src/InputObserver.cpp
     src/Licenses.cpp
     src/MidiChannelNode.cpp
     src/MidiEngine.cpp
     src/MidiInNode.cpp
     src/MidiOutNode.cpp
+    src/MidiPortWatchdog.cpp
+    src/MidiProbe.cpp
     src/Node.cpp
     src/NodeEditor.cpp
     src/NodeSerializer.cpp

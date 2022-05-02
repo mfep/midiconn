@@ -18,6 +18,7 @@ public:
     ~MidiOutNode();
 
     void accept_serializer(nlohmann::json& j, const NodeSerializer& serializer) const override;
+    const midi::OutputInfo& get_info() const { return m_output_info; }
 
 private:
     void render_internal() override;

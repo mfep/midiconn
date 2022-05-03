@@ -42,6 +42,7 @@ bool PresetManager::is_dirty(const NodeEditor& editor) const
 
 NodeEditor PresetManager::open_preset(const std::string& open_path)
 {
+    spdlog::info("Opening preset from path \"{}\"", open_path);
     std::ifstream ifs(open_path);
     nlohmann::json j;
     ifs >> j;
@@ -70,6 +71,7 @@ std::optional<NodeEditor> PresetManager::try_loading_last_preset()
     {
         std::filesystem::path exe_fs_path(m_exe_path);
         const auto json_path = exe_fs_path.replace_extension("json");
+        spdlog::info("Loading config file from \"{}\"", json_path.string());
         {
             std::ifstream ifs(json_path);
             ifs >> j;
@@ -100,6 +102,7 @@ void PresetManager::try_saving_last_preset_path() const
     }
     std::filesystem::path exe_fs_path(m_exe_path);
     const auto json_path = exe_fs_path.replace_extension("json");
+    spdlog::info("Saving config file to \"{}\"", json_path.string());
     try
     {
         nlohmann::json j;
@@ -126,6 +129,7 @@ void PresetManager::save_preset(const NodeEditor& editor, const bool save_as)
     }
     if (!save_path.empty())
     {
+        spdlog::info("Saving preset file to \"{}\"", save_path);
         if (!ends_with_dot_json(save_path))
         {
             save_path += ".json";

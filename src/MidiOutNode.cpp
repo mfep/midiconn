@@ -2,7 +2,6 @@
 
 #include "imgui.h"
 #include "imnodes.h"
-#include "spdlog/spdlog.h"
 
 #include "MidiEngine.hpp"
 #include "NodeSerializer.hpp"

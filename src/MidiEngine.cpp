@@ -206,7 +206,7 @@ void Engine::connect(size_t input_id, size_t output_id, channel_map channels)
         }
     }
     spdlog::info("connected input {} to output {} with channel mask 0x{}",
-    input_id, output_id, ss.str());
+        input_id, output_id, ss.str());
 }
 
 void Engine::disconnect(size_t input_id, size_t output_id)
@@ -228,6 +228,7 @@ void Engine::disconnect(size_t input_id, size_t output_id)
 void Engine::message_received(size_t id, std::vector<unsigned char>& message_bytes)
 {
     assert(!message_bytes.empty() && message_bytes.size() <= 3);
+    SPDLOG_DEBUG("Message ({} bytes) received from input ID {}", message_bytes.size(), id);
     std::shared_lock lock(m_mutex);
     if (id >= m_inputs.size() || m_inputs[id] == nullptr)
     {
@@ -253,6 +254,7 @@ void Engine::message_received(size_t id, std::vector<unsigned char>& message_byt
             }
             message.set_channel(target_channel);
         }
+        SPDLOG_DEBUG("Sending message to output ID {}", output_id);
         m_outputs[output_id]->m_output.send_message(message_copy);
     }
 }

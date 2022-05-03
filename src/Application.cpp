@@ -21,6 +21,7 @@ Application::Application(const char* exe_path) :
     m_node_editor(m_midi_engine),
     m_preset_manager(m_node_editor, m_midi_engine, exe_path)
 {
+    spdlog::info("Starting " MIDI_APPLICATION_NAME " version {}", MC_FULL_VERSION);
     auto last_opened_editor = m_preset_manager.try_loading_last_preset();
     if (last_opened_editor.has_value())
     {
@@ -28,7 +29,10 @@ Application::Application(const char* exe_path) :
     }
 }
 
-Application::~Application() = default;
+Application::~Application()
+{
+    spdlog::info(MIDI_APPLICATION_NAME " shutting down");
+}
 
 void Application::render()
 {
@@ -72,6 +76,7 @@ void Application::handle_done(bool& done)
     if (done)
     {
         m_preset_manager.try_saving_last_preset_path();
+        SPDLOG_DEBUG("Application is done");
     }
 }
 
@@ -144,7 +149,7 @@ void Application::render_main_menu()
     ImGui::SetNextWindowSizeConstraints({600, 0}, {600, 400});
     if (ImGui::BeginPopupModal("About " MIDI_APPLICATION_NAME, NULL, ImGuiWindowFlags_AlwaysAutoResize))
     {
-        ImGui::TextUnformatted(MC_MAJOR_VERSION "." MC_MINOR_VERSION "." MC_PATCH_VERSION "." MC_BUILD_NUMBER);
+        ImGui::TextUnformatted(MC_FULL_VERSION);
         ImGui::TextUnformatted(MC_COMMIT_HASH);
         ImGui::TextUnformatted(MC_BUILD_OS);
         if (ImGui::CollapsingHeader("Open source licenses"))

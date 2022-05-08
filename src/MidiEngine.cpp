@@ -98,7 +98,7 @@ void Engine::create(const InputInfo& input_info, InputObserver* observer)
         input->m_input.add_observer(observer);
     }
     input->m_input.open();
-    spdlog::info("instantiated MIDI input '{}'", input_info.m_name);
+    spdlog::info("Instantiated MIDI input '{}'", input_info.m_name);
 }
 
 void Engine::create(const OutputInfo& output_info, OutputObserver* observer)
@@ -124,7 +124,7 @@ void Engine::create(const OutputInfo& output_info, OutputObserver* observer)
     {
         output->m_output.add_observer(observer);
     }
-    spdlog::info("instantiated MIDI output '{}'", output_info.m_name);
+    spdlog::info("Instantiated MIDI output '{}'", output_info.m_name);
 }
 
 void Engine::remove(const InputInfo& input_info, InputObserver* observer)
@@ -143,7 +143,7 @@ void Engine::remove(const InputInfo& input_info, InputObserver* observer)
     if (--counter == 0)
     {
         m_inputs[id] = nullptr;
-        spdlog::info("removed MIDI input '{}'", input_info.m_name);
+        spdlog::info("Removed MIDI input '{}'", input_info.m_name);
     }
 }
 
@@ -178,7 +178,7 @@ void Engine::remove(const OutputInfo& output_info, OutputObserver* observer)
             connected_outputs.erase(connected_id_iter);
         }
     }
-    spdlog::info("removed MIDI output '{}'", output_info.m_name);
+    spdlog::info("Removed MIDI output '{}'", output_info.m_name);
 }
 
 void Engine::connect(size_t input_id, size_t output_id, channel_map channels)
@@ -205,8 +205,8 @@ void Engine::connect(size_t input_id, size_t output_id, channel_map channels)
             ss << val;
         }
     }
-    spdlog::info("connected input {} to output {} with channel mask 0x{}",
-    input_id, output_id, ss.str());
+    spdlog::info("Connected input {} to output {} with channel mask 0x{}",
+        input_id, output_id, ss.str());
 }
 
 void Engine::disconnect(size_t input_id, size_t output_id)
@@ -222,12 +222,13 @@ void Engine::disconnect(size_t input_id, size_t output_id)
     {
         out_list.erase(out_itr);
     }
-    spdlog::info("disconnected input {} from output {}", input_id, output_id);
+    spdlog::info("Disconnected input {} from output {}", input_id, output_id);
 }
 
 void Engine::message_received(size_t id, std::vector<unsigned char>& message_bytes)
 {
     assert(!message_bytes.empty() && message_bytes.size() <= 3);
+    SPDLOG_DEBUG("Message ({} bytes) received from input ID {}", message_bytes.size(), id);
     std::shared_lock lock(m_mutex);
     if (id >= m_inputs.size() || m_inputs[id] == nullptr)
     {
@@ -253,6 +254,7 @@ void Engine::message_received(size_t id, std::vector<unsigned char>& message_byt
             }
             message.set_channel(target_channel);
         }
+        SPDLOG_DEBUG("Sending message to output ID {}", output_id);
         m_outputs[output_id]->m_output.send_message(message_copy);
     }
 }

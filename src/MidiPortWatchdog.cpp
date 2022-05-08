@@ -1,5 +1,7 @@
 #include "MidiPortWatchdog.hpp"
 
+#include "spdlog/spdlog.h"
+
 #include "DisconnectedMidiInNode.hpp"
 #include "DisconnectedMidiOutNode.hpp"
 #include "MidiInNode.hpp"
@@ -84,6 +86,7 @@ bool update_node(std::shared_ptr<Node>& node_ptr, ValidGetterFun valid_getter_fu
         {
             if (valid_info.has_value())
             {
+                spdlog::info("Re-activating node for connected device \"{}\"", valid_info.value().m_name);
                 const auto memo = get_memo(node_ptr);
                 node_ptr = std::make_shared<ReplacingMidiNode>(valid_info.value(), std::forward<Args>(args)...);
                 set_memo(node_ptr, memo);
@@ -93,6 +96,7 @@ bool update_node(std::shared_ptr<Node>& node_ptr, ValidGetterFun valid_getter_fu
         {
             if (!valid_info.has_value() || valid_info.value().m_id != midi_ptr->get_info().m_id)
             {
+                spdlog::info("Deactivating node for disconnected device \"{}\"", valid_info.value().m_name);
                 const auto memo = get_memo(node_ptr);
                 node_ptr = std::make_shared<ReplacingMidiNode>(midi_port_name);
                 set_memo(node_ptr, memo);

@@ -6,6 +6,7 @@
 #include "PresetManager.hpp"
 
 #define MIDI_APPLICATION_NAME "MIDI Connector"
+#define MIDI_APPLICATION_NAME_SNAKE "midi_connector"
 
 namespace mc
 {
@@ -35,6 +36,7 @@ private:
     midi::Engine m_midi_engine;
     NodeEditor m_node_editor;
     PresetManager m_preset_manager;
+    bool m_debug_log_enabled{};
 };
 
 }

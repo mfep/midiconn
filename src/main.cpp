@@ -1,27 +1,37 @@
-// Dear ImGui: standalone example application for DirectX 9
-// If you are new to Dear ImGui, read documentation from the docs/ folder + read the top of imgui.cpp.
-// Read online: https://github.com/ocornut/imgui/tree/master/docs
+#define SDL_MAIN_HANDLED
 
-#include "imgui.h"
-#include "imnodes.h"
 #include "backends/imgui_impl_sdl.h"
 #include "backends/imgui_impl_sdlrenderer.h"
-#define SDL_MAIN_HANDLED
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_syswm.h>
+#include "imgui.h"
+#include "imnodes.h"
+#include "SDL2/SDL_syswm.h"
+#include "SDL2/SDL.h"
+#include "spdlog/spdlog.h"
+#include "spdlog/sinks/rotating_file_sink.h"
+#include "spdlog/sinks/stdout_color_sinks.h"
+
 #include "Application.hpp"
+
 #if !SDL_VERSION_ATLEAST(2,0,17)
 #error This backend requires SDL 2.0.17+ because of SDL_RenderGeometry() function
 #endif
 
 int main(int /*argc*/, char** argv)
 {
+    // Setup spdlog
+    static constexpr size_t max_logfile_size = 5 * 1024 * 1024; // 5 MiB
+    static constexpr size_t num_logfiles = 2;
+    auto rotating_logger = spdlog::rotating_logger_mt("default", MIDI_APPLICATION_NAME_SNAKE "_log.txt", max_logfile_size, num_logfiles);
+    rotating_logger->sinks().push_back(std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
+    rotating_logger->flush_on(spdlog::level::err);
+    spdlog::set_default_logger(rotating_logger);
+
     // Setup SDL
     // (Some versions of SDL before <2.0.10 appears to have performance/stalling issues on a minority of Windows systems,
     // depending on whether SDL_INIT_GAMECONTROLLER is enabled or disabled.. updating to latest version of SDL is recommended!)
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMECONTROLLER) != 0)
     {
-        printf("Error: %s\n", SDL_GetError());
+        spdlog::error("Cannot initialize SDL: \"{}\"", SDL_GetError());
         return -1;
     }
 
@@ -33,8 +43,8 @@ int main(int /*argc*/, char** argv)
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
     if (renderer == NULL)
     {
-        SDL_Log("Error creating SDL_Renderer!");
-        return false;
+        spdlog::error("Cannot create SDL_Renderer: \"{}\"", SDL_GetError());
+        return -1;
     }
 
     // Setup Dear ImGui context

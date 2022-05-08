@@ -56,6 +56,9 @@ target_link_libraries(midi_connector PRIVATE
     rtmidi
     spdlog::spdlog
     SDL2::SDL2)
+target_compile_definitions(midi_connector PRIVATE
+    SPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_DEBUG
+)
 
 if (WIN32)
     add_custom_command (TARGET midi_connector POST_BUILD

@@ -131,6 +131,11 @@ void Application::render_main_menu()
         }
         if (ImGui::BeginMenu("Help"))
         {
+            if (ImGui::MenuItem("Enable debug log", nullptr, &m_debug_log_enabled))
+            {
+                spdlog::set_level(m_debug_log_enabled ? spdlog::level::debug : spdlog::level::info);
+                spdlog::info("Debug log enabled: {}", m_debug_log_enabled);
+            }
             if (ImGui::MenuItem("About"))
             {
                 open_about_popup = true;

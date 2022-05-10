@@ -49,7 +49,7 @@ Engine::MidiInput::MidiInput(const InputInfo& info) :
 void Engine::MidiInput::open()
 {
     m_midi_in.setCallback(message_callback, this);
-    m_midi_in.setErrorCallback(error_callback, this);
+    m_midi_in.setErrorCallback(error_callback, nullptr);
     m_midi_in.openPort(m_info.m_id);
 }
 
@@ -65,16 +65,15 @@ void Engine::MidiInput::message_callback(
 void Engine::MidiInput::error_callback(
     RtMidiError::Type error_code,
     const std::string& message,
-    void* user_data)
+    void* /*user_data*/)
 {
-    auto* instance = static_cast<MidiInput*>(user_data);
-    spdlog::error("Error occured in MIDI input \"{}\": \"{}\"", instance->m_info.m_name, message);
+    spdlog::error("Error occured in MIDI input: \"{}\"", message);
 }
 
 Engine::MidiOutput::MidiOutput(const OutputInfo& info) :
     m_info(info)
 {
-    m_midi_out.setErrorCallback(error_callback, this);
+    m_midi_out.setErrorCallback(error_callback, nullptr);
     m_midi_out.openPort(info.m_id);
 }
 
@@ -87,10 +86,9 @@ void Engine::MidiOutput::send_message(const std::vector<unsigned char>& message_
 void Engine::MidiOutput::error_callback(
     RtMidiError::Type error_code,
     const std::string& message,
-    void* user_data)
+    void* /*user_data*/)
 {
-    auto* instance = static_cast<MidiOutput*>(user_data);
-    spdlog::error("Error occured in MIDI output \"{}\": \"{}\"", instance->m_info.m_name, message);
+    spdlog::error("Error occured in MIDI output: \"{}\"", message);
 }
 
 void Engine::create(const InputInfo& input_info, InputObserver* observer)

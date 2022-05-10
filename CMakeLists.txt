@@ -31,6 +31,7 @@ add_executable(midi_connector
     src/DisconnectedMidiInNode.cpp
     src/DisconnectedMidiOutNode.cpp
     src/InputObserver.cpp
+    src/KeyboardShortcutAggregator.cpp
     src/Licenses.cpp
     src/MidiChannelNode.cpp
     src/MidiEngine.cpp

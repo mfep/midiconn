@@ -86,6 +86,44 @@ std::string Application::get_window_title() const
     return prefix + m_preset_manager.get_opened_path().value_or("Untitled") + " - " MIDI_APPLICATION_NAME;
 }
 
+void Application::new_preset_command()
+{
+    bool new_preset = true;
+    if (m_preset_manager.is_dirty(m_node_editor))
+    {
+        new_preset = query_save();
+    }
+    if (new_preset)
+    {
+        m_node_editor = NodeEditor(m_midi_engine);
+        m_preset_manager = PresetManager(m_node_editor, m_midi_engine, m_exe_path);
+    }
+}
+
+void Application::open_preset_command()
+{
+    const auto open_path = pfd::open_file("Open preset", ".", {"JSON files (*.json)", "*.json"}).result();
+    if (open_path.size() == 1 && !open_path.front().empty())
+    {
+        m_node_editor = m_preset_manager.open_preset(open_path.front());
+    }
+}
+
+void Application::save_preset_command()
+{
+    m_preset_manager.save_preset(m_node_editor);
+}
+
+void Application::save_preset_as_command()
+{
+    m_preset_manager.save_preset_as(m_node_editor);
+}
+
+void Application::exit_command()
+{
+    m_is_done = true;
+}
+
 void Application::render_main_menu()
 {
     bool open_about_popup = false;
@@ -95,37 +133,24 @@ void Application::render_main_menu()
         {
             if (ImGui::MenuItem("New preset"))
             {
-                bool new_preset = true;
-                if (m_preset_manager.is_dirty(m_node_editor))
-                {
-                    new_preset = query_save();
-                }
-                if (new_preset)
-                {
-                    m_node_editor = NodeEditor(m_midi_engine);
-                    m_preset_manager = PresetManager(m_node_editor, m_midi_engine, m_exe_path);
-                }
+                new_preset_command();
             }
             if (ImGui::MenuItem("Open preset"))
             {
-                const auto open_path = pfd::open_file("Open preset", ".", { "JSON files (*.json)", "*.json" }).result();
-                if (open_path.size() == 1 && !open_path.front().empty())
-                {
-                    m_node_editor = m_preset_manager.open_preset(open_path.front());
-                }
+                open_preset_command();
             }
             if (ImGui::MenuItem("Save preset"))
             {
-                m_preset_manager.save_preset(m_node_editor);
+                save_preset_command();
             }
             if (ImGui::MenuItem("Save preset as"))
             {
-                m_preset_manager.save_preset_as(m_node_editor);
+                save_preset_as_command();
             }
             ImGui::Separator();
             if (ImGui::MenuItem("Exit"))
             {
-                m_is_done = true;
+                exit_command();
             }
             ImGui::EndMenu();
         }

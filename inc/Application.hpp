@@ -28,6 +28,12 @@ public:
     std::string get_window_title() const;
 
 private:
+    void new_preset_command();
+    void open_preset_command();
+    void save_preset_command();
+    void save_preset_as_command();
+    void exit_command();
+
     void render_main_menu();
     bool query_save();
 

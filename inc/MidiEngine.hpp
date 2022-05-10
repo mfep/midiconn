@@ -23,6 +23,7 @@ private:
         MidiInput(const InputInfo& info);
         void open();
         static void message_callback(double time_stamp, std::vector<unsigned char> *message, void *user_data);
+        static void error_callback(RtMidiError::Type error_code, const std::string& message, void* user_data);
 
     private:
         InputInfo m_info;
@@ -34,6 +35,7 @@ private:
     public:
         MidiOutput(const OutputInfo& info);
         void send_message(const std::vector<unsigned char>& message_bytes);
+        static void error_callback(RtMidiError::Type error_code, const std::string& message, void* user_data);
 
     private:
         OutputInfo m_info;

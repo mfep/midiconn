@@ -22,7 +22,8 @@ build-windows:
     - windows-1809
   rules:
     - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
-    - when: manual
+    - if: '$CI_PIPELINE_SOURCE == "push"'
+      when: manual
       allow_failure: true
   before_script:
     - pwd

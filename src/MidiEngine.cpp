@@ -49,6 +49,7 @@ Engine::MidiInput::MidiInput(const InputInfo& info) :
 void Engine::MidiInput::open()
 {
     m_midi_in.setCallback(message_callback, this);
+    m_midi_in.setErrorCallback(error_callback, nullptr);
     m_midi_in.openPort(m_info.m_id);
 }
 
@@ -61,9 +62,18 @@ void Engine::MidiInput::message_callback(
     instance->raise_message_received(instance->m_info.m_id, *message);
 }
 
+void Engine::MidiInput::error_callback(
+    RtMidiError::Type error_code,
+    const std::string& message,
+    void* /*user_data*/)
+{
+    spdlog::error("Error occured in MIDI input: \"{}\"", message);
+}
+
 Engine::MidiOutput::MidiOutput(const OutputInfo& info) :
     m_info(info)
 {
+    m_midi_out.setErrorCallback(error_callback, nullptr);
     m_midi_out.openPort(info.m_id);
 }
 
@@ -71,6 +81,14 @@ void Engine::MidiOutput::send_message(const std::vector<unsigned char>& message_
 {
     m_midi_out.sendMessage(&message_bytes);
     raise_message_sent(m_info.m_id, message_bytes);
+}
+
+void Engine::MidiOutput::error_callback(
+    RtMidiError::Type error_code,
+    const std::string& message,
+    void* /*user_data*/)
+{
+    spdlog::error("Error occured in MIDI output: \"{}\"", message);
 }
 
 void Engine::create(const InputInfo& input_info, InputObserver* observer)

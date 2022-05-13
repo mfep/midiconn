@@ -86,6 +86,69 @@ std::string Application::get_window_title() const
     return prefix + m_preset_manager.get_opened_path().value_or("Untitled") + " - " MIDI_APPLICATION_NAME;
 }
 
+void Application::handle_shortcuts(const KeyboardShortcutAggregator& shortcuts)
+{
+    if (shortcuts.is_shortcut_pressed(KeyboardShortcut::CtrlN))
+    {
+        new_preset_command();
+    }
+    if (shortcuts.is_shortcut_pressed(KeyboardShortcut::CtrlO))
+    {
+        open_preset_command();
+    }
+    if (shortcuts.is_shortcut_pressed(KeyboardShortcut::CtrlS))
+    {
+        save_preset_command();
+    }
+    if (shortcuts.is_shortcut_pressed(KeyboardShortcut::CtrlShiftS))
+    {
+        save_preset_as_command();
+    }
+}
+
+void Application::new_preset_command()
+{
+    spdlog::info("Executing new_preset_command");
+    bool new_preset = true;
+    if (m_preset_manager.is_dirty(m_node_editor))
+    {
+        new_preset = query_save();
+    }
+    if (new_preset)
+    {
+        m_node_editor = NodeEditor(m_midi_engine);
+        m_preset_manager = PresetManager(m_node_editor, m_midi_engine, m_exe_path);
+    }
+}
+
+void Application::open_preset_command()
+{
+    spdlog::info("Executing open_preset_command");
+    const auto open_path = pfd::open_file("Open preset", ".", {"JSON files (*.json)", "*.json"}).result();
+    if (open_path.size() == 1 && !open_path.front().empty())
+    {
+        m_node_editor = m_preset_manager.open_preset(open_path.front());
+    }
+}
+
+void Application::save_preset_command()
+{
+    spdlog::info("Executing save_preset_command");
+    m_preset_manager.save_preset(m_node_editor);
+}
+
+void Application::save_preset_as_command()
+{
+    spdlog::info("Executing save_preset_as_command");
+    m_preset_manager.save_preset_as(m_node_editor);
+}
+
+void Application::exit_command()
+{
+    spdlog::info("Executing exit_command");
+    m_is_done = true;
+}
+
 void Application::render_main_menu()
 {
     bool open_about_popup = false;
@@ -93,39 +156,26 @@ void Application::render_main_menu()
     {
         if (ImGui::BeginMenu("File"))
         {
-            if (ImGui::MenuItem("New preset"))
+            if (ImGui::MenuItem("New preset", "Ctrl+N"))
             {
-                bool new_preset = true;
-                if (m_preset_manager.is_dirty(m_node_editor))
-                {
-                    new_preset = query_save();
-                }
-                if (new_preset)
-                {
-                    m_node_editor = NodeEditor(m_midi_engine);
-                    m_preset_manager = PresetManager(m_node_editor, m_midi_engine, m_exe_path);
-                }
+                new_preset_command();
             }
-            if (ImGui::MenuItem("Open preset"))
+            if (ImGui::MenuItem("Open preset", "Ctrl+O"))
             {
-                const auto open_path = pfd::open_file("Open preset", ".", { "JSON files (*.json)", "*.json" }).result();
-                if (open_path.size() == 1 && !open_path.front().empty())
-                {
-                    m_node_editor = m_preset_manager.open_preset(open_path.front());
-                }
+                open_preset_command();
             }
-            if (ImGui::MenuItem("Save preset"))
+            if (ImGui::MenuItem("Save preset", "Ctrl+S"))
             {
-                m_preset_manager.save_preset(m_node_editor);
+                save_preset_command();
             }
-            if (ImGui::MenuItem("Save preset as"))
+            if (ImGui::MenuItem("Save preset as", "Ctrl+Shift+S"))
             {
-                m_preset_manager.save_preset_as(m_node_editor);
+                save_preset_as_command();
             }
             ImGui::Separator();
-            if (ImGui::MenuItem("Exit"))
+            if (ImGui::MenuItem("Exit", "Alt+F4"))
             {
-                m_is_done = true;
+                exit_command();
             }
             ImGui::EndMenu();
         }

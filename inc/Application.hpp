@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 
+#include "KeyboardShotcutAggregator.hpp"
 #include "MidiEngine.hpp"
 #include "NodeEditor.hpp"
 #include "PresetManager.hpp"
@@ -8,15 +9,8 @@
 #define MIDI_APPLICATION_NAME "MIDI Connector"
 #define MIDI_APPLICATION_NAME_SNAKE "midi_connector"
 
-namespace mc
+namespace mc::display
 {
-namespace midi
-{
-class Engine;
-}
-namespace display
-{
-class NodeEditor;
 
 class Application final
 {
@@ -26,8 +20,15 @@ public:
     void render();
     void handle_done(bool& done);
     std::string get_window_title() const;
+    void handle_shortcuts(const KeyboardShortcutAggregator& shortcuts);
 
 private:
+    void new_preset_command();
+    void open_preset_command();
+    void save_preset_command();
+    void save_preset_as_command();
+    void exit_command();
+
     void render_main_menu();
     bool query_save();
 
@@ -39,5 +40,4 @@ private:
     bool m_debug_log_enabled{};
 };
 
-}
 }

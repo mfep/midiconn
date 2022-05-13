@@ -11,6 +11,7 @@
 #include "spdlog/sinks/stdout_color_sinks.h"
 
 #include "Application.hpp"
+#include "KeyboardShotcutAggregator.hpp"
 
 #if !SDL_VERSION_ATLEAST(2,0,17)
 #error This backend requires SDL 2.0.17+ because of SDL_RenderGeometry() function
@@ -89,9 +90,11 @@ int main(int /*argc*/, char** argv)
         // - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application.
         // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application.
         // Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
+        mc::KeyboardShortcutAggregator shortcuts;
         SDL_Event event;
         while (SDL_PollEvent(&event))
         {
+            shortcuts.capture_event(event);
             ImGui_ImplSDL2_ProcessEvent(&event);
             if (event.type == SDL_QUIT)
                 done = true;
@@ -107,6 +110,7 @@ int main(int /*argc*/, char** argv)
         ImGui_ImplSDL2_NewFrame();
         ImGui::NewFrame();
 
+        app.handle_shortcuts(shortcuts);
         app.render();
         app.handle_done(done);
 

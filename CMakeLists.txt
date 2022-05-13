@@ -4,6 +4,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 project(midi_connector LANGUAGES CXX)
 
+find_package(fmt REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(SDL2 REQUIRED)
 
@@ -56,7 +57,8 @@ target_link_libraries(midi_connector PRIVATE
     nlohmann_json::nlohmann_json
     rtmidi
     spdlog::spdlog
-    SDL2::SDL2)
+    SDL2::SDL2
+    fmt::fmt)
 target_compile_definitions(midi_connector PRIVATE
     SPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_DEBUG
 )

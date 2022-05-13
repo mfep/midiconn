@@ -2,6 +2,7 @@
 #include <chrono>
 
 #include "InputObserver.hpp"
+#include "MidiEngine.hpp"
 #include "MidiInfo.hpp"
 #include "Node.hpp"
 
@@ -28,6 +29,7 @@ private:
     midi::InputInfo m_input_info;
     midi::Engine* m_midi_engine;
     std::chrono::time_point<std::chrono::system_clock> m_last_message_received;
+    midi::MessageTypeMask m_enabled_message_types{};
 
     friend class NodeSerializer;
 };

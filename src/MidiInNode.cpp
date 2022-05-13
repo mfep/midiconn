@@ -5,7 +5,6 @@
 #include "imgui.h"
 #include "imnodes.h"
 
-#include "MidiEngine.hpp"
 #include "NodeSerializer.hpp"
 
 namespace mc
@@ -54,6 +53,17 @@ void MidiInNode::render_internal()
 
     ImGui::TextUnformatted("all channels");
     ImNodes::EndOutputAttribute();
+
+    // if (ImGui::TreeNodeEx("Advanced"))
+    // {
+        if (ImGui::Checkbox("Enable SysEx", &m_enabled_message_types.m_sysex_enabled)
+            || ImGui::Checkbox("Enable Time", &m_enabled_message_types.m_time_enabled)
+            || ImGui::Checkbox("Enable Active Sensing", &m_enabled_message_types.m_sensing_enabled))
+        {
+            m_midi_engine->enable_message_types(m_input_info, m_enabled_message_types);
+        }
+    //     ImGui::TreePop();
+    // }
 }
 
 void MidiInNode::message_received(size_t /*id*/, std::vector<unsigned char>& /*message_bytes*/)

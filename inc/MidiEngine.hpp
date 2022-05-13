@@ -14,6 +14,13 @@
 namespace mc::midi
 {
 
+struct MessageTypeMask
+{
+    bool m_sysex_enabled;
+    bool m_time_enabled;
+    bool m_sensing_enabled;
+};
+
 class Engine final : private InputObserver
 {
 private:
@@ -22,6 +29,7 @@ private:
     public:
         MidiInput(const InputInfo& info);
         void open();
+        void enable_message_types(const MessageTypeMask& mask);
         static void message_callback(double time_stamp, std::vector<unsigned char> *message, void *user_data);
         static void error_callback(RtMidiError::Type error_code, const std::string& message, void* user_data);
 
@@ -49,6 +57,7 @@ public:
     void remove(const OutputInfo& output_info, OutputObserver* observer = nullptr);
     void connect(size_t input_id, size_t output_id, channel_map channels);
     void disconnect(size_t input_id, size_t output_id);
+    void enable_message_types(const InputInfo& input_info, const MessageTypeMask& mask);
 
 private:
     void message_received(size_t id, std::vector<unsigned char>& message_bytes) override;

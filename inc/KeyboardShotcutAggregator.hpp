@@ -11,8 +11,7 @@ enum class KeyboardShortcut : unsigned
     CtrlO = 2,
     CtrlS = 4,
     CtrlShiftS = 8,
-    AltF4 = 16,
-    Size = 5
+    Size = 4
 };
 
 class KeyboardShortcutAggregator

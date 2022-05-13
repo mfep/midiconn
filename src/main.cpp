@@ -110,6 +110,7 @@ int main(int /*argc*/, char** argv)
         ImGui_ImplSDL2_NewFrame();
         ImGui::NewFrame();
 
+        app.handle_shortcuts(shortcuts);
         app.render();
         app.handle_done(done);
 

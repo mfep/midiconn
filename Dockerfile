@@ -8,6 +8,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 		wget \
 		xorg-dev \
 		libspdlog-dev \
+		libfmt-dev \
 		libasound2-dev \
 	&& apt-get autoremove --purge -y \
 	&& apt-get autoclean \

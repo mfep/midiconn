@@ -23,9 +23,8 @@ void OutputObservable::remove_observer(OutputObserver* observer)
     }
 }
 
-void OutputObservable::raise_message_sent(
-    size_t id,
-    const std::vector<unsigned char>& message_bytes) const
+void OutputObservable::raise_message_sent(size_t                            id,
+                                          const std::vector<unsigned char>& message_bytes) const
 {
     for (auto* observer : m_observers)
     {
@@ -33,4 +32,4 @@ void OutputObservable::raise_message_sent(
     }
 }
 
-}
+} // namespace mc::midi

@@ -19,4 +19,4 @@ public:
     static void check_nodes(std::vector<std::shared_ptr<Node>>& nodes, midi::Engine& midi_engine);
 };
 
-}
+} // namespace mc

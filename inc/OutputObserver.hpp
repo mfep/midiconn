@@ -8,7 +8,7 @@ namespace mc::midi
 class OutputObserver
 {
 public:
-    virtual ~OutputObserver() = default;
+    virtual ~OutputObserver()                                                             = default;
     virtual void message_sent(size_t id, const std::vector<unsigned char>& message_bytes) = 0;
 };
 
@@ -26,4 +26,4 @@ private:
     std::vector<OutputObserver*> m_observers;
 };
 
-}
+} // namespace mc::midi

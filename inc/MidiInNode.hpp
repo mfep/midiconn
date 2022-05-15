@@ -26,12 +26,12 @@ private:
     void render_internal() override;
     void message_received(size_t id, std::vector<unsigned char>& message_bytes) override;
 
-    midi::InputInfo m_input_info;
-    midi::Engine* m_midi_engine;
+    midi::InputInfo                                    m_input_info;
+    midi::Engine*                                      m_midi_engine;
     std::chrono::time_point<std::chrono::system_clock> m_last_message_received;
-    midi::MessageTypeMask m_enabled_message_types{};
+    midi::MessageTypeMask                              m_enabled_message_types{};
 
     friend class NodeSerializer;
 };
 
-}
+} // namespace mc

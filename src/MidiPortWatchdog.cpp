@@ -13,35 +13,35 @@ namespace mc
 namespace
 {
 
-template<class MidiNode>
+template <class MidiNode>
 struct MidiNodeTraits;
 
-template<>
+template <>
 struct MidiNodeTraits<MidiInNode>
 {
     static constexpr bool is_disconnected = false;
 };
 
-template<>
+template <>
 struct MidiNodeTraits<MidiOutNode>
 {
     static constexpr bool is_disconnected = false;
 };
 
-template<>
+template <>
 struct MidiNodeTraits<DisconnectedMidiInNode>
 {
     static constexpr bool is_disconnected = true;
 };
 
-template<>
+template <>
 struct MidiNodeTraits<DisconnectedMidiOutNode>
 {
     static constexpr bool is_disconnected = true;
 };
 
-template<class MidiNode, class ReplacingMidiNode, class ValidGetterFun, class ... Args>
-bool update_node(std::shared_ptr<Node>& node_ptr, ValidGetterFun valid_getter_fun, Args&& ... args)
+template <class MidiNode, class ReplacingMidiNode, class ValidGetterFun, class... Args>
+bool update_node(std::shared_ptr<Node>& node_ptr, ValidGetterFun valid_getter_fun, Args&&... args)
 {
     if (auto* midi_ptr = dynamic_cast<MidiNode*>(node_ptr.get()); midi_ptr != nullptr)
     {
@@ -55,16 +55,12 @@ bool update_node(std::shared_ptr<Node>& node_ptr, ValidGetterFun valid_getter_fu
             midi_port_name = midi_ptr->get_info().m_name;
         }
 
-        const auto get_memo = [](std::shared_ptr<Node>& old_node)
-        {
-            return std::tuple{
-                old_node->get_input_connections(),
-                old_node->get_output_connections(),
-                ImNodes::GetNodeGridSpacePos(old_node->id())
-            };
+        const auto get_memo = [](std::shared_ptr<Node>& old_node) {
+            return std::tuple{old_node->get_input_connections(),
+                              old_node->get_output_connections(),
+                              ImNodes::GetNodeGridSpacePos(old_node->id())};
         };
-        const auto set_memo = [](std::shared_ptr<Node>& new_node, const auto& memo)
-        {
+        const auto set_memo = [](std::shared_ptr<Node>& new_node, const auto& memo) {
             for (const auto& outputting_node : std::get<0>(memo))
             {
                 auto outputting_node_ptr = outputting_node.lock();
@@ -88,7 +84,8 @@ bool update_node(std::shared_ptr<Node>& node_ptr, ValidGetterFun valid_getter_fu
             {
                 spdlog::info("Re-activating node for connected device \"{}\"", midi_port_name);
                 const auto memo = get_memo(node_ptr);
-                node_ptr = std::make_shared<ReplacingMidiNode>(valid_info.value(), std::forward<Args>(args)...);
+                node_ptr        = std::make_shared<ReplacingMidiNode>(valid_info.value(),
+                                                               std::forward<Args>(args)...);
                 set_memo(node_ptr, memo);
             }
         }
@@ -98,7 +95,7 @@ bool update_node(std::shared_ptr<Node>& node_ptr, ValidGetterFun valid_getter_fu
             {
                 spdlog::info("Deactivating node for disconnected device \"{}\"", midi_port_name);
                 const auto memo = get_memo(node_ptr);
-                node_ptr = std::make_shared<ReplacingMidiNode>(midi_port_name);
+                node_ptr        = std::make_shared<ReplacingMidiNode>(midi_port_name);
                 set_memo(node_ptr, memo);
             }
         }
@@ -110,14 +107,19 @@ bool update_node(std::shared_ptr<Node>& node_ptr, ValidGetterFun valid_getter_fu
     }
 }
 
-}   // namespace
+} // namespace
 
-void MidiPortWatchdog::check_nodes(std::vector<std::shared_ptr<Node>>& nodes, midi::Engine& midi_engine)
+void MidiPortWatchdog::check_nodes(std::vector<std::shared_ptr<Node>>& nodes,
+                                   midi::Engine&                       midi_engine)
 {
     for (auto& node_ptr : nodes)
     {
-        const auto get_valid_input = [](const auto& name) { return MidiProbe::get_valid_input(name); };
-        const auto get_valid_output = [](const auto& name) { return MidiProbe::get_valid_output(name); };
+        const auto get_valid_input = [](const auto& name) {
+            return MidiProbe::get_valid_input(name);
+        };
+        const auto get_valid_output = [](const auto& name) {
+            return MidiProbe::get_valid_output(name);
+        };
 
         if (update_node<MidiInNode, DisconnectedMidiInNode>(node_ptr, get_valid_input))
         {
@@ -127,15 +129,17 @@ void MidiPortWatchdog::check_nodes(std::vector<std::shared_ptr<Node>>& nodes, mi
         {
             // do nothing, update done in side effect
         }
-        else if (update_node<DisconnectedMidiInNode, MidiInNode>(node_ptr, get_valid_input, midi_engine))
+        else if (update_node<DisconnectedMidiInNode, MidiInNode>(
+                     node_ptr, get_valid_input, midi_engine))
         {
             // do nothing, update done in side effect
         }
-        else if (update_node<DisconnectedMidiOutNode, MidiOutNode>(node_ptr, get_valid_output, midi_engine))
+        else if (update_node<DisconnectedMidiOutNode, MidiOutNode>(
+                     node_ptr, get_valid_output, midi_engine))
         {
             // do nothing, update done in side effect
         }
     }
 }
 
-}
+} // namespace mc

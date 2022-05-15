@@ -11,31 +11,29 @@ namespace
 std::vector<Node::node_ptr> get_connections(const std::map<int, Node::node_ptr>& node_map)
 {
     std::vector<Node::node_ptr> connections;
-    for (auto[link_id, other_node_ptr] : node_map)
+    for (auto [link_id, other_node_ptr] : node_map)
     {
         connections.push_back(other_node_ptr);
     }
     return connections;
 }
 
-}   // namespace
+} // namespace
 
-Node::Node() :
-    m_id(sm_next_id++)
+Node::Node() : m_id(sm_next_id++)
 {
 }
 
 void Node::render()
 {
-    auto purge = [](std::map<int, node_ptr>& connections) -> bool
-    {
+    auto purge = [](std::map<int, node_ptr>& connections) -> bool {
         bool changed = false;
         for (auto it = connections.begin(); it != connections.end();)
         {
             if (it->second.expired())
             {
                 changed = true;
-                it = connections.erase(it);
+                it      = connections.erase(it);
             }
             else
             {
@@ -57,7 +55,7 @@ void Node::render()
     ImNodes::EndNode();
     pop_style();
 
-    for (const auto&[link_id, node] : m_output_connections)
+    for (const auto& [link_id, node] : m_output_connections)
     {
         ImNodes::Link(link_id, out_id(), std::shared_ptr(node)->in_id());
     }
@@ -65,7 +63,7 @@ void Node::render()
 
 void Node::connect_output(node_ptr to_node, node_ptr this_node)
 {
-    auto link_id = sm_next_link_id++;
+    auto link_id                  = sm_next_link_id++;
     m_output_connections[link_id] = to_node;
     std::shared_ptr(to_node)->connect_input(this_node, link_id);
 }
@@ -110,7 +108,7 @@ void Node::update_outputs_with_sources()
 Node::midi_sources Node::get_transformed_sources()
 {
     midi_sources transformed_sources;
-    for (auto&[input_id, channels] : m_input_sources)
+    for (auto& [input_id, channels] : m_input_sources)
     {
         transformed_sources[input_id] = transform_channel_map(channels);
     }
@@ -134,8 +132,9 @@ void Node::update_sources_from_inputs(int new_link_id)
     m_input_sources.clear();
     if (new_link_id >= 0)
     {
-        const auto& base_sources = m_input_connections.at(new_link_id).lock()->get_transformed_sources();
-        for (auto&[input_id, map] : base_sources)
+        const auto& base_sources =
+            m_input_connections.at(new_link_id).lock()->get_transformed_sources();
+        for (auto& [input_id, map] : base_sources)
         {
             m_input_sources[input_id] = map;
         }
@@ -149,8 +148,8 @@ void Node::update_sources_from_inputs(int new_link_id)
             continue;
         }
         midi_sources new_sources;
-        bool has_conflicting_input{};
-        for (auto&[input_id, map] : node_ptr->get_transformed_sources())
+        bool         has_conflicting_input{};
+        for (auto& [input_id, map] : node_ptr->get_transformed_sources())
         {
             auto found_id_it = m_input_sources.find(input_id);
             if (found_id_it != m_input_sources.end())
@@ -173,8 +172,8 @@ void Node::update_sources_from_inputs(int new_link_id)
             ++it;
         }
     }
-    
+
     update_outputs_with_sources();
 }
 
-}
+} // namespace mc

@@ -8,7 +8,7 @@ namespace mc::midi
 class InputObserver
 {
 public:
-    virtual ~InputObserver() = default;
+    virtual ~InputObserver()                                                            = default;
     virtual void message_received(size_t id, std::vector<unsigned char>& message_bytes) = 0;
 };
 
@@ -26,4 +26,4 @@ private:
     std::vector<InputObserver*> m_observers;
 };
 
-}
+} // namespace mc::midi

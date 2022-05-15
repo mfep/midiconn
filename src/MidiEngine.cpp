@@ -15,20 +15,20 @@ namespace fmt
 template <>
 struct formatter<mc::midi::MessageTypeMask>
 {
-    constexpr auto parse(format_parse_context& ctx) -> decltype(ctx.begin())
-    {
-        return ctx.begin();
-    }
+    constexpr auto parse(format_parse_context& ctx) -> decltype(ctx.begin()) { return ctx.begin(); }
 
     template <typename FormatContext>
     auto format(const mc::midi::MessageTypeMask& mask, FormatContext& ctx) -> decltype(ctx.out())
     {
-        return format_to(ctx.out(), "[sysex: {}, time: {}, active sense: {}]", 
-            mask.m_sysex_enabled, mask.m_time_enabled, mask.m_sensing_enabled);
+        return format_to(ctx.out(),
+                         "[sysex: {}, time: {}, active sense: {}]",
+                         mask.m_sysex_enabled,
+                         mask.m_time_enabled,
+                         mask.m_sensing_enabled);
     }
 };
 
-}   // fmt
+} // namespace fmt
 
 namespace mc::midi
 {
@@ -61,10 +61,9 @@ void check_output_port(unsigned id, const OutputInfo& output_info)
     }
 }
 
-}   // namespace
+} // namespace
 
-Engine::MidiInput::MidiInput(const InputInfo& info) :
-    m_info(info)
+Engine::MidiInput::MidiInput(const InputInfo& info) : m_info(info)
 {
 }
 
@@ -80,25 +79,22 @@ void Engine::MidiInput::enable_message_types(const MessageTypeMask& mask)
     m_midi_in.ignoreTypes(!mask.m_sysex_enabled, !mask.m_time_enabled, !mask.m_sensing_enabled);
 }
 
-void Engine::MidiInput::message_callback(
-    double /*time_stamp*/,
-    std::vector<unsigned char> *message,
-    void *user_data)
+void Engine::MidiInput::message_callback(double /*time_stamp*/,
+                                         std::vector<unsigned char>* message,
+                                         void*                       user_data)
 {
     auto* instance = static_cast<MidiInput*>(user_data);
     instance->raise_message_received(instance->m_info.m_id, *message);
 }
 
-void Engine::MidiInput::error_callback(
-    RtMidiError::Type error_code,
-    const std::string& message,
-    void* /*user_data*/)
+void Engine::MidiInput::error_callback(RtMidiError::Type  error_code,
+                                       const std::string& message,
+                                       void* /*user_data*/)
 {
     spdlog::error("Error occured in MIDI input: \"{}\"", message);
 }
 
-Engine::MidiOutput::MidiOutput(const OutputInfo& info) :
-    m_info(info)
+Engine::MidiOutput::MidiOutput(const OutputInfo& info) : m_info(info)
 {
     m_midi_out.setErrorCallback(error_callback, nullptr);
     m_midi_out.openPort(info.m_id);
@@ -110,10 +106,9 @@ void Engine::MidiOutput::send_message(const std::vector<unsigned char>& message_
     raise_message_sent(m_info.m_id, message_bytes);
 }
 
-void Engine::MidiOutput::error_callback(
-    RtMidiError::Type error_code,
-    const std::string& message,
-    void* /*user_data*/)
+void Engine::MidiOutput::error_callback(RtMidiError::Type  error_code,
+                                        const std::string& message,
+                                        void* /*user_data*/)
 {
     spdlog::error("Error occured in MIDI output: \"{}\"", message);
 }
@@ -121,7 +116,7 @@ void Engine::MidiOutput::error_callback(
 void Engine::create(const InputInfo& input_info, InputObserver* observer)
 {
     std::lock_guard guard(m_mutex);
-    const auto id = input_info.m_id;
+    const auto      id = input_info.m_id;
     check_input_port(id, input_info);
     if (id < m_inputs.size() && m_inputs[id] != nullptr)
     {
@@ -149,7 +144,7 @@ void Engine::create(const InputInfo& input_info, InputObserver* observer)
 void Engine::create(const OutputInfo& output_info, OutputObserver* observer)
 {
     std::lock_guard guard(m_mutex);
-    const auto id = output_info.m_id;
+    const auto      id = output_info.m_id;
     check_output_port(id, output_info);
     if (id < m_outputs.size() && m_outputs[id] != nullptr)
     {
@@ -164,7 +159,7 @@ void Engine::create(const OutputInfo& output_info, OutputObserver* observer)
     {
         m_outputs.resize(id + 1);
     }
-    auto& output = m_outputs[id] = std::make_unique<OutputItem>(OutputItem{ 1, output_info });
+    auto& output = m_outputs[id] = std::make_unique<OutputItem>(OutputItem{1, output_info});
     if (observer != nullptr)
     {
         output->m_output.add_observer(observer);
@@ -175,7 +170,7 @@ void Engine::create(const OutputInfo& output_info, OutputObserver* observer)
 void Engine::remove(const InputInfo& input_info, InputObserver* observer)
 {
     std::lock_guard guard(m_mutex);
-    const auto id = input_info.m_id;
+    const auto      id = input_info.m_id;
     if (id >= m_inputs.size() || m_inputs[id] == nullptr)
     {
         throw std::logic_error("Cannot remove non-existent input");
@@ -195,7 +190,7 @@ void Engine::remove(const InputInfo& input_info, InputObserver* observer)
 void Engine::remove(const OutputInfo& output_info, OutputObserver* observer)
 {
     std::lock_guard guard(m_mutex);
-    const auto id = output_info.m_id;
+    const auto      id = output_info.m_id;
     if (id >= m_outputs.size() || m_outputs[id] == nullptr)
     {
         throw std::logic_error("Cannot remove non-existent output");
@@ -217,7 +212,7 @@ void Engine::remove(const OutputInfo& output_info, OutputObserver* observer)
             continue;
         }
         auto& connected_outputs = input_ptr->m_connections;
-        auto connected_id_iter = connected_outputs.find(id);
+        auto  connected_id_iter = connected_outputs.find(id);
         if (connected_id_iter != connected_outputs.end())
         {
             connected_outputs.erase(connected_id_iter);
@@ -234,7 +229,7 @@ void Engine::connect(size_t input_id, size_t output_id, channel_map channels)
         throw std::logic_error("Cannot connect non-existent input");
     }
 
-    auto& out_list = m_inputs[input_id]->m_connections;
+    auto& out_list      = m_inputs[input_id]->m_connections;
     out_list[output_id] = channels;
 
     std::stringstream ss;
@@ -250,8 +245,8 @@ void Engine::connect(size_t input_id, size_t output_id, channel_map channels)
             ss << val;
         }
     }
-    spdlog::info("Connected input {} to output {} with channel mask 0x{}",
-        input_id, output_id, ss.str());
+    spdlog::info(
+        "Connected input {} to output {} with channel mask 0x{}", input_id, output_id, ss.str());
 }
 
 void Engine::disconnect(size_t input_id, size_t output_id)
@@ -262,7 +257,7 @@ void Engine::disconnect(size_t input_id, size_t output_id)
         return;
     }
     auto& out_list = m_inputs[input_id]->m_connections;
-    auto out_itr = out_list.find(output_id);
+    auto  out_itr  = out_list.find(output_id);
     if (out_itr != out_list.cend())
     {
         out_list.erase(out_itr);
@@ -272,8 +267,8 @@ void Engine::disconnect(size_t input_id, size_t output_id)
 
 void Engine::enable_message_types(const InputInfo& input_info, const MessageTypeMask& mask)
 {
-    // locking can be omitted here as long as this method is not called concurrently with
-    // the other methods above
+    // locking can be omitted here as long as this method is not called
+    // concurrently with the other methods above
     const auto id = input_info.m_id;
     check_input_port(id, input_info);
     if (id >= m_inputs.size() || m_inputs[id] == nullptr)
@@ -294,19 +289,19 @@ void Engine::message_received(size_t id, std::vector<unsigned char>& message_byt
         spdlog::error("Message received from non-existing input");
         return;
     }
-    for (auto&[output_id, channels] : m_inputs[id]->m_connections)
+    for (auto& [output_id, channels] : m_inputs[id]->m_connections)
     {
         if (output_id >= m_outputs.size() || m_outputs[output_id] == nullptr)
         {
             spdlog::error("Message sent to non-existing output");
             continue;
         }
-        auto message_copy = message_bytes;
+        auto        message_copy = message_bytes;
         MessageView message(message_copy);
         if (!message.is_system())
         {
             const auto message_channel = message.get_channel();
-            const auto target_channel = channels[message_channel];
+            const auto target_channel  = channels[message_channel];
             if (target_channel < 0)
             {
                 continue;
@@ -318,4 +313,4 @@ void Engine::message_received(size_t id, std::vector<unsigned char>& message_byt
     }
 }
 
-}   // namespace mt::midi
+} // namespace mc::midi

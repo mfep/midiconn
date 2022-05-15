@@ -1,7 +1,7 @@
 #include "Application.hpp"
 
-#include <fstream>
 #include <filesystem>
+#include <fstream>
 
 // for some unknown reason, SDL must be included first
 #include "SDL2/SDL.h"
@@ -16,10 +16,9 @@
 namespace mc::display
 {
 
-Application::Application(const char* exe_path) :
-    m_exe_path(exe_path),
-    m_node_editor(m_midi_engine),
-    m_preset_manager(m_node_editor, m_midi_engine, exe_path)
+Application::Application(const char* exe_path)
+    : m_exe_path(exe_path), m_node_editor(m_midi_engine),
+      m_preset_manager(m_node_editor, m_midi_engine, exe_path)
 {
     spdlog::info("Starting " MIDI_APPLICATION_NAME " version {}", MC_FULL_VERSION);
     auto last_opened_editor = m_preset_manager.try_loading_last_preset();
@@ -39,16 +38,18 @@ void Application::render()
     auto* viewport = ImGui::GetMainViewport();
     ImGui::SetNextWindowPos(viewport->Pos);
     ImGui::SetNextWindowSize(viewport->Size);
-    ImGui::Begin("Another Window", nullptr,
-        ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoSavedSettings
-        | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_MenuBar);
+    ImGui::Begin("Another Window",
+                 nullptr,
+                 ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoSavedSettings |
+                     ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
+                     ImGuiWindowFlags_MenuBar);
 
     try
     {
         render_main_menu();
         m_node_editor.render();
     }
-    catch(std::exception& ex)
+    catch (std::exception& ex)
     {
         spdlog::error(ex.what());
         pfd::message("Error", ex.what(), pfd::choice::ok, pfd::icon::error);
@@ -83,7 +84,8 @@ void Application::handle_done(bool& done)
 std::string Application::get_window_title() const
 {
     auto prefix = m_preset_manager.is_dirty(m_node_editor) ? "* " : "";
-    return prefix + m_preset_manager.get_opened_path().value_or("Untitled") + " - " MIDI_APPLICATION_NAME;
+    return prefix + m_preset_manager.get_opened_path().value_or("Untitled") +
+           " - " MIDI_APPLICATION_NAME;
 }
 
 void Application::handle_shortcuts(const KeyboardShortcutAggregator& shortcuts)
@@ -116,7 +118,7 @@ void Application::new_preset_command()
     }
     if (new_preset)
     {
-        m_node_editor = NodeEditor(m_midi_engine);
+        m_node_editor    = NodeEditor(m_midi_engine);
         m_preset_manager = PresetManager(m_node_editor, m_midi_engine, m_exe_path);
     }
 }
@@ -124,7 +126,8 @@ void Application::new_preset_command()
 void Application::open_preset_command()
 {
     spdlog::info("Executing open_preset_command");
-    const auto open_path = pfd::open_file("Open preset", ".", {"JSON files (*.json)", "*.json"}).result();
+    const auto open_path =
+        pfd::open_file("Open preset", ".", {"JSON files (*.json)", "*.json"}).result();
     if (open_path.size() == 1 && !open_path.front().empty())
     {
         m_node_editor = m_preset_manager.open_preset(open_path.front());
@@ -202,7 +205,8 @@ void Application::render_main_menu()
     ImVec2 center = ImGui::GetMainViewport()->GetCenter();
     ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
     ImGui::SetNextWindowSizeConstraints({600, 0}, {600, 400});
-    if (ImGui::BeginPopupModal("About " MIDI_APPLICATION_NAME, NULL, ImGuiWindowFlags_AlwaysAutoResize))
+    if (ImGui::BeginPopupModal(
+            "About " MIDI_APPLICATION_NAME, NULL, ImGuiWindowFlags_AlwaysAutoResize))
     {
         ImGui::TextUnformatted(MC_FULL_VERSION);
         ImGui::TextUnformatted(MC_COMMIT_HASH);
@@ -233,7 +237,10 @@ void Application::render_main_menu()
 
 bool Application::query_save()
 {
-    const auto button = pfd::message(MIDI_APPLICATION_NAME, "Do you want to save changes?", pfd::choice::yes_no_cancel).result();
+    const auto button = pfd::message(MIDI_APPLICATION_NAME,
+                                     "Do you want to save changes?",
+                                     pfd::choice::yes_no_cancel)
+                            .result();
     switch (button)
     {
     case pfd::button::yes:
@@ -248,4 +255,4 @@ bool Application::query_save()
     return true;
 }
 
-}
+} // namespace mc::display

@@ -28,26 +28,32 @@ private:
     {
     public:
         MidiInput(const InputInfo& info);
-        void open();
-        void enable_message_types(const MessageTypeMask& mask);
-        static void message_callback(double time_stamp, std::vector<unsigned char> *message, void *user_data);
-        static void error_callback(RtMidiError::Type error_code, const std::string& message, void* user_data);
+        void        open();
+        void        enable_message_types(const MessageTypeMask& mask);
+        static void message_callback(double                      time_stamp,
+                                     std::vector<unsigned char>* message,
+                                     void*                       user_data);
+        static void error_callback(RtMidiError::Type  error_code,
+                                   const std::string& message,
+                                   void*              user_data);
 
     private:
         InputInfo m_info;
-        RtMidiIn m_midi_in;
+        RtMidiIn  m_midi_in;
     };
 
     class MidiOutput final : public OutputObservable
     {
     public:
         MidiOutput(const OutputInfo& info);
-        void send_message(const std::vector<unsigned char>& message_bytes);
-        static void error_callback(RtMidiError::Type error_code, const std::string& message, void* user_data);
+        void        send_message(const std::vector<unsigned char>& message_bytes);
+        static void error_callback(RtMidiError::Type  error_code,
+                                   const std::string& message,
+                                   void*              user_data);
 
     private:
         OutputInfo m_info;
-        RtMidiOut m_midi_out;
+        RtMidiOut  m_midi_out;
     };
 
 public:
@@ -64,20 +70,20 @@ private:
 
     struct InputItem
     {
-        size_t m_counter;
-        MidiInput m_input;
+        size_t                        m_counter;
+        MidiInput                     m_input;
         std::map<size_t, channel_map> m_connections;
     };
 
     struct OutputItem
     {
-        size_t m_counter;
+        size_t     m_counter;
         MidiOutput m_output;
     };
 
-    std::vector<std::unique_ptr<InputItem>> m_inputs;
+    std::vector<std::unique_ptr<InputItem>>  m_inputs;
     std::vector<std::unique_ptr<OutputItem>> m_outputs;
-    std::shared_mutex m_mutex;
+    std::shared_mutex                        m_mutex;
 };
 
-}
+} // namespace mc::midi

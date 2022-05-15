@@ -13,4 +13,4 @@ struct License
 
 extern std::vector<License> g_licenses;
 
-}
+} // namespace mc

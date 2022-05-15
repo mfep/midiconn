@@ -8,8 +8,8 @@
 #include "DisconnectedMidiInNode.hpp"
 #include "DisconnectedMidiOutNode.hpp"
 #include "MidiChannelNode.hpp"
-#include "MidiInfo.hpp"
 #include "MidiInNode.hpp"
+#include "MidiInfo.hpp"
 #include "MidiOutNode.hpp"
 #include "MidiProbe.hpp"
 
@@ -20,8 +20,7 @@ namespace mc
 
 using nlohmann::json;
 
-NodeSerializer::NodeSerializer(midi::Engine& midi_engine) :
-    m_midi_engine(&midi_engine)
+NodeSerializer::NodeSerializer(midi::Engine& midi_engine) : m_midi_engine(&midi_engine)
 {
 }
 
@@ -31,46 +30,61 @@ void NodeSerializer::serialize_node(json& j, const Node& node) const
     j["id"] = node.id();
 
     std::vector<int> output_connected_node_ids;
-    for (auto[link_id, other_node] : node.m_output_connections)
+    for (auto [link_id, other_node] : node.m_output_connections)
     {
         output_connected_node_ids.push_back(other_node.lock()->id());
     }
     j["output_connection_ids"] = output_connected_node_ids;
-    j["position"] = ImNodes::GetNodeGridSpacePos(node.id());
+    j["position"]              = ImNodes::GetNodeGridSpacePos(node.id());
 }
 
 void NodeSerializer::serialize_node(json& j, const MidiInNode& node) const
 {
-    j = json{ { "type", "midi_in" }, { "input_name", node.m_input_info.m_name } };
+    j = json{
+        {"type",       "midi_in"               },
+        {"input_name", node.m_input_info.m_name}
+    };
 }
 
 void NodeSerializer::serialize_node(json& j, const DisconnectedMidiInNode& node) const
 {
-    j = json{ { "type", "midi_in" }, { "input_name", node.m_input_name } };
+    j = json{
+        {"type",       "midi_in"        },
+        {"input_name", node.m_input_name}
+    };
 }
 
 void NodeSerializer::serialize_node(json& j, const MidiOutNode& node) const
 {
-    j = json{ { "type", "midi_out" }, { "output_name", node.m_output_info.m_name } };
+    j = json{
+        {"type",        "midi_out"               },
+        {"output_name", node.m_output_info.m_name}
+    };
 }
 
 void NodeSerializer::serialize_node(json& j, const DisconnectedMidiOutNode& node) const
 {
-    j = json{ { "type", "midi_out" }, { "output_name", node.m_output_name } };
+    j = json{
+        {"type",        "midi_out"        },
+        {"output_name", node.m_output_name}
+    };
 }
 
 void NodeSerializer::serialize_node(json& j, const MidiChannelNode& node) const
 {
-    j = json{ { "type", "midi_channel" }, { "channels", node.m_channels } };
+    j = json{
+        {"type",     "midi_channel" },
+        {"channels", node.m_channels}
+    };
 }
 
 std::shared_ptr<Node> NodeSerializer::deserialize_node(const json& j) const
 {
-    const auto node_type = j["type"].get<std::string>();
+    const auto            node_type = j["type"].get<std::string>();
     std::shared_ptr<Node> node;
     if (node_type == "midi_in")
     {
-        const auto input_name = j["input_name"].get<std::string>();
+        const auto input_name     = j["input_name"].get<std::string>();
         const auto input_info_opt = MidiProbe::get_valid_input(input_name);
         if (input_info_opt.has_value())
         {
@@ -83,7 +97,7 @@ std::shared_ptr<Node> NodeSerializer::deserialize_node(const json& j) const
     }
     else if (node_type == "midi_out")
     {
-        const auto output_name = j["output_name"].get<std::string>();
+        const auto output_name     = j["output_name"].get<std::string>();
         const auto output_info_opt = MidiProbe::get_valid_output(output_name);
         if (output_info_opt.has_value())
         {
@@ -110,4 +124,4 @@ std::shared_ptr<Node> NodeSerializer::deserialize_node(const json& j) const
     return node;
 }
 
-}
+} // namespace mc

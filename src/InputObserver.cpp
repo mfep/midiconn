@@ -23,9 +23,8 @@ void InputObservable::remove_observer(InputObserver* observer)
     }
 }
 
-void InputObservable::raise_message_received(
-    size_t id,
-    std::vector<unsigned char>& message_bytes) const
+void InputObservable::raise_message_received(size_t                      id,
+                                             std::vector<unsigned char>& message_bytes) const
 {
     for (auto* observer : m_observers)
     {
@@ -33,4 +32,4 @@ void InputObservable::raise_message_received(
     }
 }
 
-}
+} // namespace mc::midi

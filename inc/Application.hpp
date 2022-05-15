@@ -6,7 +6,7 @@
 #include "NodeEditor.hpp"
 #include "PresetManager.hpp"
 
-#define MIDI_APPLICATION_NAME "MIDI Connector"
+#define MIDI_APPLICATION_NAME       "MIDI Connector"
 #define MIDI_APPLICATION_NAME_SNAKE "midi_connector"
 
 namespace mc::display
@@ -17,10 +17,10 @@ class Application final
 public:
     Application(const char* exe_path);
     ~Application();
-    void render();
-    void handle_done(bool& done);
+    void        render();
+    void        handle_done(bool& done);
     std::string get_window_title() const;
-    void handle_shortcuts(const KeyboardShortcutAggregator& shortcuts);
+    void        handle_shortcuts(const KeyboardShortcutAggregator& shortcuts);
 
 private:
     void new_preset_command();
@@ -32,12 +32,12 @@ private:
     void render_main_menu();
     bool query_save();
 
-    const char* m_exe_path;
-    bool m_is_done{};
-    midi::Engine m_midi_engine;
-    NodeEditor m_node_editor;
+    const char*   m_exe_path;
+    bool          m_is_done{};
+    midi::Engine  m_midi_engine;
+    NodeEditor    m_node_editor;
     PresetManager m_preset_manager;
-    bool m_debug_log_enabled{};
+    bool          m_debug_log_enabled{};
 };
 
-}
+} // namespace mc::display

@@ -17,4 +17,4 @@ private:
     friend class NodeSerializer;
 };
 
-}
+} // namespace mc

@@ -8,7 +8,7 @@
 namespace mc
 {
 
-template<class Derived>
+template <class Derived>
 class DisconnectedNode : public Node
 {
 public:
@@ -32,4 +32,4 @@ public:
     }
 };
 
-}
+} // namespace mc

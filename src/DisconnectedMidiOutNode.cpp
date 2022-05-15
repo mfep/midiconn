@@ -8,8 +8,8 @@
 namespace mc
 {
 
-DisconnectedMidiOutNode::DisconnectedMidiOutNode(const std::string& output_name) :
-    m_output_name(output_name)
+DisconnectedMidiOutNode::DisconnectedMidiOutNode(const std::string& output_name)
+    : m_output_name(output_name)
 {
 }
 
@@ -23,4 +23,4 @@ void DisconnectedMidiOutNode::render_internal()
     ImNodes::EndInputAttribute();
 }
 
-}
+} // namespace mc

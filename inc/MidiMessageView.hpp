@@ -8,8 +8,7 @@ namespace mc::midi
 class MessageView final
 {
 public:
-    MessageView(std::vector<unsigned char>& message_data) :
-        m_message_data(message_data)
+    MessageView(std::vector<unsigned char>& message_data) : m_message_data(message_data)
     {
         assert(!m_message_data.empty());
     }
@@ -40,4 +39,4 @@ private:
     std::vector<unsigned char>& m_message_data;
 };
 
-}
+} // namespace mc::midi

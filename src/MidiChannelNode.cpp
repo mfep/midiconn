@@ -13,9 +13,7 @@ namespace mc
 {
 
 const char* MidiChannelNode::sm_combo_items[] = {
-    "None", "1", "2", "3", "4", "5", "6", "7", "8",
-    "9", "10", "11", "12", "13", "14", "15", "16"
-};
+    "None", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16"};
 
 MidiChannelNode::MidiChannelNode()
 {
@@ -46,15 +44,17 @@ void MidiChannelNode::render_internal()
         ImGui::TextUnformatted(get_label(i * 2));
         ImGui::SameLine();
         ImGui::SetNextItemWidth(50);
-        ImGui::Combo(get_hidden_label(i * 2), m_channels.data() + i * 2,
-                     sm_combo_items, sm_num_combo_items);
+        ImGui::Combo(
+            get_hidden_label(i * 2), m_channels.data() + i * 2, sm_combo_items, sm_num_combo_items);
 
         ImGui::SameLine();
         ImGui::TextUnformatted(get_label(i * 2 + 1));
         ImGui::SameLine();
         ImGui::SetNextItemWidth(50);
-        ImGui::Combo(get_hidden_label(i * 2 + 1), m_channels.data() + i * 2 + 1,
-                     sm_combo_items, sm_num_combo_items);
+        ImGui::Combo(get_hidden_label(i * 2 + 1),
+                     m_channels.data() + i * 2 + 1,
+                     sm_combo_items,
+                     sm_num_combo_items);
     }
     if (ImGui::Button("Default"))
     {
@@ -117,4 +117,4 @@ const char* MidiChannelNode::get_hidden_label(size_t index)
     return labels.at(index).c_str();
 }
 
-}
+} // namespace mc

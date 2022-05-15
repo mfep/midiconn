@@ -23,7 +23,7 @@ KeyboardShortcut operator&(KeyboardShortcut a, KeyboardShortcut b)
     return static_cast<KeyboardShortcut>(static_cast<T>(a) & static_cast<T>(b));
 }
 
-template<class T = std::underlying_type_t<KeyboardShortcut>>
+template <class T = std::underlying_type_t<KeyboardShortcut>>
 bool operator!=(KeyboardShortcut a, T b)
 {
     return static_cast<T>(a) != b;
@@ -31,20 +31,20 @@ bool operator!=(KeyboardShortcut a, T b)
 
 struct KeyboardMapEntry
 {
-    bool shift_needed;
-    bool ctrl_needed;
-    SDL_Keycode code;
+    bool             shift_needed;
+    bool             ctrl_needed;
+    SDL_Keycode      code;
     KeyboardShortcut shortcut;
 };
 
-constexpr std::array<KeyboardMapEntry, size_t(KeyboardShortcut::Size)> keyboard_mapping{{
-    { true,  true, SDLK_s,  KeyboardShortcut::CtrlShiftS },
-    { false, true, SDLK_s,  KeyboardShortcut::CtrlS      },
-    { false, true, SDLK_n,  KeyboardShortcut::CtrlN      },
-    { false, true, SDLK_o,  KeyboardShortcut::CtrlO      }
-}};
+constexpr std::array<KeyboardMapEntry, size_t(KeyboardShortcut::Size)> keyboard_mapping{
+    {{true, true, SDLK_s, KeyboardShortcut::CtrlShiftS},
+     {false, true, SDLK_s, KeyboardShortcut::CtrlS},
+     {false, true, SDLK_n, KeyboardShortcut::CtrlN},
+     {false, true, SDLK_o, KeyboardShortcut::CtrlO}}
+};
 
-}   // namespace
+} // namespace
 
 void KeyboardShortcutAggregator::capture_event(const SDL_Event& event)
 {
@@ -52,16 +52,13 @@ void KeyboardShortcutAggregator::capture_event(const SDL_Event& event)
     {
         return;
     }
-    const auto mod = event.key.keysym.mod;
+    const auto mod           = event.key.keysym.mod;
     const bool shift_pressed = mod & KMOD_SHIFT;
-    const bool ctrl_pressed = mod & KMOD_CTRL;
-    const auto found_map = std::find_if(keyboard_mapping.begin(),
-        keyboard_mapping.end(),
-        [&](const auto& map)
-        {
-            return (shift_pressed == map.shift_needed)
-                && (ctrl_pressed == map.ctrl_needed)
-                && (event.key.keysym.sym == map.code);
+    const bool ctrl_pressed  = mod & KMOD_CTRL;
+    const auto found_map =
+        std::find_if(keyboard_mapping.begin(), keyboard_mapping.end(), [&](const auto& map) {
+            return (shift_pressed == map.shift_needed) && (ctrl_pressed == map.ctrl_needed) &&
+                   (event.key.keysym.sym == map.code);
         });
     if (found_map == keyboard_mapping.end())
     {
@@ -75,4 +72,4 @@ bool KeyboardShortcutAggregator::is_shortcut_pressed(KeyboardShortcut shortcut) 
     return (shortcut & m_pressed_shortcuts) != 0;
 }
 
-}
+} // namespace mc

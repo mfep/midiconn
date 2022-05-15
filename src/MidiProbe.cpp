@@ -31,11 +31,11 @@ std::string truncate_port_name(const std::string& port_name)
     return port_name.substr(0, last_space_idx);
 }
 
-template<class RtMidiT, class InfoT>
+template <class RtMidiT, class InfoT>
 std::vector<InfoT> get_connections()
 {
-    RtMidiT midi_conn;
-    const auto port_count = midi_conn.getPortCount();
+    RtMidiT            midi_conn;
+    const auto         port_count = midi_conn.getPortCount();
     std::vector<InfoT> info_list;
     for (unsigned i = 0; i < port_count; i++)
     {
@@ -44,10 +44,12 @@ std::vector<InfoT> get_connections()
     return info_list;
 }
 
-template<class Info>
+template <class Info>
 std::optional<Info> get_valid_info(const std::string& name, const std::vector<Info>& infos)
 {
-    auto found_it = std::find_if(infos.begin(), infos.end(), [&](const auto& info) { return info.m_name == name; });
+    auto found_it = std::find_if(infos.begin(), infos.end(), [&](const auto& info) {
+        return info.m_name == name;
+    });
     if (found_it != infos.end())
     {
         return *found_it;
@@ -55,7 +57,7 @@ std::optional<Info> get_valid_info(const std::string& name, const std::vector<In
     return std::nullopt;
 }
 
-}   // namespace
+} // namespace
 
 std::vector<InputInfo> MidiProbe::get_inputs()
 {
@@ -95,4 +97,4 @@ std::optional<std::string> MidiProbe::get_valid_output_port_name(unsigned id)
     return truncate_port_name(RtMidiOut{}.getPortName(id));
 }
 
-}
+} // namespace mc

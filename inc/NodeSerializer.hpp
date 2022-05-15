@@ -36,4 +36,4 @@ private:
     midi::Engine* m_midi_engine;
 };
 
-}
+} // namespace mc

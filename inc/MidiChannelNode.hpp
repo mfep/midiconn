@@ -10,7 +10,7 @@ class MidiChannelNode final : public Node
 public:
     MidiChannelNode();
 
-    void accept_serializer(nlohmann::json& j, const NodeSerializer& serializer) const;
+    void accept_serializer(nlohmann::json& j, const NodeSerializer& serializer) const override;
 
 private:
     void              render_internal() override;

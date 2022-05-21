@@ -2,3 +2,4 @@
 build
 *.ini
 Version.hpp
+.flatpak-builder

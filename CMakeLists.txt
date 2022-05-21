@@ -62,6 +62,8 @@ target_link_libraries(midi_connector PRIVATE
 target_compile_definitions(midi_connector PRIVATE
     SPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_DEBUG
 )
+install(TARGETS midi_connector
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 if (WIN32)
     add_custom_command (TARGET midi_connector POST_BUILD

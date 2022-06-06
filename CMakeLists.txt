@@ -19,7 +19,12 @@ add_subdirectory(deps/json)
 set(RTMIDI_BUILD_TESTING OFF CACHE INTERNAL "")
 add_subdirectory(deps/rtmidi)
 
+include(cmake/EmbedBinaryFile.cmake)
+set(g_font_cpp_path "")
+EmbedBinaryFile(misc/DroidSans.ttf g_font_binary g_font_cpp_path)
+
 add_executable(midi_connector
+    ${g_font_cpp_path}
     deps/imgui/imgui.cpp
     deps/imgui/imgui_demo.cpp
     deps/imgui/imgui_draw.cpp

@@ -17,6 +17,9 @@
 #error This backend requires SDL 2.0.17+ because of SDL_RenderGeometry() function
 #endif
 
+extern unsigned char g_font_binary[];
+extern unsigned long long g_font_binary_size;
+
 int main(int /*argc*/, char** argv)
 {
     // Setup spdlog
@@ -90,6 +93,8 @@ int main(int /*argc*/, char** argv)
     // io.Fonts->AddFontFromFileTTF("../../misc/fonts/ProggyTiny.ttf", 10.0f);
     // ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf", 18.0f, NULL,
     // io.Fonts->GetGlyphRangesJapanese()); IM_ASSERT(font != NULL);
+    ImGui::GetIO().Fonts->AddFontFromMemoryTTF(g_font_binary, g_font_binary_size, 16);
+
     // Main loop
     mc::display::Application app(argv[0]);
     bool                     done = false;

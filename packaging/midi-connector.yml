@@ -36,9 +36,8 @@ modules:
       - -DCMAKE_BUILD_TYPE=Release
       - -DRTMIDI_BUILD_STATIC_LIBS=ON
     sources:
-      - type: git
+      - type: dir
         path: './..'
-        branch: flatpak
 cleanup:
   - /bin/sdl2-config
   - /include

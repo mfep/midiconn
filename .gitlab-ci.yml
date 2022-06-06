@@ -3,16 +3,34 @@ image: registry.gitlab.com/mfep/midi-connector
 default:
   interruptible: true
 
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
+
 build-linux:
   stage: build
   script:
-    - git submodule update --init
     - cmake -S . -B build -D CMAKE_CXX_FLAGS="-Wall -Wextra" -D COMMIT_HASH=${CI_COMMIT_SHA}
     - cmake --build build --config Release
   artifacts:
     paths:
       - build/midi_connector
     expire_in: 1 week
+
+build-linux-flatpak:
+  stage: build
+  image: ubuntu
+  script:
+    - apt-get update -y && apt-get install -y flatpak-builder
+    - flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+    - flatpak install -y flathub org.freedesktop.Sdk//21.08 org.freedesktop.Platform//21.08
+    - flatpak-builder build/flatpak packaging/midi-connector.yml
+  artifacts:
+    paths:
+      - build/flatpak
+    expire_in: 1 week
+  cache:
+    paths:
+      - .flatpak-builder
 
 build-windows:
   stage: build

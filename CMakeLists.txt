@@ -20,10 +20,6 @@ add_subdirectory(deps/json)
 set(RTMIDI_BUILD_TESTING OFF CACHE INTERNAL "")
 add_subdirectory(deps/rtmidi)
 
-include(cmake/EmbedBinaryFile.cmake)
-set(g_font_cpp_path "")
-EmbedBinaryFile(misc/DroidSans.ttf g_font_binary g_font_cpp_path)
-
 add_executable(midi_connector
     ${g_font_cpp_path}
     deps/imgui/imgui.cpp
@@ -74,6 +70,12 @@ target_compile_definitions(midi_connector PRIVATE
 )
 install(TARGETS midi_connector
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+
+add_custom_command(TARGET midi_connector POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    ${CMAKE_CURRENT_LIST_DIR}/fonts/DroidSans.ttf
+    $<TARGET_FILE_DIR:midi_connector>/DroidSans.ttf
+)
 
 if (WIN32)
     add_custom_command (TARGET midi_connector POST_BUILD

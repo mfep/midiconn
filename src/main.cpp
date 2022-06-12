@@ -65,10 +65,6 @@ int main(int /*argc*/, char** argv)
     // io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
     // io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 
-    // Setup Dear ImGui style
-    ImGui::StyleColorsDark();
-    // ImGui::StyleColorsClassic();
-
     // Setup Platform/Renderer backends
     ImGui_ImplSDL2_InitForSDLRenderer(window);
     ImGui_ImplSDLRenderer_Init(renderer);

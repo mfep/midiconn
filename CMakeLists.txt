@@ -49,6 +49,7 @@ add_executable(midi_connector
     src/main.cpp
     src/OutputObserver.cpp
     src/PresetManager.cpp
+    src/Theme.cpp
 )
 
 target_include_directories(midi_connector PRIVATE

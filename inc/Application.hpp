@@ -5,6 +5,7 @@
 #include "MidiEngine.hpp"
 #include "NodeEditor.hpp"
 #include "PresetManager.hpp"
+#include "Theme.hpp"
 
 #define MIDI_APPLICATION_NAME       "MIDI Connector"
 #define MIDI_APPLICATION_NAME_SNAKE "midi_connector"
@@ -37,6 +38,7 @@ private:
     midi::Engine  m_midi_engine;
     NodeEditor    m_node_editor;
     PresetManager m_preset_manager;
+    ThemeControl  m_theme_control;
     bool          m_debug_log_enabled{};
 };
 

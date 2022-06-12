@@ -182,6 +182,27 @@ void Application::render_main_menu()
             }
             ImGui::EndMenu();
         }
+        if (ImGui::BeginMenu("Settings"))
+        {
+            if (ImGui::BeginMenu("Theme"))
+            {
+                const auto current_theme = m_theme_control.get_theme();
+                if (ImGui::MenuItem("Dark theme", nullptr, current_theme == Theme::Dark))
+                {
+                    m_theme_control.set_theme(Theme::Dark);
+                }
+                if (ImGui::MenuItem("Light theme", nullptr, current_theme == Theme::Light))
+                {
+                    m_theme_control.set_theme(Theme::Light);
+                }
+                if (ImGui::MenuItem("Classic theme", nullptr, current_theme == Theme::Classic))
+                {
+                    m_theme_control.set_theme(Theme::Classic);
+                }
+                ImGui::EndMenu();
+            }
+            ImGui::EndMenu();
+        }
         if (ImGui::BeginMenu("Help"))
         {
             if (ImGui::MenuItem("Enable debug log", nullptr, &m_debug_log_enabled))

@@ -13,9 +13,10 @@ namespace
 struct ConfigContent
 {
     std::string m_last_preset_path;
+    Theme m_theme;
 };
 
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ConfigContent, m_last_preset_path);
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ConfigContent, m_last_preset_path, m_theme);
 
 } // namespace
 
@@ -38,6 +39,7 @@ ConfigFile::ConfigFile(const std::string_view exe_path)
         }
         const auto config  = j.get<ConfigContent>();
         m_last_preset_path = config.m_last_preset_path;
+        m_theme = config.m_theme;
     }
     catch (const std::exception& ex)
     {
@@ -51,12 +53,19 @@ void ConfigFile::set_last_preset_path(const std::filesystem::path& path)
     save_config_file();
 }
 
+void ConfigFile::set_theme(const Theme theme)
+{
+    m_theme = theme;
+    save_config_file();
+}
+
 void ConfigFile::save_config_file() const
 {
     spdlog::info("Saving config file to: \"{}\"", m_config_json_path.string());
     const ConfigContent config
     {
-        m_last_preset_path.value_or("").string()
+        m_last_preset_path.value_or("").string(),
+        m_theme.value_or(Theme::Default)
     };
     const nlohmann::json j = config;
     std::ofstream ofs(m_config_json_path);

@@ -18,7 +18,7 @@ namespace mc::display
 
 Application::Application(const char* exe_path)
     : m_exe_path(exe_path), m_node_editor(m_midi_engine), m_config(exe_path),
-      m_preset_manager(m_node_editor, m_midi_engine, m_config, exe_path)
+      m_preset_manager(m_node_editor, m_midi_engine, m_config, exe_path), m_theme_control(m_config)
 {
     spdlog::info("Starting " MIDI_APPLICATION_NAME " version {}", MC_FULL_VERSION);
     auto last_opened_editor = m_preset_manager.try_loading_last_preset();

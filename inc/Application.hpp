@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 
+#include "ConfigFile.hpp"
 #include "KeyboardShotcutAggregator.hpp"
 #include "MidiEngine.hpp"
 #include "NodeEditor.hpp"
@@ -37,6 +38,7 @@ private:
     bool          m_is_done{};
     midi::Engine  m_midi_engine;
     NodeEditor    m_node_editor;
+    ConfigFile    m_config;
     PresetManager m_preset_manager;
     ThemeControl  m_theme_control;
     bool          m_debug_log_enabled{};

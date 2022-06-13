@@ -32,6 +32,7 @@ add_executable(midi_connector
     deps/imgui/misc/freetype/imgui_freetype.cpp
     deps/imnodes/imnodes.cpp
     src/Application.cpp
+    src/ConfigFile.cpp
     src/DisconnectedMidiInNode.cpp
     src/DisconnectedMidiOutNode.cpp
     src/InputObserver.cpp

@@ -6,6 +6,8 @@
 
 namespace mc
 {
+class ConfigFile;
+
 namespace midi
 {
 class Engine;
@@ -16,9 +18,13 @@ namespace display
 class NodeEditor;
 
 class PresetManager final
+
 {
 public:
-    PresetManager(const NodeEditor& editor, midi::Engine& midi_engine, const char* exe_path);
+    PresetManager(const NodeEditor& editor,
+                  midi::Engine&     midi_engine,
+                  ConfigFile&       config,
+                  const char*       exe_path);
 
     bool                              is_dirty(const NodeEditor& editor) const;
     NodeEditor                        open_preset(const std::string& path);
@@ -32,6 +38,7 @@ private:
     void save_preset(const NodeEditor& editor, const bool save_as);
 
     midi::Engine*              m_midi_engine;
+    ConfigFile*                m_config;
     nlohmann::json             m_last_editor_state;
     std::optional<std::string> m_opened_path;
     const char*                m_exe_path;

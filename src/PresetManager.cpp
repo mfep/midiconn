@@ -7,6 +7,7 @@
 #include "portable-file-dialogs.h"
 #include "spdlog/spdlog.h"
 
+#include "ConfigFile.hpp"
 #include "NodeEditor.hpp"
 
 namespace
@@ -28,8 +29,9 @@ namespace mc::display
 
 PresetManager::PresetManager(const NodeEditor& editor,
                              midi::Engine&     midi_engine,
+                             ConfigFile&       config,
                              const char*       exe_path)
-    : m_midi_engine(&midi_engine), m_exe_path(exe_path)
+    : m_midi_engine(&midi_engine), m_config(&config), m_exe_path(exe_path)
 {
     editor.to_json(m_last_editor_state);
 }
@@ -65,32 +67,19 @@ void PresetManager::save_preset_as(const NodeEditor& editor)
 
 std::optional<NodeEditor> PresetManager::try_loading_last_preset()
 {
-    std::string    previous_preset_path;
-    nlohmann::json j;
-    try
+    const auto last_preset_path = m_config->get_last_preset_path();
+    if (!last_preset_path.has_value())
     {
-        std::filesystem::path exe_fs_path(m_exe_path);
-        const auto            json_path = exe_fs_path.replace_extension("json");
-        spdlog::info("Loading config file from \"{}\"", json_path.string());
-        {
-            std::ifstream ifs(json_path);
-            ifs >> j;
-        }
-        j["previous_preset_path"].get_to(previous_preset_path);
-    }
-    catch (std::exception& ex)
-    {
-        spdlog::info("Could not load config file. Reason: \"{}\"", ex.what());
         return std::nullopt;
     }
     try
     {
-        return open_preset(previous_preset_path);
+        return open_preset(last_preset_path.value().string());
     }
     catch (std::exception& ex)
     {
         spdlog::info("Could not load previous preset at \"{}\". Reason: \"{}\"",
-                     previous_preset_path,
+                     last_preset_path.value().string(),
                      ex.what());
         return std::nullopt;
     }
@@ -102,20 +91,7 @@ void PresetManager::try_saving_last_preset_path() const
     {
         return;
     }
-    std::filesystem::path exe_fs_path(m_exe_path);
-    const auto            json_path = exe_fs_path.replace_extension("json");
-    spdlog::info("Saving config file to \"{}\"", json_path.string());
-    try
-    {
-        nlohmann::json j;
-        j["previous_preset_path"] = m_opened_path.value();
-        std::ofstream ofstream(json_path);
-        ofstream << j;
-    }
-    catch (std::exception& ex)
-    {
-        spdlog::warn("Could not save previous preset. Reason: \"{}\"", ex.what());
-    }
+    m_config->set_last_preset_path(m_opened_path.value());
 }
 
 void PresetManager::save_preset(const NodeEditor& editor, const bool save_as)

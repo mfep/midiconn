@@ -20,6 +20,7 @@ public:
     Application(const char* exe_path);
     ~Application();
     void        render();
+    void        update_outside_frame();
     void        handle_done(bool& done);
     std::string get_window_title() const;
     void        handle_shortcuts(const KeyboardShortcutAggregator& shortcuts);

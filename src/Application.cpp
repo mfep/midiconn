@@ -61,6 +61,11 @@ void Application::render()
 #endif
 }
 
+void Application::update_outside_frame()
+{
+    m_theme_control.update_scale_if_needed();
+}
+
 void Application::handle_done(bool& done)
 {
     if (done || m_is_done)
@@ -200,6 +205,18 @@ void Application::render_main_menu()
                     m_theme_control.set_theme(Theme::Classic);
                 }
                 ImGui::EndMenu();
+            }
+            const float current_interface_scale = m_theme_control.get_scale();
+            ImGui::TextUnformatted("Interface scale");
+            ImGui::SameLine();
+            if (ImGui::Button("+"))
+            {
+                m_theme_control.set_scale(current_interface_scale + 0.25F);
+            }
+            ImGui::SameLine();
+            if (ImGui::Button("-"))
+            {
+                m_theme_control.set_scale(current_interface_scale - 0.25F);
             }
             ImGui::EndMenu();
         }

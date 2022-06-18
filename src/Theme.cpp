@@ -1,16 +1,20 @@
 #include "Theme.hpp"
 
 #include "imgui.h"
-#include "imnodes.h"
+#include "spdlog/spdlog.h"
 
 #include "ConfigFile.hpp"
+
+bool ImGui_ImplSDLRenderer_CreateFontsTexture();
 
 namespace mc
 {
 
 ThemeControl::ThemeControl(ConfigFile& config) : m_config(&config)
 {
+    m_original_nodes_style = ImNodes::GetStyle();
     set_theme_internal(m_config->get_theme().value_or(Theme::Default));
+    set_scale_internal(1.f);
 }
 
 void ThemeControl::set_theme(const Theme theme)
@@ -19,8 +23,22 @@ void ThemeControl::set_theme(const Theme theme)
     m_config->set_theme(theme);
 }
 
+void ThemeControl::set_scale(const float scale)
+{
+    m_new_scale = scale;
+}
+
+void ThemeControl::update_scale_if_needed()
+{
+    if (m_new_scale != m_scale)
+    {
+        set_scale_internal(m_new_scale);
+    }
+}
+
 void ThemeControl::set_theme_internal(const Theme theme)
 {
+    spdlog::info("Setting application theme to {}", static_cast<int>(theme));
     switch (m_current_theme = theme)
     {
     case Theme::Dark:
@@ -38,6 +56,29 @@ void ThemeControl::set_theme_internal(const Theme theme)
     default:
         break;
     }
+}
+
+void ThemeControl::set_scale_internal(const float scale)
+{
+    m_scale     = std::min(std::max(1.0F, scale), 3.0F);
+    m_new_scale = m_scale;
+    spdlog::info("Setting application scale to {}", m_scale);
+    // ImGui::GetStyle().ScaleAllSizes(m_scale);
+    ImGui::GetIO().Fonts->Clear();
+    ImGui::GetIO().Fonts->AddFontFromFileTTF("DroidSans.ttf", 16 * m_scale);
+
+    // workaround, otherwise the fonts won't rebuild properly
+    ImGui_ImplSDLRenderer_CreateFontsTexture();
+
+    auto& current_nodes_style               = ImNodes::GetStyle();
+    current_nodes_style.GridSpacing         = m_original_nodes_style.GridSpacing * m_scale;
+    current_nodes_style.LinkThickness       = m_original_nodes_style.LinkThickness * m_scale;
+    current_nodes_style.NodeBorderThickness = m_original_nodes_style.NodeBorderThickness * m_scale;
+    current_nodes_style.NodeCornerRounding  = m_original_nodes_style.NodeCornerRounding * m_scale;
+    current_nodes_style.NodePadding         = {m_original_nodes_style.NodePadding.x * m_scale,
+                                               m_original_nodes_style.NodePadding.y * m_scale};
+    current_nodes_style.PinCircleRadius     = m_original_nodes_style.PinCircleRadius * m_scale;
+    current_nodes_style.PinLineThickness    = m_original_nodes_style.PinLineThickness * m_scale;
 }
 
 } // namespace mc

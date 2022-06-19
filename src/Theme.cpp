@@ -1,5 +1,7 @@
 #include "Theme.hpp"
 
+#include "IconsFontaudio.h"
+#include "IconsForkAwesome.h"
 #include "imgui.h"
 #include "spdlog/spdlog.h"
 
@@ -75,8 +77,14 @@ void ThemeControl::set_scale_internal(const InterfaceScale scale)
 {
     const float scale_value = calculate_scale_value(scale);
     spdlog::info("Setting application scale to {}", scale_value);
-    ImGui::GetIO().Fonts->Clear();
-    ImGui::GetIO().Fonts->AddFontFromFileTTF("DroidSans.ttf", 16 * scale_value);
+    auto& io = ImGui::GetIO();
+    io.Fonts->Clear();
+    io.Fonts->AddFontFromFileTTF("DroidSans.ttf", 16 * scale_value);
+    const ImWchar icons_ranges[] = { ICON_MIN_FK, ICON_MAX_16_FK, 0 };
+    ImFontConfig icons_config;
+    icons_config.MergeMode = true;
+    icons_config.PixelSnapH = true;
+    io.Fonts->AddFontFromFileTTF("forkawesome-webfont.ttf", 12 * scale_value, &icons_config, icons_ranges);
 
     // workaround, otherwise the fonts won't rebuild properly
     ImGui_ImplSDLRenderer_CreateFontsTexture();

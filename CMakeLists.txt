@@ -58,6 +58,7 @@ target_include_directories(midi_connector PRIVATE
     deps/imgui
     deps/imnodes
     deps/portable-file-dialogs
+    deps/IconFontCppHeaders
     ${FREETYPE_INCLUDE_DIRS})
 target_link_libraries(midi_connector PRIVATE
     nlohmann_json::nlohmann_json
@@ -76,7 +77,8 @@ install(TARGETS midi_connector
 add_custom_command(TARGET midi_connector POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
     ${CMAKE_CURRENT_LIST_DIR}/fonts/DroidSans.ttf
-    $<TARGET_FILE_DIR:midi_connector>/DroidSans.ttf
+    ${CMAKE_CURRENT_LIST_DIR}/fonts/forkawesome-webfont.ttf
+    $<TARGET_FILE_DIR:midi_connector>
 )
 
 if (WIN32)

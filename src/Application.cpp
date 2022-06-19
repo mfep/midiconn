@@ -5,6 +5,7 @@
 
 // for some unknown reason, SDL must be included first
 #include "SDL2/SDL.h"
+#include "IconsForkAwesome.h"
 #include "imgui.h"
 #include "nlohmann/json.hpp"
 #include "portable-file-dialogs.h"
@@ -162,51 +163,51 @@ void Application::render_main_menu()
     bool open_about_popup = false;
     if (ImGui::BeginMenuBar())
     {
-        if (ImGui::BeginMenu("File"))
+        if (ImGui::BeginMenu(ICON_FK_FILE_O " File"))
         {
-            if (ImGui::MenuItem("New preset", "Ctrl+N"))
+            if (ImGui::MenuItem(ICON_FK_FILE_O " New preset", "Ctrl+N"))
             {
                 new_preset_command();
             }
-            if (ImGui::MenuItem("Open preset", "Ctrl+O"))
+            if (ImGui::MenuItem(ICON_FK_FOLDER_OPEN_O " Open preset", "Ctrl+O"))
             {
                 open_preset_command();
             }
-            if (ImGui::MenuItem("Save preset", "Ctrl+S"))
+            if (ImGui::MenuItem(ICON_FK_FLOPPY_O " Save preset", "Ctrl+S"))
             {
                 save_preset_command();
             }
-            if (ImGui::MenuItem("Save preset as", "Ctrl+Shift+S"))
+            if (ImGui::MenuItem(ICON_FK_FLOPPY_O " Save preset as", "Ctrl+Shift+S"))
             {
                 save_preset_as_command();
             }
             ImGui::Separator();
-            if (ImGui::MenuItem("Exit", "Alt+F4"))
+            if (ImGui::MenuItem(ICON_FK_TIMES " Exit", "Alt+F4"))
             {
                 exit_command();
             }
             ImGui::EndMenu();
         }
-        if (ImGui::BeginMenu("Settings"))
+        if (ImGui::BeginMenu(ICON_FK_COG " Settings"))
         {
-            if (ImGui::BeginMenu("Theme"))
+            if (ImGui::BeginMenu(ICON_FK_PAINT_BRUSH " Theme"))
             {
                 const auto current_theme = m_theme_control.get_theme();
-                if (ImGui::MenuItem("Dark theme", nullptr, current_theme == Theme::Dark))
+                if (ImGui::MenuItem(ICON_FK_MOON_O " Dark theme", nullptr, current_theme == Theme::Dark))
                 {
                     m_theme_control.set_theme(Theme::Dark);
                 }
-                if (ImGui::MenuItem("Light theme", nullptr, current_theme == Theme::Light))
+                if (ImGui::MenuItem(ICON_FK_SUN_O " Light theme", nullptr, current_theme == Theme::Light))
                 {
                     m_theme_control.set_theme(Theme::Light);
                 }
-                if (ImGui::MenuItem("Classic theme", nullptr, current_theme == Theme::Classic))
+                if (ImGui::MenuItem(ICON_FK_STAR_O " Classic theme", nullptr, current_theme == Theme::Classic))
                 {
                     m_theme_control.set_theme(Theme::Classic);
                 }
                 ImGui::EndMenu();
             }
-            if (ImGui::BeginMenu("Interface Scale"))
+            if (ImGui::BeginMenu(ICON_FK_EYE " Interface Scale"))
             {
                 const auto current_scale = m_theme_control.get_scale();
                 for (size_t i = 0; i < interface_scale_labels.size(); ++i)
@@ -222,7 +223,7 @@ void Application::render_main_menu()
             }
             ImGui::EndMenu();
         }
-        if (ImGui::BeginMenu("Help"))
+        if (ImGui::BeginMenu(ICON_FK_QUESTION " Help"))
         {
             if (ImGui::MenuItem("Enable debug log", nullptr, &m_debug_log_enabled))
             {

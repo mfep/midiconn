@@ -23,7 +23,7 @@ void ThemeControl::set_theme(const Theme theme)
     m_config->set_theme(theme);
 }
 
-void ThemeControl::set_scale(const float scale)
+void ThemeControl::set_scale(const InterfaceScale scale)
 {
     m_new_scale = scale;
 }
@@ -32,7 +32,9 @@ void ThemeControl::update_scale_if_needed()
 {
     if (m_new_scale != m_scale)
     {
-        set_scale_internal(m_new_scale);
+        const float scale_value = 1 + 0.25F * static_cast<int>(m_new_scale);
+        set_scale_internal(scale_value);
+        m_scale = m_new_scale;
     }
 }
 
@@ -60,25 +62,22 @@ void ThemeControl::set_theme_internal(const Theme theme)
 
 void ThemeControl::set_scale_internal(const float scale)
 {
-    m_scale     = std::min(std::max(1.0F, scale), 3.0F);
-    m_new_scale = m_scale;
-    spdlog::info("Setting application scale to {}", m_scale);
-    // ImGui::GetStyle().ScaleAllSizes(m_scale);
+    spdlog::info("Setting application scale to {}", scale);
     ImGui::GetIO().Fonts->Clear();
-    ImGui::GetIO().Fonts->AddFontFromFileTTF("DroidSans.ttf", 16 * m_scale);
+    ImGui::GetIO().Fonts->AddFontFromFileTTF("DroidSans.ttf", 16 * scale);
 
     // workaround, otherwise the fonts won't rebuild properly
     ImGui_ImplSDLRenderer_CreateFontsTexture();
 
     auto& current_nodes_style               = ImNodes::GetStyle();
-    current_nodes_style.GridSpacing         = m_original_nodes_style.GridSpacing * m_scale;
-    current_nodes_style.LinkThickness       = m_original_nodes_style.LinkThickness * m_scale;
-    current_nodes_style.NodeBorderThickness = m_original_nodes_style.NodeBorderThickness * m_scale;
-    current_nodes_style.NodeCornerRounding  = m_original_nodes_style.NodeCornerRounding * m_scale;
-    current_nodes_style.NodePadding         = {m_original_nodes_style.NodePadding.x * m_scale,
-                                               m_original_nodes_style.NodePadding.y * m_scale};
-    current_nodes_style.PinCircleRadius     = m_original_nodes_style.PinCircleRadius * m_scale;
-    current_nodes_style.PinLineThickness    = m_original_nodes_style.PinLineThickness * m_scale;
+    current_nodes_style.GridSpacing         = m_original_nodes_style.GridSpacing * scale;
+    current_nodes_style.LinkThickness       = m_original_nodes_style.LinkThickness * scale;
+    current_nodes_style.NodeBorderThickness = m_original_nodes_style.NodeBorderThickness * scale;
+    current_nodes_style.NodeCornerRounding  = m_original_nodes_style.NodeCornerRounding * scale;
+    current_nodes_style.NodePadding         = {m_original_nodes_style.NodePadding.x * scale,
+                                               m_original_nodes_style.NodePadding.y * scale};
+    current_nodes_style.PinCircleRadius     = m_original_nodes_style.PinCircleRadius * scale;
+    current_nodes_style.PinLineThickness    = m_original_nodes_style.PinLineThickness * scale;
 }
 
 } // namespace mc

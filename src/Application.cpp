@@ -206,17 +206,19 @@ void Application::render_main_menu()
                 }
                 ImGui::EndMenu();
             }
-            const float current_interface_scale = m_theme_control.get_scale();
-            ImGui::TextUnformatted("Interface scale");
-            ImGui::SameLine();
-            if (ImGui::Button("+"))
+            if (ImGui::BeginMenu("Interface Scale"))
             {
-                m_theme_control.set_scale(current_interface_scale + 0.25F);
-            }
-            ImGui::SameLine();
-            if (ImGui::Button("-"))
-            {
-                m_theme_control.set_scale(current_interface_scale - 0.25F);
+                const auto current_scale = m_theme_control.get_scale();
+                for (size_t i = 0; i < interface_scale_labels.size(); ++i)
+                {
+                    if (ImGui::MenuItem(interface_scale_labels[i].data(),
+                                        nullptr,
+                                        static_cast<size_t>(current_scale) == i))
+                    {
+                        m_theme_control.set_scale(static_cast<InterfaceScale>(i));
+                    }
+                }
+                ImGui::EndMenu();
             }
             ImGui::EndMenu();
         }

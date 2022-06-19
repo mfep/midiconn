@@ -25,7 +25,8 @@ enum class InterfaceScale
     Scale_1_50,
     Scale_1_75,
     Scale_2_00,
-    Size
+    Size,
+    Undefined
 };
 
 constexpr inline std::array<std::string_view, static_cast<size_t>(InterfaceScale::Size)>
@@ -46,11 +47,11 @@ public:
 
 private:
     void set_theme_internal(const Theme theme);
-    void set_scale_internal(const float scale);
+    void set_scale_internal(const InterfaceScale scale);
 
     ConfigFile*    m_config;
     Theme          m_current_theme{};
-    InterfaceScale m_scale{};
+    InterfaceScale m_scale{ InterfaceScale::Undefined };
     InterfaceScale m_new_scale{};
     ImNodesStyle   m_original_nodes_style;
 };

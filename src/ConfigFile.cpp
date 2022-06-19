@@ -12,11 +12,12 @@ namespace
 
 struct ConfigContent
 {
-    std::string m_last_preset_path;
-    Theme m_theme;
+    std::string    m_last_preset_path;
+    Theme          m_theme;
+    InterfaceScale m_scale;
 };
 
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ConfigContent, m_last_preset_path, m_theme);
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ConfigContent, m_last_preset_path, m_theme, m_scale);
 
 } // namespace
 
@@ -39,7 +40,8 @@ ConfigFile::ConfigFile(const std::string_view exe_path)
         }
         const auto config  = j.get<ConfigContent>();
         m_last_preset_path = config.m_last_preset_path;
-        m_theme = config.m_theme;
+        m_theme            = config.m_theme;
+        m_scale            = config.m_scale;
     }
     catch (const std::exception& ex)
     {
@@ -59,16 +61,20 @@ void ConfigFile::set_theme(const Theme theme)
     save_config_file();
 }
 
+void ConfigFile::set_scale(const InterfaceScale scale)
+{
+    m_scale = scale;
+    save_config_file();
+}
+
 void ConfigFile::save_config_file() const
 {
     spdlog::info("Saving config file to: \"{}\"", m_config_json_path.string());
-    const ConfigContent config
-    {
-        m_last_preset_path.value_or("").string(),
-        m_theme.value_or(Theme::Default)
-    };
+    const ConfigContent  config{m_last_preset_path.value_or("").string(),
+                               m_theme.value_or(Theme::Default),
+                               m_scale.value_or(InterfaceScale::Scale_1_00)};
     const nlohmann::json j = config;
-    std::ofstream ofs(m_config_json_path);
+    std::ofstream        ofs(m_config_json_path);
     ofs << j;
 }
 

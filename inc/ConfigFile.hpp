@@ -18,19 +18,19 @@ public:
     {
         return m_last_preset_path;
     };
-    const std::optional<Theme>& get_theme() const
-    {
-        return m_theme;
-    }
-    void set_last_preset_path(const std::filesystem::path& path);
-    void set_theme(const Theme theme);
+    const std::optional<Theme>&          get_theme() const { return m_theme; }
+    const std::optional<InterfaceScale>& get_scale() const { return m_scale; }
+    void                                 set_last_preset_path(const std::filesystem::path& path);
+    void                                 set_theme(const Theme theme);
+    void                                 set_scale(const InterfaceScale scale);
 
 private:
     void save_config_file() const;
 
-    std::filesystem::path m_config_json_path;
+    std::filesystem::path                m_config_json_path;
     std::optional<std::filesystem::path> m_last_preset_path;
-    std::optional<Theme> m_theme;
+    std::optional<Theme>                 m_theme;
+    std::optional<InterfaceScale>        m_scale;
 };
 
 } // namespace mc

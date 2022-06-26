@@ -165,7 +165,7 @@ void Application::render_main_menu()
     {
         if (ImGui::BeginMenu(ICON_FK_FILE_O " File"))
         {
-            if (ImGui::MenuItem(ICON_FK_FILE_O " New preset", "Ctrl+N"))
+            if (ImGui::MenuItem(ICON_FK_FILE_O "  New preset", "Ctrl+N"))
             {
                 new_preset_command();
             }
@@ -173,16 +173,16 @@ void Application::render_main_menu()
             {
                 open_preset_command();
             }
-            if (ImGui::MenuItem(ICON_FK_FLOPPY_O " Save preset", "Ctrl+S"))
+            if (ImGui::MenuItem(ICON_FK_FLOPPY_O "  Save preset", "Ctrl+S"))
             {
                 save_preset_command();
             }
-            if (ImGui::MenuItem(ICON_FK_FLOPPY_O " Save preset as", "Ctrl+Shift+S"))
+            if (ImGui::MenuItem(ICON_FK_FLOPPY_O "  Save preset as", "Ctrl+Shift+S"))
             {
                 save_preset_as_command();
             }
             ImGui::Separator();
-            if (ImGui::MenuItem(ICON_FK_TIMES " Exit", "Alt+F4"))
+            if (ImGui::MenuItem(" " ICON_FK_TIMES "  Exit", "Alt+F4"))
             {
                 exit_command();
             }

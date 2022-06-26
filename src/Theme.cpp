@@ -1,7 +1,15 @@
 #include "Theme.hpp"
 
+#ifdef WIN32
+#define WIN32_LEAN_AND_MEAN
+#include "winsdkver.h"
+#define WINVER WINVER_MAXVER
+#include "windows.h"
+#include "winuser.h"
+#endif
 #include "IconsFontaudio.h"
 #include "IconsForkAwesome.h"
+#include "SDL2/SDL_syswm.h"
 #include "imgui.h"
 #include "spdlog/spdlog.h"
 
@@ -11,22 +19,14 @@ bool ImGui_ImplSDLRenderer_CreateFontsTexture();
 
 namespace mc
 {
-namespace
-{
 
-float calculate_scale_value(const InterfaceScale scale)
-{
-    return 1 + 0.25F * static_cast<int>(scale);
-}
-
-} // namespace
-
-ThemeControl::ThemeControl(ConfigFile& config) : m_config(&config)
+ThemeControl::ThemeControl(ConfigFile& config, SDL_Window* window)
+    : m_config(&config), m_window(window)
 {
     m_original_nodes_style = ImNodes::GetStyle();
     set_theme_internal(m_config->get_theme().value_or(Theme::Default));
 
-    m_new_scale = m_config->get_scale().value_or(InterfaceScale::Scale_1_00);
+    m_new_scale = m_config->get_scale().value_or(InterfaceScale::Auto);
     update_scale_if_needed();
 }
 
@@ -80,11 +80,12 @@ void ThemeControl::set_scale_internal(const InterfaceScale scale)
     auto& io = ImGui::GetIO();
     io.Fonts->Clear();
     io.Fonts->AddFontFromFileTTF("DroidSans.ttf", 16 * scale_value);
-    const ImWchar icons_ranges[] = { ICON_MIN_FK, ICON_MAX_16_FK, 0 };
-    ImFontConfig icons_config;
-    icons_config.MergeMode = true;
+    const ImWchar icons_ranges[] = {ICON_MIN_FK, ICON_MAX_16_FK, 0};
+    ImFontConfig  icons_config;
+    icons_config.MergeMode  = true;
     icons_config.PixelSnapH = true;
-    io.Fonts->AddFontFromFileTTF("forkawesome-webfont.ttf", 12 * scale_value, &icons_config, icons_ranges);
+    io.Fonts->AddFontFromFileTTF(
+        "forkawesome-webfont.ttf", 12 * scale_value, &icons_config, icons_ranges);
 
     // workaround, otherwise the fonts won't rebuild properly
     ImGui_ImplSDLRenderer_CreateFontsTexture();
@@ -100,6 +101,34 @@ void ThemeControl::set_scale_internal(const InterfaceScale scale)
                                             m_original_nodes_style.NodePadding.y * scale_value};
     current_nodes_style.PinCircleRadius  = m_original_nodes_style.PinCircleRadius * scale_value;
     current_nodes_style.PinLineThickness = m_original_nodes_style.PinLineThickness * scale_value;
+}
+
+float ThemeControl::calculate_scale_value(const InterfaceScale scale) const
+{
+    if (scale == InterfaceScale::Auto)
+    {
+        return get_auto_interface_scale();
+    }
+    return 1 + 0.25F * static_cast<int>(scale);
+}
+
+float ThemeControl::get_auto_interface_scale() const
+{
+#ifdef WIN32
+    SDL_SysWMinfo window_info{};
+    const bool    result = SDL_GetWindowWMInfo(m_window, &window_info);
+    if (!result)
+    {
+        throw std::runtime_error("Could not query window info");
+    }
+    const auto window_handle = window_info.info.win.window;
+    const auto dpi           = GetDpiForWindow(window_handle);
+    spdlog::info("Detected DPI: {}", dpi);
+    return dpi / 96.F;
+#else
+    spdlog::warn("Automatic interface scaling is not supported on the current platform.");
+    return 1.f;
+#endif
 }
 
 } // namespace mc

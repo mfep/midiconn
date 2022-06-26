@@ -92,7 +92,7 @@ int main(int /*argc*/, char** argv)
     // ImGui::GetIO().Fonts->AddFontFromFileTTF("DroidSans.ttf", 16);
 
     // Main loop
-    mc::display::Application app(argv[0]);
+    mc::display::Application app(argv[0], window);
     bool                     done = false;
     size_t                   frame_idx{};
     while (!done)

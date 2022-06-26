@@ -4,7 +4,6 @@
 #include <fstream>
 
 // for some unknown reason, SDL must be included first
-#include "SDL2/SDL.h"
 #include "IconsForkAwesome.h"
 #include "imgui.h"
 #include "nlohmann/json.hpp"
@@ -17,9 +16,10 @@
 namespace mc::display
 {
 
-Application::Application(const char* exe_path)
+Application::Application(const char* exe_path, SDL_Window* window)
     : m_exe_path(exe_path), m_node_editor(m_midi_engine), m_config(exe_path),
-      m_preset_manager(m_node_editor, m_midi_engine, m_config, exe_path), m_theme_control(m_config)
+      m_preset_manager(m_node_editor, m_midi_engine, m_config, exe_path),
+      m_theme_control(m_config, window)
 {
     spdlog::info("Starting " MIDI_APPLICATION_NAME " version {}", MC_FULL_VERSION);
     auto last_opened_editor = m_preset_manager.try_loading_last_preset();
@@ -193,15 +193,18 @@ void Application::render_main_menu()
             if (ImGui::BeginMenu(ICON_FK_PAINT_BRUSH " Theme"))
             {
                 const auto current_theme = m_theme_control.get_theme();
-                if (ImGui::MenuItem(ICON_FK_MOON_O " Dark theme", nullptr, current_theme == Theme::Dark))
+                if (ImGui::MenuItem(
+                        ICON_FK_MOON_O " Dark theme", nullptr, current_theme == Theme::Dark))
                 {
                     m_theme_control.set_theme(Theme::Dark);
                 }
-                if (ImGui::MenuItem(ICON_FK_SUN_O " Light theme", nullptr, current_theme == Theme::Light))
+                if (ImGui::MenuItem(
+                        ICON_FK_SUN_O " Light theme", nullptr, current_theme == Theme::Light))
                 {
                     m_theme_control.set_theme(Theme::Light);
                 }
-                if (ImGui::MenuItem(ICON_FK_STAR_O " Classic theme", nullptr, current_theme == Theme::Classic))
+                if (ImGui::MenuItem(
+                        ICON_FK_STAR_O " Classic theme", nullptr, current_theme == Theme::Classic))
                 {
                     m_theme_control.set_theme(Theme::Classic);
                 }

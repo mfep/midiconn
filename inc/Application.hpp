@@ -1,6 +1,8 @@
 #pragma once
 #include <string>
 
+#include "SDL2/SDL.h"
+
 #include "ConfigFile.hpp"
 #include "KeyboardShotcutAggregator.hpp"
 #include "MidiEngine.hpp"
@@ -17,7 +19,7 @@ namespace mc::display
 class Application final
 {
 public:
-    Application(const char* exe_path);
+    Application(const char* exe_path, SDL_Window* window);
     ~Application();
     void        render();
     void        update_outside_frame();

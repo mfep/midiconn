@@ -33,28 +33,37 @@ void MidiChannelNode::render_internal()
     ImNodes::BeginInputAttribute(in_id());
     ImGui::TextUnformatted("MIDI in");
     ImNodes::EndInputAttribute();
-    ImGui::SameLine(135);
+    ImGui::SameLine(100);
     ImNodes::BeginOutputAttribute(out_id());
     ImGui::TextUnformatted("MIDI out");
     ImNodes::EndOutputAttribute();
 
     const auto previous_channels = m_channels;
-    for (size_t i = 0; i < 8; i++)
-    {
-        ImGui::TextUnformatted(get_label(i * 2));
-        ImGui::SameLine();
-        ImGui::SetNextItemWidth(50);
-        ImGui::Combo(
-            get_hidden_label(i * 2), m_channels.data() + i * 2, sm_combo_items, sm_num_combo_items);
 
-        ImGui::SameLine();
-        ImGui::TextUnformatted(get_label(i * 2 + 1));
-        ImGui::SameLine();
-        ImGui::SetNextItemWidth(50);
-        ImGui::Combo(get_hidden_label(i * 2 + 1),
-                     m_channels.data() + i * 2 + 1,
-                     sm_combo_items,
-                     sm_num_combo_items);
+    if (ImGui::BeginTable("MIDI Channel table", 4, ImGuiTableFlags_SizingStretchProp, {160, 0}))
+    {
+        for (size_t i = 0; i < 8; i++)
+        {
+            ImGui::TableNextRow();
+            ImGui::TableNextColumn();
+            ImGui::TextUnformatted(get_label(i * 2));
+            ImGui::TableNextColumn();
+            ImGui::SetNextItemWidth(50);
+            ImGui::Combo(get_hidden_label(i * 2),
+                         m_channels.data() + i * 2,
+                         sm_combo_items,
+                         sm_num_combo_items);
+
+            ImGui::TableNextColumn();
+            ImGui::TextUnformatted(get_label(i * 2 + 1));
+            ImGui::TableNextColumn();
+            ImGui::SetNextItemWidth(50);
+            ImGui::Combo(get_hidden_label(i * 2 + 1),
+                         m_channels.data() + i * 2 + 1,
+                         sm_combo_items,
+                         sm_num_combo_items);
+        }
+        ImGui::EndTable();
     }
     if (ImGui::Button("Default"))
     {
@@ -97,7 +106,7 @@ const char* MidiChannelNode::get_label(size_t index)
         for (size_t i = 0; i < sm_num_combo_items; i++)
         {
             std::stringstream ss;
-            ss << std::setw(2) << i + 1 << " ->";
+            ss << std::setw(2) << i + 1;
             labels.push_back(ss.str());
         }
     }

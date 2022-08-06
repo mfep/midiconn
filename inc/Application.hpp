@@ -7,6 +7,7 @@
 #include "KeyboardShotcutAggregator.hpp"
 #include "MidiEngine.hpp"
 #include "NodeEditor.hpp"
+#include "NodeFactory.hpp"
 #include "PresetManager.hpp"
 #include "Theme.hpp"
 
@@ -40,6 +41,7 @@ private:
     const char*   m_exe_path;
     bool          m_is_done{};
     midi::Engine  m_midi_engine;
+    NodeFactory   m_node_factory;
     NodeEditor    m_node_editor;
     ConfigFile    m_config;
     PresetManager m_preset_manager;

@@ -44,13 +44,14 @@ public:
     Theme          get_theme() const { return m_current_theme; }
     void           set_scale(const InterfaceScale scale);
     InterfaceScale get_scale() const { return m_scale; }
+    float          get_scale_value() const { return calculate_scale_value(m_scale); };
 
     // Call this outside of ImGui's NewFrame() and Render()
     void update_scale_if_needed();
 
 private:
-    void set_theme_internal(const Theme theme);
-    void set_scale_internal(const InterfaceScale scale);
+    void  set_theme_internal(const Theme theme);
+    void  set_scale_internal(const InterfaceScale scale);
     float calculate_scale_value(const InterfaceScale scale) const;
     float get_auto_interface_scale() const;
 

@@ -27,11 +27,11 @@ bool ends_with_dot_json(const std::string& path)
 namespace mc::display
 {
 
-PresetManager::PresetManager(const NodeEditor& editor,
-                             midi::Engine&     midi_engine,
-                             ConfigFile&       config,
-                             const char*       exe_path)
-    : m_midi_engine(&midi_engine), m_config(&config), m_exe_path(exe_path)
+PresetManager::PresetManager(const NodeEditor&  editor,
+                             const NodeFactory& node_factory,
+                             ConfigFile&        config,
+                             const char*        exe_path)
+    : m_node_factory(&node_factory), m_config(&config), m_exe_path(exe_path)
 {
     editor.to_json(m_last_editor_state);
 }
@@ -49,7 +49,7 @@ NodeEditor PresetManager::open_preset(const std::string& open_path)
     std::ifstream  ifs(open_path);
     nlohmann::json j;
     ifs >> j;
-    auto node_editor    = NodeEditor::from_json(*m_midi_engine, j);
+    auto node_editor    = NodeEditor::from_json(*m_node_factory, j);
     m_last_editor_state = j;
     m_opened_path       = open_path;
     return node_editor;

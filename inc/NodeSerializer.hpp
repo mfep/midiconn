@@ -5,10 +5,6 @@
 
 namespace mc
 {
-namespace midi
-{
-class Engine;
-}
 
 class DisconnectedMidiInNode;
 class DisconnectedMidiOutNode;
@@ -16,11 +12,12 @@ class MidiChannelNode;
 class MidiInNode;
 class MidiOutNode;
 class Node;
+class NodeFactory;
 
 class NodeSerializer final
 {
 public:
-    NodeSerializer(midi::Engine& midi_engine);
+    NodeSerializer(const NodeFactory& node_factory);
 
     void serialize_node(nlohmann::json& j, const Node& node) const;
 
@@ -33,7 +30,7 @@ public:
     std::shared_ptr<Node> deserialize_node(const nlohmann::json& j) const;
 
 private:
-    midi::Engine* m_midi_engine;
+    const NodeFactory* m_node_factory;
 };
 
 } // namespace mc

@@ -6,11 +6,13 @@
 #include "MidiEngine.hpp"
 #include "MidiInNode.hpp"
 #include "MidiOutNode.hpp"
+#include "Theme.hpp"
 
 namespace mc
 {
 
-NodeFactory::NodeFactory(midi::Engine& midi_engine) : m_midi_engine(&midi_engine)
+NodeFactory::NodeFactory(midi::Engine& midi_engine, const ThemeControl& theme_control)
+    : m_midi_engine(&midi_engine), m_theme_control(&theme_control)
 {
 }
 
@@ -25,19 +27,21 @@ std::shared_ptr<MidiOutNode> NodeFactory::build_midi_out_node(
     return std::make_shared<MidiOutNode>(output_info, *m_midi_engine);
 }
 
-std::shared_ptr<DisconnectedMidiInNode> NodeFactory::build_disconnected_midi_in_node(const std::string& input_name) const
+std::shared_ptr<DisconnectedMidiInNode> NodeFactory::build_disconnected_midi_in_node(
+    const std::string& input_name) const
 {
     return std::make_shared<DisconnectedMidiInNode>(input_name);
 }
 
-std::shared_ptr<DisconnectedMidiOutNode> NodeFactory::build_disconnected_midi_out_node(const std::string& output_name) const
+std::shared_ptr<DisconnectedMidiOutNode> NodeFactory::build_disconnected_midi_out_node(
+    const std::string& output_name) const
 {
     return std::make_shared<DisconnectedMidiOutNode>(output_name);
 }
 
 std::shared_ptr<MidiChannelNode> NodeFactory::build_midi_channel_node() const
 {
-    return std::make_shared<MidiChannelNode>();
+    return std::make_shared<MidiChannelNode>([=]() { return m_theme_control->get_scale_value(); });
 }
 
 } // namespace mc

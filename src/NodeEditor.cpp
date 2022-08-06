@@ -131,8 +131,9 @@ void NodeEditor::renderContextMenu()
         ImGui::TreeNodeEx("Channel map", leaf_flags);
         if (ImGui::IsItemClicked())
         {
-            const auto& node = m_nodes.emplace_back(std::make_shared<MidiChannelNode>());
+            const auto node = m_node_factory->build_midi_channel_node();
             ImNodes::SetNodeScreenSpacePos(node->id(), ImGui::GetMousePosOnOpeningCurrentPopup());
+            m_nodes.push_back(node);
             ImGui::CloseCurrentPopup();
         }
         if (ImGui::TreeNode("MIDI inputs"))

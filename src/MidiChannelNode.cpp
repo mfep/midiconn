@@ -15,7 +15,7 @@ namespace mc
 const char* MidiChannelNode::sm_combo_items[] = {
     "None", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16"};
 
-MidiChannelNode::MidiChannelNode()
+MidiChannelNode::MidiChannelNode(std::function<float()> get_scale) : m_get_scale(get_scale)
 {
     std::iota(m_channels.begin(), m_channels.end(), 1);
 }
@@ -33,14 +33,14 @@ void MidiChannelNode::render_internal()
     ImNodes::BeginInputAttribute(in_id());
     ImGui::TextUnformatted("MIDI in");
     ImNodes::EndInputAttribute();
-    ImGui::SameLine(100);
+    ImGui::SameLine(100 * m_get_scale());
     ImNodes::BeginOutputAttribute(out_id());
     ImGui::TextUnformatted("MIDI out");
     ImNodes::EndOutputAttribute();
 
     const auto previous_channels = m_channels;
 
-    if (ImGui::BeginTable("MIDI Channel table", 4, ImGuiTableFlags_SizingStretchProp, {160, 0}))
+    if (ImGui::BeginTable("MIDI Channel table", 4, ImGuiTableFlags_SizingStretchProp, {160 * m_get_scale(), 0}))
     {
         for (size_t i = 0; i < 8; i++)
         {
@@ -48,7 +48,7 @@ void MidiChannelNode::render_internal()
             ImGui::TableNextColumn();
             ImGui::TextUnformatted(get_label(i * 2));
             ImGui::TableNextColumn();
-            ImGui::SetNextItemWidth(50);
+            ImGui::SetNextItemWidth(50 * m_get_scale());
             ImGui::Combo(get_hidden_label(i * 2),
                          m_channels.data() + i * 2,
                          sm_combo_items,
@@ -57,7 +57,7 @@ void MidiChannelNode::render_internal()
             ImGui::TableNextColumn();
             ImGui::TextUnformatted(get_label(i * 2 + 1));
             ImGui::TableNextColumn();
-            ImGui::SetNextItemWidth(50);
+            ImGui::SetNextItemWidth(50 * m_get_scale());
             ImGui::Combo(get_hidden_label(i * 2 + 1),
                          m_channels.data() + i * 2 + 1,
                          sm_combo_items,

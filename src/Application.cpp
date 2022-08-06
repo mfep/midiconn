@@ -17,9 +17,9 @@ namespace mc::display
 {
 
 Application::Application(const char* exe_path, SDL_Window* window)
-    : m_exe_path(exe_path), m_node_factory(m_midi_engine), m_node_editor(m_node_factory),
-      m_config(exe_path), m_preset_manager(m_node_editor, m_node_factory, m_config, exe_path),
-      m_theme_control(m_config, window)
+    : m_exe_path(exe_path), m_config(exe_path), m_theme_control(m_config, window),
+      m_node_factory(m_midi_engine, m_theme_control), m_node_editor(m_node_factory),
+      m_preset_manager(m_node_editor, m_node_factory, m_config, exe_path)
 {
     spdlog::info("Starting " MIDI_APPLICATION_NAME " version {}", MC_FULL_VERSION);
     auto last_opened_editor = m_preset_manager.try_loading_last_preset();
@@ -124,8 +124,8 @@ void Application::new_preset_command()
     }
     if (new_preset)
     {
-        m_node_editor    = NodeEditor(m_midi_engine);
-        m_preset_manager = PresetManager(m_node_editor, m_midi_engine, m_config, m_exe_path);
+        m_node_editor    = NodeEditor(m_node_factory);
+        m_preset_manager = PresetManager(m_node_editor, m_node_factory, m_config, m_exe_path);
     }
 }
 

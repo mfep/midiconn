@@ -40,12 +40,12 @@ private:
 
     const char*   m_exe_path;
     bool          m_is_done{};
+    ConfigFile    m_config;
+    ThemeControl  m_theme_control;
     midi::Engine  m_midi_engine;
     NodeFactory   m_node_factory;
     NodeEditor    m_node_editor;
-    ConfigFile    m_config;
     PresetManager m_preset_manager;
-    ThemeControl  m_theme_control;
     bool          m_debug_log_enabled{};
 };
 

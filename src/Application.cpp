@@ -4,7 +4,7 @@
 #include <fstream>
 
 // for some unknown reason, SDL must be included first
-#include "SDL2/SDL.h"
+#include "IconsForkAwesome.h"
 #include "imgui.h"
 #include "nlohmann/json.hpp"
 #include "portable-file-dialogs.h"
@@ -16,9 +16,10 @@
 namespace mc::display
 {
 
-Application::Application(const char* exe_path)
-    : m_exe_path(exe_path), m_node_editor(m_midi_engine),
-      m_preset_manager(m_node_editor, m_midi_engine, exe_path)
+Application::Application(const char* exe_path, SDL_Window* window)
+    : m_exe_path(exe_path), m_config(exe_path), m_theme_control(m_config, window),
+      m_node_factory(m_midi_engine, m_theme_control), m_node_editor(m_node_factory),
+      m_preset_manager(m_node_editor, m_node_factory, m_config, exe_path)
 {
     spdlog::info("Starting " MIDI_APPLICATION_NAME " version {}", MC_FULL_VERSION);
     auto last_opened_editor = m_preset_manager.try_loading_last_preset();
@@ -59,6 +60,11 @@ void Application::render()
 #ifndef NDEBUG
     ImGui::ShowDemoWindow();
 #endif
+}
+
+void Application::update_outside_frame()
+{
+    m_theme_control.update_scale_if_needed();
 }
 
 void Application::handle_done(bool& done)
@@ -118,8 +124,8 @@ void Application::new_preset_command()
     }
     if (new_preset)
     {
-        m_node_editor    = NodeEditor(m_midi_engine);
-        m_preset_manager = PresetManager(m_node_editor, m_midi_engine, m_exe_path);
+        m_node_editor    = NodeEditor(m_node_factory);
+        m_preset_manager = PresetManager(m_node_editor, m_node_factory, m_config, m_exe_path);
     }
 }
 
@@ -157,32 +163,70 @@ void Application::render_main_menu()
     bool open_about_popup = false;
     if (ImGui::BeginMenuBar())
     {
-        if (ImGui::BeginMenu("File"))
+        if (ImGui::BeginMenu(ICON_FK_FILE_O " File"))
         {
-            if (ImGui::MenuItem("New preset", "Ctrl+N"))
+            if (ImGui::MenuItem(ICON_FK_FILE_O "  New preset", "Ctrl+N"))
             {
                 new_preset_command();
             }
-            if (ImGui::MenuItem("Open preset", "Ctrl+O"))
+            if (ImGui::MenuItem(ICON_FK_FOLDER_OPEN_O " Open preset", "Ctrl+O"))
             {
                 open_preset_command();
             }
-            if (ImGui::MenuItem("Save preset", "Ctrl+S"))
+            if (ImGui::MenuItem(ICON_FK_FLOPPY_O "  Save preset", "Ctrl+S"))
             {
                 save_preset_command();
             }
-            if (ImGui::MenuItem("Save preset as", "Ctrl+Shift+S"))
+            if (ImGui::MenuItem(ICON_FK_FLOPPY_O "  Save preset as", "Ctrl+Shift+S"))
             {
                 save_preset_as_command();
             }
             ImGui::Separator();
-            if (ImGui::MenuItem("Exit", "Alt+F4"))
+            if (ImGui::MenuItem(" " ICON_FK_TIMES "  Exit", "Alt+F4"))
             {
                 exit_command();
             }
             ImGui::EndMenu();
         }
-        if (ImGui::BeginMenu("Help"))
+        if (ImGui::BeginMenu(ICON_FK_COG " Settings"))
+        {
+            if (ImGui::BeginMenu(ICON_FK_PAINT_BRUSH " Theme"))
+            {
+                const auto current_theme = m_theme_control.get_theme();
+                if (ImGui::MenuItem(
+                        ICON_FK_MOON_O " Dark theme", nullptr, current_theme == Theme::Dark))
+                {
+                    m_theme_control.set_theme(Theme::Dark);
+                }
+                if (ImGui::MenuItem(
+                        ICON_FK_SUN_O " Light theme", nullptr, current_theme == Theme::Light))
+                {
+                    m_theme_control.set_theme(Theme::Light);
+                }
+                if (ImGui::MenuItem(
+                        ICON_FK_STAR_O " Classic theme", nullptr, current_theme == Theme::Classic))
+                {
+                    m_theme_control.set_theme(Theme::Classic);
+                }
+                ImGui::EndMenu();
+            }
+            if (ImGui::BeginMenu(ICON_FK_EYE " Interface Scale"))
+            {
+                const auto current_scale = m_theme_control.get_scale();
+                for (size_t i = 0; i < interface_scale_labels.size(); ++i)
+                {
+                    if (ImGui::MenuItem(interface_scale_labels[i].data(),
+                                        nullptr,
+                                        static_cast<size_t>(current_scale) == i))
+                    {
+                        m_theme_control.set_scale(static_cast<InterfaceScale>(i));
+                    }
+                }
+                ImGui::EndMenu();
+            }
+            ImGui::EndMenu();
+        }
+        if (ImGui::BeginMenu(ICON_FK_QUESTION " Help"))
         {
             if (ImGui::MenuItem("Enable debug log", nullptr, &m_debug_log_enabled))
             {

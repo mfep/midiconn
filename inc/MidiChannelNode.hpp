@@ -1,4 +1,7 @@
 #pragma once
+
+#include <functional>
+
 #include "MidiInfo.hpp"
 #include "Node.hpp"
 
@@ -8,7 +11,7 @@ namespace mc
 class MidiChannelNode final : public Node
 {
 public:
-    MidiChannelNode();
+    MidiChannelNode(std::function<float()> get_scale);
 
     void accept_serializer(nlohmann::json& j, const NodeSerializer& serializer) const override;
 
@@ -22,7 +25,8 @@ private:
     static inline constexpr size_t sm_num_combo_items = 17;
     static const char*             sm_combo_items[sm_num_combo_items];
 
-    std::array<int, 16> m_channels;
+    std::array<int, 16>  m_channels;
+    std::function<float()> m_get_scale;
 
     friend class NodeSerializer;
 };

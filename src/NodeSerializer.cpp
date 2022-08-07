@@ -12,6 +12,7 @@
 #include "MidiInfo.hpp"
 #include "MidiOutNode.hpp"
 #include "MidiProbe.hpp"
+#include "NodeFactory.hpp"
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ImVec2, x, y);
 
@@ -20,7 +21,7 @@ namespace mc
 
 using nlohmann::json;
 
-NodeSerializer::NodeSerializer(midi::Engine& midi_engine) : m_midi_engine(&midi_engine)
+NodeSerializer::NodeSerializer(const NodeFactory& node_factory) : m_node_factory(&node_factory)
 {
 }
 
@@ -88,11 +89,11 @@ std::shared_ptr<Node> NodeSerializer::deserialize_node(const json& j) const
         const auto input_info_opt = MidiProbe::get_valid_input(input_name);
         if (input_info_opt.has_value())
         {
-            node = std::make_shared<MidiInNode>(input_info_opt.value(), *m_midi_engine);
+            node = m_node_factory->build_midi_in_node(input_info_opt.value());
         }
         else
         {
-            node = std::make_shared<DisconnectedMidiInNode>(input_name);
+            node = m_node_factory->build_disconnected_midi_in_node(input_name);
         }
     }
     else if (node_type == "midi_out")
@@ -101,16 +102,16 @@ std::shared_ptr<Node> NodeSerializer::deserialize_node(const json& j) const
         const auto output_info_opt = MidiProbe::get_valid_output(output_name);
         if (output_info_opt.has_value())
         {
-            node = std::make_shared<MidiOutNode>(output_info_opt.value(), *m_midi_engine);
+            node = m_node_factory->build_midi_out_node(output_info_opt.value());
         }
         else
         {
-            node = std::make_shared<DisconnectedMidiOutNode>(output_name);
+            node = m_node_factory->build_disconnected_midi_out_node(output_name);
         }
     }
     else if (node_type == "midi_channel")
     {
-        auto channel_node = std::make_shared<MidiChannelNode>();
+        auto channel_node = m_node_factory->build_midi_channel_node();
         j["channels"].get_to(channel_node->m_channels);
         node = channel_node;
     }

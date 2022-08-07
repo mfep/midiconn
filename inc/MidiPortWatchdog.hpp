@@ -6,17 +6,14 @@
 
 namespace mc
 {
-namespace midi
-{
-class Engine;
-}
+class NodeFactory;
 
 class MidiPortWatchdog final
 {
 public:
     MidiPortWatchdog() = delete;
 
-    static void check_nodes(std::vector<std::shared_ptr<Node>>& nodes, midi::Engine& midi_engine);
+    static void check_nodes(std::vector<std::shared_ptr<Node>>& nodes, const NodeFactory& node_factory);
 };
 
 } // namespace mc

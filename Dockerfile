@@ -10,6 +10,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 		libspdlog-dev \
 		libfmt-dev \
 		libasound2-dev \
+		libfreetype-dev \
 	&& apt-get autoremove --purge -y \
 	&& apt-get autoclean \
 	&& rm -rf /var/cache/apt/*

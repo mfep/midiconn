@@ -9,6 +9,7 @@
 #include "MidiOutNode.hpp"
 #include "MidiPortWatchdog.hpp"
 #include "MidiProbe.hpp"
+#include "NodeFactory.hpp"
 #include "NodeSerializer.hpp"
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ImVec2, x, y);
@@ -16,7 +17,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ImVec2, x, y);
 namespace mc::display
 {
 
-NodeEditor::NodeEditor(midi::Engine& midi_engine) : m_midi_engine(&midi_engine)
+NodeEditor::NodeEditor(const NodeFactory& node_factory) : m_node_factory(&node_factory)
 {
 }
 
@@ -39,7 +40,7 @@ void NodeEditor::to_json(nlohmann::json& j) const
     using nlohmann::json;
 
     auto           node_array = json::array();
-    NodeSerializer serializer(*m_midi_engine);
+    NodeSerializer serializer(*m_node_factory);
     for (const auto& node : m_nodes)
     {
         json node_json;
@@ -53,13 +54,13 @@ void NodeEditor::to_json(nlohmann::json& j) const
     };
 }
 
-NodeEditor NodeEditor::from_json(midi::Engine& midi_engine, const nlohmann::json& j)
+NodeEditor NodeEditor::from_json(const NodeFactory& node_factory, const nlohmann::json& j)
 {
     const ImVec2 panning = j["panning"];
     ImNodes::EditorContextResetPanning(panning);
 
-    NodeEditor     editor(midi_engine);
-    NodeSerializer deserializer(midi_engine);
+    NodeEditor     editor(node_factory);
+    NodeSerializer deserializer(node_factory);
 
     // 1st iter -> create nodes
     for (const auto& node_json : j["nodes"])
@@ -100,13 +101,17 @@ void NodeEditor::renderContextMenu()
             ImGui::TreeNodeEx(info.m_name.c_str(), leaf_flags);
             if (ImGui::IsItemClicked())
             {
-                using node_type = std::conditional_t<
-                    std::is_same_v<midi::InputInfo, std::decay_t<decltype(info)>>,
-                    MidiInNode,
-                    MidiOutNode>;
+                std::shared_ptr<Node> node;
+                if constexpr (std::is_same_v<midi::InputInfo, std::decay_t<decltype(info)>>)
+                {
+                    node = m_node_factory->build_midi_in_node(info);
+                }
+                else
+                {
+                    node = m_node_factory->build_midi_out_node(info);
+                }
 
-                const auto& node =
-                    m_nodes.emplace_back(std::make_shared<node_type>(info, *m_midi_engine));
+                m_nodes.push_back(node);
 
                 ImNodes::SetNodeScreenSpacePos(node->id(),
                                                ImGui::GetMousePosOnOpeningCurrentPopup());
@@ -126,8 +131,9 @@ void NodeEditor::renderContextMenu()
         ImGui::TreeNodeEx("Channel map", leaf_flags);
         if (ImGui::IsItemClicked())
         {
-            const auto& node = m_nodes.emplace_back(std::make_shared<MidiChannelNode>());
+            const auto node = m_node_factory->build_midi_channel_node();
             ImNodes::SetNodeScreenSpacePos(node->id(), ImGui::GetMousePosOnOpeningCurrentPopup());
+            m_nodes.push_back(node);
             ImGui::CloseCurrentPopup();
         }
         if (ImGui::TreeNode("MIDI inputs"))
@@ -146,7 +152,7 @@ void NodeEditor::renderContextMenu()
 
 void NodeEditor::renderNodes()
 {
-    MidiPortWatchdog::check_nodes(m_nodes, *m_midi_engine);
+    MidiPortWatchdog::check_nodes(m_nodes, *m_node_factory);
     for (const auto& node : m_nodes)
     {
         node->render();

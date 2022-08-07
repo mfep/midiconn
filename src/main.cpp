@@ -17,6 +17,9 @@
 #error This backend requires SDL 2.0.17+ because of SDL_RenderGeometry() function
 #endif
 
+extern unsigned char      g_font_binary[];
+extern unsigned long long g_font_binary_size;
+
 int main(int /*argc*/, char** argv)
 {
     // Setup spdlog
@@ -62,10 +65,6 @@ int main(int /*argc*/, char** argv)
     // io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
     // io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 
-    // Setup Dear ImGui style
-    ImGui::StyleColorsDark();
-    // ImGui::StyleColorsClassic();
-
     // Setup Platform/Renderer backends
     ImGui_ImplSDL2_InitForSDLRenderer(window);
     ImGui_ImplSDLRenderer_Init(renderer);
@@ -90,8 +89,10 @@ int main(int /*argc*/, char** argv)
     // io.Fonts->AddFontFromFileTTF("../../misc/fonts/ProggyTiny.ttf", 10.0f);
     // ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf", 18.0f, NULL,
     // io.Fonts->GetGlyphRangesJapanese()); IM_ASSERT(font != NULL);
+    // ImGui::GetIO().Fonts->AddFontFromFileTTF("DroidSans.ttf", 16);
+
     // Main loop
-    mc::display::Application app(argv[0]);
+    mc::display::Application app(argv[0], window);
     bool                     done = false;
     size_t                   frame_idx{};
     while (!done)
@@ -124,6 +125,8 @@ int main(int /*argc*/, char** argv)
             {
             }
         }
+
+        app.update_outside_frame();
 
         // Start the Dear ImGui frame
         ImGui_ImplSDLRenderer_NewFrame();

@@ -7,6 +7,7 @@
 #include "MidiInNode.hpp"
 #include "MidiOutNode.hpp"
 #include "MidiProbe.hpp"
+#include "NodeFactory.hpp"
 
 namespace mc
 {
@@ -40,8 +41,40 @@ struct MidiNodeTraits<DisconnectedMidiOutNode>
     static constexpr bool is_disconnected = true;
 };
 
-template <class MidiNode, class ReplacingMidiNode, class ValidGetterFun, class... Args>
-bool update_node(std::shared_ptr<Node>& node_ptr, ValidGetterFun valid_getter_fun, Args&&... args)
+template <class NodeType>
+struct NodeBuilder
+{
+    const NodeFactory* m_node_factory{};
+};
+
+std::shared_ptr<Node> build_node(const NodeBuilder<MidiInNode>& builder,
+                                 const midi::InputInfo&         input_info)
+{
+    return builder.m_node_factory->build_midi_in_node(input_info);
+}
+
+std::shared_ptr<Node> build_node(const NodeBuilder<DisconnectedMidiInNode>& builder,
+                                 const std::string&                         input_name)
+{
+    return builder.m_node_factory->build_disconnected_midi_in_node(input_name);
+}
+
+std::shared_ptr<Node> build_node(const NodeBuilder<MidiOutNode>& builder,
+                                 const midi::OutputInfo&         output_info)
+{
+    return builder.m_node_factory->build_midi_out_node(output_info);
+}
+
+std::shared_ptr<Node> build_node(const NodeBuilder<DisconnectedMidiOutNode>& builder,
+                                 const std::string&                          output_name)
+{
+    return builder.m_node_factory->build_disconnected_midi_out_node(output_name);
+}
+
+template <class MidiNode, class ReplacingMidiNode, class ValidGetterFun>
+bool update_node(std::shared_ptr<Node>&                node_ptr,
+                 ValidGetterFun                        valid_getter_fun,
+                 const NodeBuilder<ReplacingMidiNode>& builder)
 {
     if (auto* midi_ptr = dynamic_cast<MidiNode*>(node_ptr.get()); midi_ptr != nullptr)
     {
@@ -84,8 +117,7 @@ bool update_node(std::shared_ptr<Node>& node_ptr, ValidGetterFun valid_getter_fu
             {
                 spdlog::info("Re-activating node for connected device \"{}\"", midi_port_name);
                 const auto memo = get_memo(node_ptr);
-                node_ptr        = std::make_shared<ReplacingMidiNode>(valid_info.value(),
-                                                               std::forward<Args>(args)...);
+                node_ptr        = build_node(builder, valid_info.value());
                 set_memo(node_ptr, memo);
             }
         }
@@ -95,7 +127,7 @@ bool update_node(std::shared_ptr<Node>& node_ptr, ValidGetterFun valid_getter_fu
             {
                 spdlog::info("Deactivating node for disconnected device \"{}\"", midi_port_name);
                 const auto memo = get_memo(node_ptr);
-                node_ptr        = std::make_shared<ReplacingMidiNode>(midi_port_name);
+                node_ptr        = build_node(builder, midi_port_name);
                 set_memo(node_ptr, memo);
             }
         }
@@ -110,8 +142,9 @@ bool update_node(std::shared_ptr<Node>& node_ptr, ValidGetterFun valid_getter_fu
 } // namespace
 
 void MidiPortWatchdog::check_nodes(std::vector<std::shared_ptr<Node>>& nodes,
-                                   midi::Engine&                       midi_engine)
+                                   const NodeFactory&                  node_factory)
 {
+
     for (auto& node_ptr : nodes)
     {
         const auto get_valid_input = [](const auto& name) {
@@ -121,21 +154,25 @@ void MidiPortWatchdog::check_nodes(std::vector<std::shared_ptr<Node>>& nodes,
             return MidiProbe::get_valid_output(name);
         };
 
-        if (update_node<MidiInNode, DisconnectedMidiInNode>(node_ptr, get_valid_input))
+        if (update_node<MidiInNode, DisconnectedMidiInNode>(
+                node_ptr, get_valid_input, NodeBuilder<DisconnectedMidiInNode>{&node_factory}))
         {
             // do nothing, update done in side effect
         }
-        else if (update_node<MidiOutNode, DisconnectedMidiOutNode>(node_ptr, get_valid_output))
+        else if (update_node<MidiOutNode, DisconnectedMidiOutNode>(
+                     node_ptr,
+                     get_valid_output,
+                     NodeBuilder<DisconnectedMidiOutNode>{&node_factory}))
         {
             // do nothing, update done in side effect
         }
         else if (update_node<DisconnectedMidiInNode, MidiInNode>(
-                     node_ptr, get_valid_input, midi_engine))
+                     node_ptr, get_valid_input, NodeBuilder<MidiInNode>{&node_factory}))
         {
             // do nothing, update done in side effect
         }
         else if (update_node<DisconnectedMidiOutNode, MidiOutNode>(
-                     node_ptr, get_valid_output, midi_engine))
+                     node_ptr, get_valid_output, NodeBuilder<MidiOutNode>{&node_factory}))
         {
             // do nothing, update done in side effect
         }

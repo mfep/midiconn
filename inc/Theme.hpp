@@ -3,6 +3,7 @@
 #include <array>
 #include <string_view>
 
+#include "SDL2/SDL_syswm.h"
 #include "imnodes.h"
 
 class SDL_Window;

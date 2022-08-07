@@ -9,7 +9,6 @@
 #endif
 #include "IconsFontaudio.h"
 #include "IconsForkAwesome.h"
-#include "SDL2/SDL_syswm.h"
 #include "imgui.h"
 #include "spdlog/spdlog.h"
 

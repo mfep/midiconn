@@ -85,6 +85,10 @@ add_custom_command(TARGET midi_connector POST_BUILD
 if (WIN32)
     target_compile_definitions(midi_connector PRIVATE
         WINVER=0x0A00
+        NTDDI_VERSION=0x0A000000
+    )
+    target_link_libraries(midi_connector PRIVATE
+        Shcore.lib
     )
     add_custom_command (TARGET midi_connector POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different

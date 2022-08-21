@@ -2,6 +2,7 @@
 
 #ifdef WIN32
 #define WIN32_LEAN_AND_MEAN
+#include "shellscalingapi.h"
 #include "windows.h"
 #include "winuser.h"
 #endif
@@ -13,6 +14,18 @@
 #include "ConfigFile.hpp"
 
 bool ImGui_ImplSDLRenderer_CreateFontsTexture();
+
+namespace
+{
+#ifdef WIN32
+
+const auto unused = []() {
+    SetProcessDpiAwareness(PROCESS_SYSTEM_DPI_AWARE);
+    return 0;
+}();
+
+#endif
+} // namespace
 
 namespace mc
 {

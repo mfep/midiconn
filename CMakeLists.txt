@@ -83,6 +83,9 @@ add_custom_command(TARGET midi_connector POST_BUILD
 )
 
 if (WIN32)
+    target_compile_definitions(midi_connector PRIVATE
+        WINVER=0x0A00
+    )
     add_custom_command (TARGET midi_connector POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
         $<TARGET_FILE:rtmidi>

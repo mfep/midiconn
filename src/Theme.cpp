@@ -2,8 +2,6 @@
 
 #ifdef WIN32
 #define WIN32_LEAN_AND_MEAN
-#include "winsdkver.h"
-#define WINVER WINVER_MAXVER
 #include "windows.h"
 #include "winuser.h"
 #endif

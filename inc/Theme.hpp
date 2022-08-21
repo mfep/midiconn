@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <optional>
 #include <string_view>
 
 #include "SDL2/SDL_syswm.h"
@@ -56,12 +57,13 @@ private:
     float calculate_scale_value(const InterfaceScale scale) const;
     float get_auto_interface_scale() const;
 
-    ConfigFile*    m_config;
-    SDL_Window*    m_window;
-    Theme          m_current_theme{};
-    InterfaceScale m_scale{InterfaceScale::Undefined};
-    InterfaceScale m_new_scale{};
-    ImNodesStyle   m_original_nodes_style;
+    ConfigFile*                  m_config;
+    SDL_Window*                  m_window;
+    Theme                        m_current_theme{};
+    InterfaceScale               m_scale{InterfaceScale::Undefined};
+    InterfaceScale               m_new_scale{};
+    ImNodesStyle                 m_original_nodes_style;
+    mutable std::optional<float> m_detected_interface_scale;
 };
 
 } // namespace mc

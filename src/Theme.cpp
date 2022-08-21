@@ -111,21 +111,25 @@ float ThemeControl::calculate_scale_value(const InterfaceScale scale) const
 
 float ThemeControl::get_auto_interface_scale() const
 {
-#ifdef WIN32
-    SDL_SysWMinfo window_info{};
-    const bool    result = SDL_GetWindowWMInfo(m_window, &window_info);
-    if (!result)
+    if (!m_detected_interface_scale.has_value())
     {
-        throw std::runtime_error("Could not query window info");
-    }
-    const auto window_handle = window_info.info.win.window;
-    const auto dpi           = GetDpiForWindow(window_handle);
-    spdlog::info("Detected DPI: {}", dpi);
-    return dpi / 96.F;
+#ifdef WIN32
+        SDL_SysWMinfo window_info{};
+        const bool    result = SDL_GetWindowWMInfo(m_window, &window_info);
+        if (!result)
+        {
+            throw std::runtime_error("Could not query window info");
+        }
+        const auto window_handle = window_info.info.win.window;
+        const auto dpi           = GetDpiForWindow(window_handle);
+        spdlog::info("Detected DPI: {}", dpi);
+        m_detected_interface_scale = dpi / 96.F;
 #else
-    spdlog::warn("Automatic interface scaling is not supported on the current platform.");
-    return 1.f;
+        spdlog::warn("Automatic interface scaling is not supported on the current platform.");
+        m_detected_interface_scale = 1.f;
 #endif
+    }
+    return m_detected_interface_scale.value();
 }
 
 } // namespace mc

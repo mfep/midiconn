@@ -103,7 +103,10 @@ void PresetManager::save_preset(const NodeEditor& editor, const bool save_as)
     }
     else
     {
-        save_path = pfd::save_file("Save preset", ".", {"JSON files (*.json)", "*.json"}).result();
+        const auto filename =
+            std::filesystem::path(m_opened_path.value_or("preset.json")).filename().string();
+        save_path =
+            pfd::save_file("Save preset", filename, {"JSON files (*.json)", "*.json"}).result();
     }
     if (!save_path.empty())
     {

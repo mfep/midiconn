@@ -54,20 +54,6 @@ void MidiInNode::render_internal()
 
     ImGui::TextUnformatted("all channels");
     ImNodes::EndOutputAttribute();
-
-    ImGui::PushStyleColor(ImGuiCol_Header, {});
-    ImGui::PushStyleColor(ImGuiCol_HeaderActive, {});
-    ImGui::PushStyleColor(ImGuiCol_HeaderHovered, {});
-    if (ImGui::CollapsingHeader("Advanced"))
-    {
-        if (ImGui::Checkbox("Enable SysEx", &m_enabled_message_types.m_sysex_enabled) ||
-            ImGui::Checkbox("Enable Time", &m_enabled_message_types.m_time_enabled) ||
-            ImGui::Checkbox("Enable Active Sensing", &m_enabled_message_types.m_sensing_enabled))
-        {
-            m_midi_engine->enable_message_types(m_input_info, m_enabled_message_types);
-        }
-    }
-    ImGui::PopStyleColor(3);
 }
 
 void MidiInNode::message_received(size_t /*id*/, std::vector<unsigned char>& /*message_bytes*/)

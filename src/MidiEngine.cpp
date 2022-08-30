@@ -265,18 +265,15 @@ void Engine::disconnect(size_t input_id, size_t output_id)
     spdlog::info("Disconnected input {} from output {}", input_id, output_id);
 }
 
-void Engine::enable_message_types(const InputInfo& input_info, const MessageTypeMask& mask)
+void Engine::enable_message_types(const MessageTypeMask& mask)
 {
-    // locking can be omitted here as long as this method is not called
-    // concurrently with the other methods above
-    const auto id = input_info.m_id;
-    check_input_port(id, input_info);
-    if (id >= m_inputs.size() || m_inputs[id] == nullptr)
+    std::lock_guard guard(m_mutex);
+    spdlog::info("Enabling message types: {}", mask);
+    m_message_type_mask = mask;
+    for (auto& input : m_inputs)
     {
-        throw std::logic_error("Cannot enable message types on non-existent input");
+        input->m_input.enable_message_types(m_message_type_mask);
     }
-    spdlog::info("Enabling message types for \"{}\": {}", input_info.m_name, mask);
-    m_inputs[id]->m_input.enable_message_types(mask);
 }
 
 void Engine::message_received(size_t id, std::vector<unsigned char>& message_bytes)

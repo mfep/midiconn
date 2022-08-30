@@ -1,5 +1,7 @@
 #include "NodeEditor.hpp"
 
+#include <string_view>
+
 #include "imgui.h"
 #include "imnodes.h"
 #include "nlohmann/json.hpp"
@@ -14,6 +16,11 @@
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ImVec2, x, y);
 
+namespace
+{
+constexpr std::string_view contex_popup_name = "NodeEditorContextMenu";
+}
+
 namespace mc::display
 {
 
@@ -24,6 +31,12 @@ NodeEditor::NodeEditor(const NodeFactory& node_factory) : m_node_factory(&node_f
 void NodeEditor::render()
 {
     ImNodes::BeginNodeEditor();
+
+    // Render right click context menu
+    if (ImGui::IsMouseReleased(ImGuiMouseButton_Right))
+    {
+        ImGui::OpenPopup(contex_popup_name.data());
+    }
     renderContextMenu();
     renderNodes();
     if (m_nodes.size() > 1)
@@ -31,6 +44,8 @@ void NodeEditor::render()
         ImNodes::MiniMap();
     }
     ImNodes::EndNodeEditor();
+
+    handleLinkDropped();
     handleDelete();
     handleConnect();
 }
@@ -91,11 +106,12 @@ NodeEditor NodeEditor::from_json(const NodeFactory& node_factory, const nlohmann
     return editor;
 }
 
-void NodeEditor::renderContextMenu()
+std::shared_ptr<Node> NodeEditor::renderContextMenu(bool show_outputting_nodes,
+                                                    bool show_inputting_nodes)
 {
     constexpr ImGuiTreeNodeFlags leaf_flags =
         ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
-    auto render_contents = [this, leaf_flags](auto& infos) {
+    auto render_contents = [this, leaf_flags](auto& infos) -> std::shared_ptr<Node> {
         for (const auto& info : infos)
         {
             ImGui::TreeNodeEx(info.m_name.c_str(), leaf_flags);
@@ -116,38 +132,56 @@ void NodeEditor::renderContextMenu()
                 ImNodes::SetNodeScreenSpacePos(node->id(),
                                                ImGui::GetMousePosOnOpeningCurrentPopup());
                 ImGui::CloseCurrentPopup();
+                return node;
             }
         }
+        return nullptr;
     };
 
+    std::shared_ptr<Node> node;
     ImGui::SetNextWindowSizeConstraints({300, 0}, {500, 500});
-    if (ImGui::BeginPopupContextWindow())
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.f, 0.f));
+    if (ImGui::BeginPopup(contex_popup_name.data()))
     {
         if (ImGui::IsWindowAppearing())
         {
             m_input_infos  = MidiProbe::get_inputs();
             m_output_infos = MidiProbe::get_outputs();
         }
-        ImGui::TreeNodeEx("Channel map", leaf_flags);
-        if (ImGui::IsItemClicked())
+        if (show_outputting_nodes || show_inputting_nodes)
         {
-            const auto node = m_node_factory->build_midi_channel_node();
-            ImNodes::SetNodeScreenSpacePos(node->id(), ImGui::GetMousePosOnOpeningCurrentPopup());
-            m_nodes.push_back(node);
-            ImGui::CloseCurrentPopup();
+            ImGui::TreeNodeEx("Channel map", leaf_flags);
+            if (ImGui::IsItemClicked())
+            {
+                node = m_node_factory->build_midi_channel_node();
+                ImNodes::SetNodeScreenSpacePos(node->id(),
+                                               ImGui::GetMousePosOnOpeningCurrentPopup());
+                m_nodes.push_back(node);
+                ImGui::CloseCurrentPopup();
+            }
         }
-        if (ImGui::TreeNode("MIDI inputs"))
+        if (show_outputting_nodes && ImGui::TreeNode("MIDI inputs"))
         {
-            render_contents(m_input_infos);
+            auto tmp_node = render_contents(m_input_infos);
+            if (tmp_node) // new node was created
+            {
+                node = tmp_node;
+            }
             ImGui::TreePop();
         }
-        if (ImGui::TreeNode("MIDI outputs"))
+        if (show_inputting_nodes && ImGui::TreeNode("MIDI outputs"))
         {
-            render_contents(m_output_infos);
+            auto tmp_node = render_contents(m_output_infos);
+            if (tmp_node) // new node was created
+            {
+                node = tmp_node;
+            }
             ImGui::TreePop();
         }
         ImGui::EndPopup();
     }
+    ImGui::PopStyleVar();
+    return node;
 }
 
 void NodeEditor::renderNodes()
@@ -213,6 +247,36 @@ void NodeEditor::handleConnect()
             });
         (*start_node_it)
             ->connect_output(std::weak_ptr(*end_node_it), std::weak_ptr(*start_node_it));
+    }
+}
+
+void NodeEditor::handleLinkDropped()
+{
+    if (ImNodes::IsLinkDropped(&m_dropped_link_id))
+    {
+        ImGui::OpenPopup(contex_popup_name.data());
+    }
+    auto new_node = renderContextMenu(Node::is_in_id(m_dropped_link_id),
+                                      Node::is_out_id(m_dropped_link_id));
+    if (new_node)
+    {
+        if (Node::is_out_id(m_dropped_link_id))
+        {
+            auto start_node_it =
+                std::find_if(m_nodes.begin(), m_nodes.end(), [this](const auto& node) {
+                    return node->out_id() == m_dropped_link_id;
+                });
+            (*start_node_it)
+                ->connect_output(std::weak_ptr(new_node), std::weak_ptr(*start_node_it));
+        }
+        else if (Node::is_in_id(m_dropped_link_id))
+        {
+            auto end_node_it =
+                std::find_if(m_nodes.begin(), m_nodes.end(), [this](const auto& node) {
+                    return node->in_id() == m_dropped_link_id;
+                });
+            new_node->connect_output(std::weak_ptr(*end_node_it), std::weak_ptr(new_node));
+        }
     }
 }
 

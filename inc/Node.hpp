@@ -33,6 +33,9 @@ public:
 
     virtual void accept_serializer(nlohmann::json& j, const NodeSerializer& serializer) const = 0;
 
+    static bool is_in_id(int id) { return id % 2 == 0; }
+    static bool is_out_id(int id) { return !is_in_id(id); }
+
 protected:
     virtual void              render_internal() = 0;
     virtual void              push_style() const {};

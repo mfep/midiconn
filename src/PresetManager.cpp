@@ -10,6 +10,17 @@
 #include "ConfigFile.hpp"
 #include "NodeEditor.hpp"
 
+namespace mc::midi
+{
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(MessageTypeMask,
+                                   m_sysex_enabled,
+                                   m_time_enabled,
+                                   m_sensing_enabled);
+}
+
+namespace mc::display
+{
+
 namespace
 {
 
@@ -24,48 +35,53 @@ bool ends_with_dot_json(const std::string& path)
 
 } // namespace
 
-namespace mc::display
+void Preset::to_json(nlohmann::json& j) const
 {
+    m_node_editor.to_json(j["editor"]);
+    j["enabled_message_types"] = m_message_type_mask;
+}
 
-PresetManager::PresetManager(const NodeEditor&  editor,
+Preset Preset::from_json(const NodeFactory& node_factory, const nlohmann::json& j)
+{
+    return {NodeEditor::from_json(node_factory, j["editor"]), j["enabled_message_types"]};
+}
+
+PresetManager::PresetManager(const Preset&      preset,
                              const NodeFactory& node_factory,
                              ConfigFile&        config,
                              const char*        exe_path)
     : m_node_factory(&node_factory), m_config(&config), m_exe_path(exe_path)
 {
-    editor.to_json(m_last_editor_state);
+    preset.to_json(m_last_editor_state);
 }
 
-bool PresetManager::is_dirty(const NodeEditor& editor) const
+bool PresetManager::is_dirty(const Preset& preset) const
 {
     nlohmann::json current_editor_state;
-    editor.to_json(current_editor_state);
+    preset.to_json(current_editor_state);
     return current_editor_state != m_last_editor_state;
 }
 
-NodeEditor PresetManager::open_preset(const std::string& open_path)
+Preset PresetManager::open_preset(const std::string& open_path)
 {
     spdlog::info("Opening preset from path \"{}\"", open_path);
-    std::ifstream  ifs(open_path);
-    nlohmann::json j;
-    ifs >> j;
-    auto node_editor    = NodeEditor::from_json(*m_node_factory, j);
-    m_last_editor_state = j;
-    m_opened_path       = open_path;
-    return node_editor;
+    std::ifstream ifs(open_path);
+    ifs >> m_last_editor_state;
+    m_opened_path = open_path;
+    return Preset::from_json(*m_node_factory, m_last_editor_state);
 }
 
-void PresetManager::save_preset(const NodeEditor& editor)
+void PresetManager::save_preset(const Preset& preset)
 {
-    save_preset(editor, false);
+    save_preset(preset, false);
 }
 
-void PresetManager::save_preset_as(const NodeEditor& editor)
+void PresetManager::save_preset_as(const Preset& preset)
 {
-    save_preset(editor, true);
+    save_preset(preset, true);
 }
 
-std::optional<NodeEditor> PresetManager::try_loading_last_preset()
+std::optional<Preset> PresetManager::try_loading_last_preset()
 {
     const auto last_preset_path = m_config->get_last_preset_path();
     if (!last_preset_path.has_value())
@@ -94,7 +110,7 @@ void PresetManager::try_saving_last_preset_path() const
     m_config->set_last_preset_path(m_opened_path.value());
 }
 
-void PresetManager::save_preset(const NodeEditor& editor, const bool save_as)
+void PresetManager::save_preset(const Preset& preset, const bool save_as)
 {
     std::string save_path;
     if (!save_as && m_opened_path.has_value())
@@ -116,7 +132,7 @@ void PresetManager::save_preset(const NodeEditor& editor, const bool save_as)
             save_path += ".json";
         }
         nlohmann::json j;
-        editor.to_json(j);
+        preset.to_json(j);
         std::ofstream ofs(save_path);
         ofs << j << std::endl;
         m_last_editor_state = j;

@@ -18,14 +18,14 @@ namespace mc::display
 
 Application::Application(const char* exe_path, SDL_Window* window)
     : m_exe_path(exe_path), m_config(exe_path), m_theme_control(m_config, window),
-      m_node_factory(m_midi_engine, m_theme_control), m_node_editor(m_node_factory),
-      m_preset_manager(m_node_editor, m_node_factory, m_config, exe_path)
+      m_node_factory(m_midi_engine, m_theme_control), m_preset{NodeEditor(m_node_factory)},
+      m_preset_manager(m_preset, m_node_factory, m_config, exe_path)
 {
     spdlog::info("Starting " MIDI_APPLICATION_NAME " version {}", MC_FULL_VERSION);
     auto last_opened_editor = m_preset_manager.try_loading_last_preset();
     if (last_opened_editor.has_value())
     {
-        m_node_editor = std::move(last_opened_editor.value());
+        m_preset = std::move(last_opened_editor.value());
     }
 }
 
@@ -48,7 +48,7 @@ void Application::render()
     try
     {
         render_main_menu();
-        m_node_editor.render();
+        m_preset.m_node_editor.render();
     }
     catch (std::exception& ex)
     {
@@ -71,7 +71,7 @@ void Application::handle_done(bool& done)
 {
     if (done || m_is_done)
     {
-        if (m_preset_manager.is_dirty(m_node_editor))
+        if (m_preset_manager.is_dirty(m_preset))
         {
             done = m_is_done = query_save();
         }
@@ -89,7 +89,7 @@ void Application::handle_done(bool& done)
 
 std::string Application::get_window_title() const
 {
-    auto prefix = m_preset_manager.is_dirty(m_node_editor) ? "* " : "";
+    auto prefix = m_preset_manager.is_dirty(m_preset) ? "* " : "";
     return prefix + m_preset_manager.get_opened_path().value_or("Untitled") +
            " - " MIDI_APPLICATION_NAME;
 }
@@ -118,14 +118,14 @@ void Application::new_preset_command()
 {
     spdlog::info("Executing new_preset_command");
     bool new_preset = true;
-    if (m_preset_manager.is_dirty(m_node_editor))
+    if (m_preset_manager.is_dirty(m_preset))
     {
         new_preset = query_save();
     }
     if (new_preset)
     {
-        m_node_editor    = NodeEditor(m_node_factory);
-        m_preset_manager = PresetManager(m_node_editor, m_node_factory, m_config, m_exe_path);
+        m_preset         = {NodeEditor(m_node_factory)};
+        m_preset_manager = PresetManager(m_preset, m_node_factory, m_config, m_exe_path);
     }
 }
 
@@ -136,20 +136,20 @@ void Application::open_preset_command()
         pfd::open_file("Open preset", ".", {"JSON files (*.json)", "*.json"}).result();
     if (open_path.size() == 1 && !open_path.front().empty())
     {
-        m_node_editor = m_preset_manager.open_preset(open_path.front());
+        m_preset = m_preset_manager.open_preset(open_path.front());
     }
 }
 
 void Application::save_preset_command()
 {
     spdlog::info("Executing save_preset_command");
-    m_preset_manager.save_preset(m_node_editor);
+    m_preset_manager.save_preset(m_preset);
 }
 
 void Application::save_preset_as_command()
 {
     spdlog::info("Executing save_preset_as_command");
-    m_preset_manager.save_preset_as(m_node_editor);
+    m_preset_manager.save_preset_as(m_preset);
 }
 
 void Application::exit_command()
@@ -180,6 +180,18 @@ void Application::render_main_menu()
             if (ImGui::MenuItem(ICON_FK_FLOPPY_O "  Save preset as", "Ctrl+Shift+S"))
             {
                 save_preset_as_command();
+            }
+            ImGui::Separator();
+            if (ImGui::BeginMenu("MIDI message filter"))
+            {
+                bool changed = ImGui::MenuItem("SysEx", nullptr, &m_preset.m_message_type_mask.m_sysex_enabled);
+                changed = ImGui::MenuItem("Clock", nullptr, &m_preset.m_message_type_mask.m_time_enabled) || changed;
+                changed = ImGui::MenuItem("Active Sensing", nullptr, &m_preset.m_message_type_mask.m_sensing_enabled) || changed;
+                if (changed)
+                {
+                    m_midi_engine.enable_message_types(m_preset.m_message_type_mask);
+                }
+                ImGui::EndMenu();
             }
             ImGui::Separator();
             if (ImGui::MenuItem(" " ICON_FK_TIMES "  Exit", "Alt+F4"))
@@ -284,7 +296,7 @@ bool Application::query_save()
     switch (button)
     {
     case pfd::button::yes:
-        m_preset_manager.save_preset(m_node_editor);
+        m_preset_manager.save_preset(m_preset);
         break;
     case pfd::button::no:
     default:

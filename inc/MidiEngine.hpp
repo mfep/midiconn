@@ -16,9 +16,9 @@ namespace mc::midi
 
 struct MessageTypeMask
 {
-    bool m_sysex_enabled;
-    bool m_time_enabled;
-    bool m_sensing_enabled;
+    bool m_sysex_enabled{ true };
+    bool m_time_enabled{ true };
+    bool m_sensing_enabled{ true };
 };
 
 class Engine final : private InputObserver
@@ -63,7 +63,9 @@ public:
     void remove(const OutputInfo& output_info, OutputObserver* observer = nullptr);
     void connect(size_t input_id, size_t output_id, channel_map channels);
     void disconnect(size_t input_id, size_t output_id);
-    void enable_message_types(const InputInfo& input_info, const MessageTypeMask& mask);
+    void enable_message_types(const MessageTypeMask& mask);
+
+    const MessageTypeMask& get_message_types() const { return m_message_type_mask; }
 
 private:
     void message_received(size_t id, std::vector<unsigned char>& message_bytes) override;
@@ -84,6 +86,7 @@ private:
     std::vector<std::unique_ptr<InputItem>>  m_inputs;
     std::vector<std::unique_ptr<OutputItem>> m_outputs;
     std::shared_mutex                        m_mutex;
+    MessageTypeMask                          m_message_type_mask;
 };
 
 } // namespace mc::midi

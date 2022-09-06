@@ -182,6 +182,18 @@ void Application::render_main_menu()
                 save_preset_as_command();
             }
             ImGui::Separator();
+            if (ImGui::BeginMenu("MIDI message filter"))
+            {
+                bool changed = ImGui::MenuItem("SysEx", nullptr, &m_preset.m_message_type_mask.m_sysex_enabled);
+                changed = ImGui::MenuItem("Clock", nullptr, &m_preset.m_message_type_mask.m_time_enabled) || changed;
+                changed = ImGui::MenuItem("Active Sensing", nullptr, &m_preset.m_message_type_mask.m_sensing_enabled) || changed;
+                if (changed)
+                {
+                    m_midi_engine.enable_message_types(m_preset.m_message_type_mask);
+                }
+                ImGui::EndMenu();
+            }
+            ImGui::Separator();
             if (ImGui::MenuItem(" " ICON_FK_TIMES "  Exit", "Alt+F4"))
             {
                 exit_command();

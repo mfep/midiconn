@@ -10,6 +10,17 @@
 #include "ConfigFile.hpp"
 #include "NodeEditor.hpp"
 
+namespace mc::midi
+{
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(MessageTypeMask,
+                                   m_sysex_enabled,
+                                   m_time_enabled,
+                                   m_sensing_enabled);
+}
+
+namespace mc::display
+{
+
 namespace
 {
 
@@ -24,17 +35,15 @@ bool ends_with_dot_json(const std::string& path)
 
 } // namespace
 
-namespace mc::display
-{
-
 void Preset::to_json(nlohmann::json& j) const
 {
     m_node_editor.to_json(j["editor"]);
+    j["enabled_message_types"] = m_message_type_mask;
 }
 
 Preset Preset::from_json(const NodeFactory& node_factory, const nlohmann::json& j)
 {
-    return { NodeEditor::from_json(node_factory, j["editor"]) };
+    return {NodeEditor::from_json(node_factory, j["editor"]), j["enabled_message_types"]};
 }
 
 PresetManager::PresetManager(const Preset&      preset,

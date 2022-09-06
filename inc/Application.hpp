@@ -44,7 +44,7 @@ private:
     ThemeControl  m_theme_control;
     midi::Engine  m_midi_engine;
     NodeFactory   m_node_factory;
-    NodeEditor    m_node_editor;
+    Preset        m_preset;
     PresetManager m_preset_manager;
     bool          m_debug_log_enabled{};
 };

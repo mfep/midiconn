@@ -6,6 +6,13 @@ default:
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
 
+.rules:optional:
+  rules:
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+    - if: '$CI_PIPELINE_SOURCE == "push"'
+      when: manual
+      allow_failure: true
+
 build-linux:
   stage: build
   script:
@@ -19,6 +26,8 @@ build-linux:
 build-linux-flatpak:
   stage: build
   image: ubuntu
+  extends:
+    - .rules:optional
   script:
     - apt-get update -y && apt-get install -y flatpak-builder
     - flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
@@ -34,15 +43,12 @@ build-linux-flatpak:
 
 build-windows:
   stage: build
+  extends:
+    - .rules:optional
   tags:
     - shared-windows
     - windows
     - windows-1809
-  rules:
-    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
-    - if: '$CI_PIPELINE_SOURCE == "push"'
-      when: manual
-      allow_failure: true
   before_script:
     - pwd
     - cd C:/vcpkg

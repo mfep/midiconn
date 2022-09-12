@@ -20,7 +20,7 @@ namespace mc::display
 class Application final
 {
 public:
-    Application(const char* exe_path, SDL_Window* window);
+    Application(const std::string& exe_path, SDL_Window* window);
     ~Application();
     void        render();
     void        update_outside_frame();
@@ -38,7 +38,7 @@ private:
     void render_main_menu();
     bool query_save();
 
-    const char*   m_exe_path;
+    std::string   m_exe_path;
     bool          m_is_done{};
     ConfigFile    m_config;
     ThemeControl  m_theme_control;

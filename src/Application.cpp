@@ -16,10 +16,10 @@
 namespace mc::display
 {
 
-Application::Application(const char* exe_path, SDL_Window* window)
+Application::Application(const std::string& exe_path, SDL_Window* window)
     : m_exe_path(exe_path), m_config(exe_path), m_theme_control(m_config, window),
       m_node_factory(m_midi_engine, m_theme_control), m_preset{NodeEditor(m_node_factory)},
-      m_preset_manager(m_preset, m_node_factory, m_config, exe_path)
+      m_preset_manager(m_preset, m_node_factory, m_config)
 {
     spdlog::info("Starting " MIDI_APPLICATION_NAME " version {}", MC_FULL_VERSION);
     auto last_opened_editor = m_preset_manager.try_loading_last_preset();
@@ -125,7 +125,7 @@ void Application::new_preset_command()
     if (new_preset)
     {
         m_preset         = {NodeEditor(m_node_factory)};
-        m_preset_manager = PresetManager(m_preset, m_node_factory, m_config, m_exe_path);
+        m_preset_manager = PresetManager(m_preset, m_node_factory, m_config);
     }
 }
 
@@ -184,9 +184,15 @@ void Application::render_main_menu()
             ImGui::Separator();
             if (ImGui::BeginMenu("MIDI message filter"))
             {
-                bool changed = ImGui::MenuItem("SysEx", nullptr, &m_preset.m_message_type_mask.m_sysex_enabled);
-                changed = ImGui::MenuItem("Clock", nullptr, &m_preset.m_message_type_mask.m_time_enabled) || changed;
-                changed = ImGui::MenuItem("Active Sensing", nullptr, &m_preset.m_message_type_mask.m_sensing_enabled) || changed;
+                bool changed = ImGui::MenuItem(
+                    "SysEx", nullptr, &m_preset.m_message_type_mask.m_sysex_enabled);
+                changed = ImGui::MenuItem(
+                              "Clock", nullptr, &m_preset.m_message_type_mask.m_time_enabled) ||
+                          changed;
+                changed = ImGui::MenuItem("Active Sensing",
+                                          nullptr,
+                                          &m_preset.m_message_type_mask.m_sensing_enabled) ||
+                          changed;
                 if (changed)
                 {
                     m_midi_engine.enable_message_types(m_preset.m_message_type_mask);

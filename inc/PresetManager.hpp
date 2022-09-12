@@ -17,7 +17,7 @@ namespace display
 
 struct Preset
 {
-    NodeEditor m_node_editor;
+    NodeEditor            m_node_editor;
     midi::MessageTypeMask m_message_type_mask;
 
     void          to_json(nlohmann::json& j) const;
@@ -27,10 +27,7 @@ struct Preset
 class PresetManager final
 {
 public:
-    PresetManager(const Preset&      preset,
-                  const NodeFactory& node_factory,
-                  ConfigFile&        config,
-                  const char*        exe_path);
+    PresetManager(const Preset& preset, const NodeFactory& node_factory, ConfigFile& config);
 
     bool                              is_dirty(const Preset& preset) const;
     Preset                            open_preset(const std::string& path);
@@ -47,7 +44,6 @@ private:
     ConfigFile*                m_config;
     nlohmann::json             m_last_editor_state;
     std::optional<std::string> m_opened_path;
-    const char*                m_exe_path;
 };
 
 } // namespace display

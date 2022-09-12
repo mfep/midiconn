@@ -20,7 +20,7 @@ add_subdirectory(deps/json)
 set(RTMIDI_BUILD_TESTING OFF CACHE INTERNAL "")
 add_subdirectory(deps/rtmidi)
 
-add_executable(midi_connector
+set(sources
     ${g_font_cpp_path}
     deps/imgui/imgui.cpp
     deps/imgui/imgui_demo.cpp
@@ -53,6 +53,13 @@ add_executable(midi_connector
     src/PresetManager.cpp
     src/Theme.cpp
 )
+if(WIN32)
+    list(APPEND sources src/PlatformUtilsWin.cpp)
+else()
+    list(APPEND sources src/PlatformUtilsLinux.cpp)
+endif()
+
+add_executable(midi_connector "${sources}")
 
 target_include_directories(midi_connector PRIVATE
     inc
@@ -82,7 +89,7 @@ add_custom_command(TARGET midi_connector POST_BUILD
     $<TARGET_FILE_DIR:midi_connector>
 )
 
-if (WIN32)
+if(WIN32)
     target_compile_definitions(midi_connector PRIVATE
         WINVER=0x0A00
         NTDDI_VERSION=0x0A000000
@@ -90,7 +97,7 @@ if (WIN32)
     target_link_libraries(midi_connector PRIVATE
         Shcore.lib
     )
-    add_custom_command (TARGET midi_connector POST_BUILD
+    add_custom_command(TARGET midi_connector POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
         $<TARGET_FILE:rtmidi>
         $<TARGET_FILE:spdlog::spdlog>
@@ -98,4 +105,8 @@ if (WIN32)
         $<TARGET_FILE:SDL2::SDL2>
         $<TARGET_FILE_DIR:midi_connector>
     )
+endif()
+
+if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    target_link_options(midi_connector PRIVATE "/SUBSYSTEM:WINDOWS")
 endif()

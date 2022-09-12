@@ -12,6 +12,7 @@
 
 #include "Application.hpp"
 #include "KeyboardShotcutAggregator.hpp"
+#include "PlatformUtils.hpp"
 
 #if !SDL_VERSION_ATLEAST(2, 0, 17)
 #error This backend requires SDL 2.0.17+ because of SDL_RenderGeometry() function
@@ -20,7 +21,7 @@
 extern unsigned char      g_font_binary[];
 extern unsigned long long g_font_binary_size;
 
-int main(int /*argc*/, char** argv)
+MAIN
 {
     // Setup spdlog
     static constexpr size_t max_logfile_size = 5 * 1024 * 1024; // 5 MiB
@@ -92,7 +93,7 @@ int main(int /*argc*/, char** argv)
     // ImGui::GetIO().Fonts->AddFontFromFileTTF("DroidSans.ttf", 16);
 
     // Main loop
-    mc::display::Application app(argv[0], window);
+    mc::display::Application app(GET_EXE_PATH(), window);
     bool                     done = false;
     size_t                   frame_idx{};
     while (!done)

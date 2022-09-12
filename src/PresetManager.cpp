@@ -48,9 +48,8 @@ Preset Preset::from_json(const NodeFactory& node_factory, const nlohmann::json& 
 
 PresetManager::PresetManager(const Preset&      preset,
                              const NodeFactory& node_factory,
-                             ConfigFile&        config,
-                             const char*        exe_path)
-    : m_node_factory(&node_factory), m_config(&config), m_exe_path(exe_path)
+                             ConfigFile&        config)
+    : m_node_factory(&node_factory), m_config(&config)
 {
     preset.to_json(m_last_editor_state);
 }

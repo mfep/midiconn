@@ -196,8 +196,8 @@ void NodeEditor::renderNodes()
 
 void NodeEditor::renderHelpText()
 {
-    constexpr std::string_view help_text =
-        "Left click to select. Right click to create nodes. Middle click to pan view.";
+    constexpr std::string_view help_text = "Left click to select. Right click to create nodes. "
+                                           "Middle click (or Ctrl + left click) to pan view.";
 
     const auto text_size           = ImGui::CalcTextSize(help_text.data());
     const auto window_size         = ImGui::GetWindowSize();
@@ -272,8 +272,8 @@ void NodeEditor::handleLinkDropped()
     {
         ImGui::OpenPopup(contex_popup_name.data());
     }
-    auto new_node = renderContextMenu(Node::is_in_id(m_dropped_link_id),
-                                      Node::is_out_id(m_dropped_link_id));
+    auto new_node =
+        renderContextMenu(Node::is_in_id(m_dropped_link_id), Node::is_out_id(m_dropped_link_id));
     if (new_node)
     {
         if (Node::is_out_id(m_dropped_link_id))

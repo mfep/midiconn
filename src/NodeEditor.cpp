@@ -43,6 +43,7 @@ void NodeEditor::render()
     {
         ImNodes::MiniMap();
     }
+    renderHelpText();
     ImNodes::EndNodeEditor();
 
     handleLinkDropped();
@@ -191,6 +192,21 @@ void NodeEditor::renderNodes()
     {
         node->render();
     }
+}
+
+void NodeEditor::renderHelpText()
+{
+    constexpr std::string_view help_text =
+        "Left click to select. Right click to create nodes. Middle click to pan view.";
+
+    const auto text_size           = ImGui::CalcTextSize(help_text.data());
+    const auto window_size         = ImGui::GetWindowSize();
+    const auto original_cursor_pos = ImGui::GetCursorPos();
+    ImGui::SetCursorPos({window_size.x - text_size.x - 3, window_size.y - text_size.y - 3});
+    ImGui::BeginDisabled();
+    ImGui::TextUnformatted(help_text.data());
+    ImGui::EndDisabled();
+    ImGui::SetCursorPos(original_cursor_pos);
 }
 
 void NodeEditor::handleDelete()

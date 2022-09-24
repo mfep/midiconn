@@ -27,6 +27,7 @@ private:
     std::shared_ptr<Node> renderContextMenu(bool show_outputting_nodes = true,
                                             bool show_inputting_nodes  = true);
     void                  renderNodes();
+    void                  renderHelpText();
     void                  handleDelete();
     void                  handleConnect();
     void                  handleLinkDropped();

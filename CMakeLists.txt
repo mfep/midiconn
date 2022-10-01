@@ -80,15 +80,23 @@ target_compile_definitions(midi_connector PRIVATE
     SPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_DEBUG
     IMGUI_ENABLE_FREETYPE
 )
-install(TARGETS midi_connector
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
-
-add_custom_command(TARGET midi_connector POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-    ${CMAKE_CURRENT_LIST_DIR}/fonts/DroidSans.ttf
-    ${CMAKE_CURRENT_LIST_DIR}/fonts/forkawesome-webfont.ttf
-    $<TARGET_FILE_DIR:midi_connector>
+file(GLOB FONTS RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/fonts" "${CMAKE_CURRENT_SOURCE_DIR}/fonts/*")
+set(FONT_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/fonts/$<JOIN:${FONTS},;${CMAKE_CURRENT_SOURCE_DIR}/fonts/>")
+set(FONT_TARGETS "${CMAKE_BINARY_DIR}/$<JOIN:${FONTS},;${CMAKE_BINARY_DIR}/>")
+add_custom_command(
+    OUTPUT "${FONT_TARGETS}"
+    COMMAND "${CMAKE_COMMAND}"
+    ARGS -E copy_if_different "${FONT_SOURCES}" "${CMAKE_BINARY_DIR}"
+    COMMENT "Copying fonts"
+    COMMAND_EXPAND_LISTS
+    DEPENDS "${FONT_SOURCES}"
 )
+add_custom_target(midi_connector_fonts DEPENDS "${FONT_TARGETS}")
+add_dependencies(midi_connector midi_connector_fonts)
+
+install(TARGETS midi_connector
+    RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
+install(FILES "${FONT_SOURCES}" DESTINATION "${CMAKE_INSTALL_BINDIR}")
 
 if(WIN32)
     target_compile_definitions(midi_connector PRIVATE

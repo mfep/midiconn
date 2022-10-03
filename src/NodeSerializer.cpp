@@ -81,11 +81,11 @@ void NodeSerializer::serialize_node(json& j, const MidiChannelNode& node) const
 
 std::shared_ptr<Node> NodeSerializer::deserialize_node(const json& j) const
 {
-    const auto            node_type = j["type"].get<std::string>();
+    const auto            node_type = j.at("type").get<std::string>();
     std::shared_ptr<Node> node;
     if (node_type == "midi_in")
     {
-        const auto input_name     = j["input_name"].get<std::string>();
+        const auto input_name     = j.at("input_name").get<std::string>();
         const auto input_info_opt = MidiProbe::get_valid_input(input_name);
         if (input_info_opt.has_value())
         {
@@ -98,7 +98,7 @@ std::shared_ptr<Node> NodeSerializer::deserialize_node(const json& j) const
     }
     else if (node_type == "midi_out")
     {
-        const auto output_name     = j["output_name"].get<std::string>();
+        const auto output_name     = j.at("output_name").get<std::string>();
         const auto output_info_opt = MidiProbe::get_valid_output(output_name);
         if (output_info_opt.has_value())
         {
@@ -112,16 +112,16 @@ std::shared_ptr<Node> NodeSerializer::deserialize_node(const json& j) const
     else if (node_type == "midi_channel")
     {
         auto channel_node = m_node_factory->build_midi_channel_node();
-        j["channels"].get_to(channel_node->m_channels);
+        j.at("channels").get_to(channel_node->m_channels);
         node = channel_node;
     }
     else
     {
         throw std::logic_error("Unexpected node type");
     }
-    const auto current_id = node->m_id = j["id"];
+    const auto current_id = node->m_id = j.at("id");
     Node::sm_next_id = std::max(current_id + 1, Node::sm_next_id); // Debt, writing to global state
-    ImNodes::SetNodeGridSpacePos(node->id(), j["position"]);
+    ImNodes::SetNodeGridSpacePos(node->id(), j.at("position"));
     return node;
 }
 

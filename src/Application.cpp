@@ -6,7 +6,6 @@
 // for some unknown reason, SDL must be included first
 #include "IconsForkAwesome.h"
 #include "imgui.h"
-#include "nlohmann/json.hpp"
 #include "portable-file-dialogs.h"
 #include "spdlog/spdlog.h"
 

@@ -72,28 +72,28 @@ void NodeEditor::to_json(nlohmann::json& j) const
 
 NodeEditor NodeEditor::from_json(const NodeFactory& node_factory, const nlohmann::json& j)
 {
-    const ImVec2 panning = j["panning"];
+    const ImVec2 panning = j.at("panning");
     ImNodes::EditorContextResetPanning(panning);
 
     NodeEditor     editor(node_factory);
     NodeSerializer deserializer(node_factory);
 
     // 1st iter -> create nodes
-    for (const auto& node_json : j["nodes"])
+    for (const auto& node_json : j.at("nodes"))
     {
         editor.m_nodes.emplace_back(deserializer.deserialize_node(node_json));
     }
 
     // 2nd iter -> create connections
-    for (const auto& node_json : j["nodes"])
+    for (const auto& node_json : j.at("nodes"))
     {
         const auto source_node = *std::find_if(editor.m_nodes.begin(),
                                                editor.m_nodes.end(),
-                                               [node_id = node_json["id"]](const auto& node) {
+                                               [node_id = node_json.at("id")](const auto& node) {
                                                    return node->id() == node_id;
                                                });
 
-        for (const int connected_node_id : node_json["output_connection_ids"])
+        for (const int connected_node_id : node_json.at("output_connection_ids"))
         {
             const auto target_node = *std::find_if(editor.m_nodes.begin(),
                                                    editor.m_nodes.end(),

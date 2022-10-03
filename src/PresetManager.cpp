@@ -43,7 +43,7 @@ void Preset::to_json(nlohmann::json& j) const
 
 Preset Preset::from_json(const NodeFactory& node_factory, const nlohmann::json& j)
 {
-    return {NodeEditor::from_json(node_factory, j["editor"]), j["enabled_message_types"]};
+    return {NodeEditor::from_json(node_factory, j.at("editor")), j.at("enabled_message_types")};
 }
 
 PresetManager::PresetManager(const Preset&      preset,

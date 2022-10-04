@@ -9,6 +9,7 @@
 
 #include "ConfigFile.hpp"
 #include "NodeEditor.hpp"
+#include "Version.hpp"
 
 namespace mc::midi
 {
@@ -132,10 +133,13 @@ void PresetManager::save_preset(const Preset& preset, const bool save_as)
         }
         nlohmann::json j;
         preset.to_json(j);
-        std::ofstream ofs(save_path);
-        ofs << j << std::endl;
         m_last_editor_state = j;
-        m_opened_path       = save_path;
+        j["version"]        = MC_FULL_VERSION;
+        {
+            std::ofstream ofs(save_path);
+            ofs << j << std::endl;
+        }
+        m_opened_path = save_path;
     }
 }
 

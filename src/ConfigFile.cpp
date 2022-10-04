@@ -5,6 +5,8 @@
 #include "nlohmann/json.hpp"
 #include "spdlog/spdlog.h"
 
+#include "Version.hpp"
+
 namespace mc
 {
 namespace
@@ -70,11 +72,12 @@ void ConfigFile::set_scale(const InterfaceScale scale)
 void ConfigFile::save_config_file() const
 {
     spdlog::info("Saving config file to: \"{}\"", m_config_json_path.string());
-    const ConfigContent  config{m_last_preset_path.value_or("").string(),
+    const ConfigContent config{m_last_preset_path.value_or("").string(),
                                m_theme.value_or(Theme::Default),
                                m_scale.value_or(InterfaceScale::Scale_1_00)};
-    const nlohmann::json j = config;
-    std::ofstream        ofs(m_config_json_path);
+    nlohmann::json      j = config;
+    j["version"]          = MC_FULL_VERSION;
+    std::ofstream ofs(m_config_json_path);
     ofs << j;
 }
 

@@ -16,7 +16,7 @@
    xmlns:svg="http://www.w3.org/2000/svg">
   <sodipodi:namedview
      id="namedview7"
-     pagecolor="#000000"
+     pagecolor="#979797"
      bordercolor="#000000"
      borderopacity="1"
      inkscape:showpageshadow="true"
@@ -26,13 +26,13 @@
      inkscape:document-units="px"
      showgrid="true"
      showguides="false"
-     inkscape:zoom="1.0898438"
-     inkscape:cx="143.59857"
-     inkscape:cy="301.87814"
+     inkscape:zoom="1.5412719"
+     inkscape:cx="207.29633"
+     inkscape:cy="246.87403"
      inkscape:window-width="1920"
-     inkscape:window-height="1017"
-     inkscape:window-x="-8"
-     inkscape:window-y="-8"
+     inkscape:window-height="1011"
+     inkscape:window-x="0"
+     inkscape:window-y="32"
      inkscape:window-maximized="1"
      inkscape:current-layer="layer1">
     <inkscape:grid
@@ -44,7 +44,7 @@
        spacingx="10"
        spacingy="10"
        empspacing="4"
-       visible="false" />
+       visible="true" />
     <sodipodi:guide
        position="0,480"
        orientation="0.70710678,0.70710678"
@@ -63,7 +63,7 @@
          offset="0"
          id="stop6668" />
       <stop
-         style="stop-color:#1ebf9f;stop-opacity:1;"
+         style="stop-color:#1ebf81;stop-opacity:1;"
          offset="1"
          id="stop6670" />
     </linearGradient>
@@ -125,10 +125,10 @@
        inkscape:collect="always"
        xlink:href="#linearGradient6672"
        id="linearGradient6674"
-       x1="360"
+       x1="120"
        y1="120"
-       x2="120"
-       y2="360"
+       x2="320"
+       y2="320"
        gradientUnits="userSpaceOnUse" />
     <filter
        style="color-interpolation-filters:sRGB;"

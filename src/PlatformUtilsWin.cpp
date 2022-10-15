@@ -26,4 +26,9 @@ std::filesystem::path get_config_dir()
     return config_dir;
 }
 
+void open_logfile_external()
+{
+    std::system(get_logfile_path().c_str());
+}
+
 } // namespace mc::platform

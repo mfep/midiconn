@@ -20,4 +20,10 @@ std::filesystem::path get_config_dir()
     return config_dir;
 }
 
+void open_logfile_external()
+{
+    const std::string command = "xdg-open " + get_logfile_path().string();
+    std::system(command.c_str());
+}
+
 } // namespace mc::platform

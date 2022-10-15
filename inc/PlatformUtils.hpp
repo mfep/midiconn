@@ -19,5 +19,6 @@ namespace mc::platform
 
 std::filesystem::path get_config_dir();
 std::filesystem::path get_logfile_path();
+void                  open_logfile_external();
 
 } // namespace mc::platform

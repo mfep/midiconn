@@ -10,6 +10,7 @@
 #include "spdlog/spdlog.h"
 
 #include "Licenses.hpp"
+#include "PlatformUtils.hpp"
 #include "Version.hpp"
 
 namespace mc::display
@@ -249,6 +250,10 @@ void Application::render_main_menu()
             {
                 spdlog::set_level(m_debug_log_enabled ? spdlog::level::debug : spdlog::level::info);
                 spdlog::info("Debug log enabled: {}", m_debug_log_enabled);
+            }
+            if (ImGui::MenuItem(ICON_FK_PENCIL_SQUARE " Open logfile"))
+            {
+                platform::open_logfile_external();
             }
             if (ImGui::MenuItem(ICON_FK_GLOBE " Visit website"))
             {

@@ -3,6 +3,7 @@
 
 #include "SDL2/SDL.h"
 
+#include "ApplicationName.hpp"
 #include "ConfigFile.hpp"
 #include "KeyboardShotcutAggregator.hpp"
 #include "MidiEngine.hpp"
@@ -10,9 +11,6 @@
 #include "NodeFactory.hpp"
 #include "PresetManager.hpp"
 #include "Theme.hpp"
-
-#define MIDI_APPLICATION_NAME       "MIDI Connector"
-#define MIDI_APPLICATION_NAME_SNAKE "midi_connector"
 
 namespace mc::display
 {

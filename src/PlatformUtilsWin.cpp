@@ -22,10 +22,7 @@ std::filesystem::path get_config_dir()
     }
     const auto config_dir = std::filesystem::path(appdata_path_chars.data()) /
                             MIDI_APPLICATION_ORG / MIDI_APPLICATION_NAME_SNAKE;
-    if (!std::filesystem::exists(config_dir) || !std::filesystem::is_directory(config_dir))
-    {
-        std::filesystem::create_directories(config_dir);
-    }
+    std::filesystem::create_directories(config_dir);
     return config_dir;
 }
 

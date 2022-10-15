@@ -50,6 +50,7 @@ set(sources
     src/NodeSerializer.cpp
     src/main.cpp
     src/OutputObserver.cpp
+    src/PlatformUtils.cpp
     src/PresetManager.cpp
     src/Theme.cpp
 )

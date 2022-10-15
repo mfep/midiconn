@@ -12,7 +12,7 @@ namespace mc
 class ConfigFile final
 {
 public:
-    explicit ConfigFile(const std::string_view exe_path);
+    ConfigFile();
 
     const std::optional<std::filesystem::path>& get_last_preset_path() const
     {

@@ -18,16 +18,13 @@
 #error This backend requires SDL 2.0.17+ because of SDL_RenderGeometry() function
 #endif
 
-extern unsigned char      g_font_binary[];
-extern unsigned long long g_font_binary_size;
-
 MAIN
 {
     // Setup spdlog
     static constexpr size_t max_logfile_size = 5 * 1024 * 1024; // 5 MiB
     static constexpr size_t num_logfiles     = 2;
     auto                    rotating_logger  = spdlog::rotating_logger_mt(
-        "default", MIDI_APPLICATION_NAME_SNAKE "_log.txt", max_logfile_size, num_logfiles);
+        "default", mc::platform::get_logfile_path().string(), max_logfile_size, num_logfiles);
     rotating_logger->sinks().push_back(std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
     rotating_logger->flush_on(spdlog::level::err);
     spdlog::set_default_logger(rotating_logger);
@@ -94,7 +91,7 @@ MAIN
     // ImGui::GetIO().Fonts->AddFontFromFileTTF("DroidSans.ttf", 16);
 
     // Main loop
-    mc::display::Application app(GET_EXE_PATH(), window);
+    mc::display::Application app(window);
     bool                     done = false;
     size_t                   frame_idx{};
     while (!done)

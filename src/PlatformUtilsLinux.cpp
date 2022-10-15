@@ -1,8 +1,23 @@
-#include <string>
-
 #include "PlatformUtils.hpp"
 
-std::string get_exe_path(char** argv)
+#include "ApplicationName.hpp"
+
+#include <cstdlib>
+
+namespace mc::platform
 {
-    return *argv;
+
+std::filesystem::path get_config_dir()
+{
+    // XDG_CONFIG_HOME is set in Flatpak
+    if (const char* config_home = std::getenv("XDG_CONFIG_HOME"); config_home != nullptr)
+    {
+        return std::filesystem::path(config_home);
+    }
+    const auto config_dir =
+        std::filesystem::path(std::getenv("HOME")) / "." MIDI_APPLICATION_NAME_SNAKE;
+    std::filesystem::create_directories(config_dir);
+    return config_dir;
 }
+
+} // namespace mc::platform

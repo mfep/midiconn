@@ -15,8 +15,8 @@
 namespace mc::display
 {
 
-Application::Application(const std::string& exe_path, SDL_Window* window)
-    : m_exe_path(exe_path), m_config(exe_path), m_theme_control(m_config, window),
+Application::Application(SDL_Window* window)
+    : m_theme_control(m_config, window),
       m_node_factory(m_midi_engine, m_theme_control), m_preset{NodeEditor(m_node_factory)},
       m_preset_manager(m_preset, m_node_factory, m_config)
 {

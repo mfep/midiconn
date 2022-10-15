@@ -18,9 +18,6 @@
 #error This backend requires SDL 2.0.17+ because of SDL_RenderGeometry() function
 #endif
 
-extern unsigned char      g_font_binary[];
-extern unsigned long long g_font_binary_size;
-
 MAIN
 {
     // Setup spdlog
@@ -94,7 +91,7 @@ MAIN
     // ImGui::GetIO().Fonts->AddFontFromFileTTF("DroidSans.ttf", 16);
 
     // Main loop
-    mc::display::Application app(GET_EXE_PATH(), window);
+    mc::display::Application app(window);
     bool                     done = false;
     size_t                   frame_idx{};
     while (!done)

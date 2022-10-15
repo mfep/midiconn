@@ -5,6 +5,7 @@
 #include "nlohmann/json.hpp"
 #include "spdlog/spdlog.h"
 
+#include "PlatformUtils.hpp"
 #include "Version.hpp"
 
 namespace mc
@@ -23,10 +24,9 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ConfigContent, m_last_preset_path, m_theme, m
 
 } // namespace
 
-ConfigFile::ConfigFile(const std::string_view exe_path)
+ConfigFile::ConfigFile()
 {
-    m_config_json_path = exe_path;
-    m_config_json_path.replace_extension("json");
+    m_config_json_path = platform::get_config_dir() / "config.json";
     if (!std::filesystem::exists(m_config_json_path))
     {
         spdlog::info("Config file does not exist at \"{}\"", m_config_json_path.string());
@@ -78,7 +78,14 @@ void ConfigFile::save_config_file() const
     nlohmann::json      j = config;
     j["version"]          = MC_FULL_VERSION;
     std::ofstream ofs(m_config_json_path);
-    ofs << j;
+    if (ofs.good())
+    {
+        ofs << j;
+    }
+    else
+    {
+        spdlog::warn("Could not save config file to \"{}\"", m_config_json_path.string());
+    }
 }
 
 } // namespace mc

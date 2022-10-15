@@ -13,18 +13,6 @@
 namespace mc::platform
 {
 
-std::string get_exe_path(char**)
-{
-    constexpr DWORD filename_length = 512;
-    CHAR            filename[filename_length];
-    const auto      buffer_length = GetModuleFileNameA(nullptr, filename, filename_length);
-    if (filename_length == buffer_length)
-    {
-        throw std::runtime_error("Could not get current exe's path");
-    }
-    return std::string(filename, buffer_length);
-}
-
 std::filesystem::path get_config_dir()
 {
     std::array<char, MAX_PATH> appdata_path_chars{};
@@ -32,8 +20,13 @@ std::filesystem::path get_config_dir()
     {
         throw std::runtime_error("Cannot get config file location");
     }
-    const std::filesystem::path appdata_path(appdata_path_chars.data());
-    return appdata_path / MIDI_APPLICATION_ORG / MIDI_APPLICATION_NAME_SNAKE;
+    const auto config_dir = std::filesystem::path(appdata_path_chars.data()) /
+                            MIDI_APPLICATION_ORG / MIDI_APPLICATION_NAME_SNAKE;
+    if (!std::filesystem::exists(config_dir) || !std::filesystem::is_directory(config_dir))
+    {
+        std::filesystem::create_directories(config_dir);
+    }
+    return config_dir;
 }
 
 } // namespace mc::platform

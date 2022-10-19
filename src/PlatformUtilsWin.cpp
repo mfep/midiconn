@@ -5,8 +5,9 @@
 #include <string>
 
 #define WIN32_LEAN_AND_MEAN
-#include "shlobj_core.h"
 #include <Windows.h>
+#include <shellapi.h>
+#include <shlobj_core.h>
 
 #include "ApplicationName.hpp"
 
@@ -28,7 +29,10 @@ std::filesystem::path get_config_dir()
 
 void open_logfile_external()
 {
-    std::system(get_logfile_path().c_str());
+    if (reinterpret_cast<INT_PTR>(ShellExecute(nullptr, "open", get_logfile_path().string().c_str(), nullptr, nullptr, SW_SHOWNORMAL)) <= 32)
+    {
+        throw std::runtime_error("Could not open logfile.");
+    }
 }
 
 } // namespace mc::platform

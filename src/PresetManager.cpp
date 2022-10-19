@@ -66,6 +66,10 @@ Preset PresetManager::open_preset(const std::string& open_path)
 {
     spdlog::info("Opening preset from path \"{}\"", open_path);
     std::ifstream ifs(open_path);
+    if (!ifs.good())
+    {
+        throw std::runtime_error("Cannot open preset file at \"" + open_path + "\"");
+    }
     ifs >> m_last_editor_state;
     m_opened_path = open_path;
     return Preset::from_json(*m_node_factory, m_last_editor_state);

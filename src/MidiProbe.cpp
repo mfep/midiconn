@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <sstream>
 
-#include "RtMidi/RtMidi.h"
+#include "rtmidi/RtMidi.h"
 
 namespace mc
 {

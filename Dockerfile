@@ -1,16 +1,17 @@
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 WORKDIR /src
 RUN export DEBIAN_FRONTEND=noninteractive \
 	&& apt-get update \
 	&& apt-get install -y \
-		git \
 		build-essential \
+		git \
+		libasound2-dev \
+		libfmt-dev \
+		libfreetype-dev \
+		librtmidi-dev \
+		libspdlog-dev \
 		wget \
 		xorg-dev \
-		libspdlog-dev \
-		libfmt-dev \
-		libasound2-dev \
-		libfreetype-dev \
 	&& apt-get autoremove --purge -y \
 	&& apt-get autoclean \
 	&& rm -rf /var/cache/apt/*

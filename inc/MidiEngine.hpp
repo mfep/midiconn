@@ -5,7 +5,7 @@
 #include <shared_mutex>
 #include <vector>
 
-#include "RtMidi.h"
+#include "RtMidi/RtMidi.h"
 
 #include "InputObserver.hpp"
 #include "MidiInfo.hpp"

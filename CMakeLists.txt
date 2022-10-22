@@ -8,7 +8,8 @@ project(midi_connector LANGUAGES CXX)
 find_package(fmt REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(SDL2 REQUIRED)
-find_package(Freetype REQUIRED)
+find_package(Freetype CONFIG REQUIRED)
+find_package(ZLIB REQUIRED)
 find_package(rtmidi REQUIRED)
 
 configure_file(
@@ -54,6 +55,7 @@ set(sources
     src/PresetManager.cpp
     src/Theme.cpp
 )
+
 if(WIN32)
     list(APPEND sources src/PlatformUtilsWin.cpp)
 else()
@@ -67,15 +69,14 @@ target_include_directories(midi_connector PRIVATE
     deps/imgui
     deps/imnodes
     deps/portable-file-dialogs
-    deps/IconFontCppHeaders
-    ${FREETYPE_INCLUDE_DIRS})
+    deps/IconFontCppHeaders)
 target_link_libraries(midi_connector PRIVATE
     nlohmann_json::nlohmann_json
     RtMidi::rtmidi
     spdlog::spdlog
     SDL2::SDL2
     fmt::fmt
-    ${FREETYPE_LIBRARIES})
+    freetype)
 target_compile_definitions(midi_connector PRIVATE
     SPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_DEBUG
     IMGUI_ENABLE_FREETYPE
@@ -103,6 +104,8 @@ endif()
 
 install(TARGETS midi_connector
     RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
+install(IMPORTED_RUNTIME_ARTIFACTS spdlog::spdlog fmt::fmt SDL2::SDL2 freetype
+    RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
 install(FILES "${FONT_SOURCES}" DESTINATION "${CMAKE_INSTALL_BINDIR}")
 set(CPACK_INSTALL_CMAKE_PROJECTS "")
 
@@ -113,14 +116,6 @@ if(WIN32)
     )
     target_link_libraries(midi_connector PRIVATE
         Shcore.lib
-    )
-    add_custom_command(TARGET midi_connector POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        $<TARGET_FILE:RtMidi::rtmidi>
-        $<TARGET_FILE:spdlog::spdlog>
-        $<TARGET_FILE:fmt::fmt>
-        $<TARGET_FILE:SDL2::SDL2>
-        $<TARGET_FILE_DIR:midi_connector>
     )
 endif()
 

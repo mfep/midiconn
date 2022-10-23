@@ -1,4 +1,3 @@
-image: registry.gitlab.com/mfep/midi-connector
 
 default:
   interruptible: true
@@ -14,6 +13,7 @@ variables:
       allow_failure: true
 
 build-linux:
+  image: registry.gitlab.com/mfep/midi-connector:latest
   stage: build
   script:
     - cmake -S . -B build -D CMAKE_CXX_FLAGS="-Wall -Wextra" -D COMMIT_HASH=${CI_COMMIT_SHA}

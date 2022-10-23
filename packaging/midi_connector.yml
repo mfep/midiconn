@@ -1,5 +1,5 @@
 command: midi_connector
-id: xyz.safeworlds.midi-connector
+id: xyz.safeworlds.midi_connector
 runtime: org.freedesktop.Platform
 runtime-version: '21.08'
 sdk: org.freedesktop.Sdk
@@ -54,7 +54,8 @@ cleanup:
   - /lib/pkgconfig
   - /lib/*.a
   - /lib/*.la
-  - /share
+  - /share/aclocal
+  - /share/rtmidi
 finish-args:
 - --socket=x11
 - --socket=wayland

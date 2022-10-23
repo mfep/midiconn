@@ -89,18 +89,9 @@ target_compile_definitions(midi_connector PRIVATE
 
 if(WIN32)
     set(CMAKE_INSTALL_BINDIR ".")
-endif()
-
-install(TARGETS midi_connector
-    RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
-
-if (WIN32)
     install(IMPORTED_RUNTIME_ARTIFACTS spdlog::spdlog fmt::fmt SDL2::SDL2
         RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
     set(CPACK_INSTALL_CMAKE_PROJECTS "")
-endif()
-
-if(WIN32)
     target_compile_definitions(midi_connector PRIVATE
         WINVER=0x0A00
         NTDDI_VERSION=0x0A000000
@@ -108,8 +99,16 @@ if(WIN32)
     target_link_libraries(midi_connector PRIVATE
         Shcore.lib
     )
+    target_link_options(midi_connector PRIVATE "/SUBSYSTEM:WINDOWS")
+else()
+    install(FILES "graphics/mc_logo.svg"
+        DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/scalable/apps/"
+        RENAME "xyz.safeworlds.midi_connector.svg")
+    install(FILES "packaging/xyz.safeworlds.midi_connector.desktop"
+        DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/applications/")
+    install(FILES "packaging/xyz.safeworlds.midi_connector.metainfo.xml"
+        DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/metainfo/")
 endif()
 
-if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    target_link_options(midi_connector PRIVATE "/SUBSYSTEM:WINDOWS")
-endif()
+install(TARGETS midi_connector
+    RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")

@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=MIDI Connector
+Exec=midi_connector
+Type=Application
+Icon=xyz.safeworlds.midi_connector
+Categories=AudioVideo

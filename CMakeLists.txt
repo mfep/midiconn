@@ -93,9 +93,12 @@ endif()
 
 install(TARGETS midi_connector
     RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
-install(IMPORTED_RUNTIME_ARTIFACTS spdlog::spdlog fmt::fmt SDL2::SDL2
-    RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
-set(CPACK_INSTALL_CMAKE_PROJECTS "")
+
+if (WIN32)
+    install(IMPORTED_RUNTIME_ARTIFACTS spdlog::spdlog fmt::fmt SDL2::SDL2
+        RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
+    set(CPACK_INSTALL_CMAKE_PROJECTS "")
+endif()
 
 if(WIN32)
     target_compile_definitions(midi_connector PRIVATE

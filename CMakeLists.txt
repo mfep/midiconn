@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.22)
 
 include(CPack)
+include(deps/CMakeRC.cmake)
 set(CMAKE_CXX_STANDARD 17)
 
 project(midi_connector LANGUAGES CXX)
@@ -61,6 +62,9 @@ else()
     list(APPEND sources src/PlatformUtilsLinux.cpp)
 endif()
 
+file(GLOB FONTS RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/fonts/*")
+cmrc_add_resource_library(midi_connector_fonts "${FONTS}" ALIAS fonts)
+
 add_executable(midi_connector "${sources}")
 
 target_include_directories(midi_connector PRIVATE
@@ -76,27 +80,12 @@ target_link_libraries(midi_connector PRIVATE
     spdlog::spdlog
     SDL2::SDL2
     fmt::fmt
-    freetype)
+    freetype
+    fonts)
 target_compile_definitions(midi_connector PRIVATE
     SPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_DEBUG
     IMGUI_ENABLE_FREETYPE
 )
-
-get_property(GENERATOR_IS_MULTI_CONFIG GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
-file(GLOB FONTS RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/fonts" "${CMAKE_CURRENT_SOURCE_DIR}/fonts/*")
-set(FONT_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/fonts/$<JOIN:${FONTS},;${CMAKE_CURRENT_SOURCE_DIR}/fonts/>")
-set(FONT_TARGET_DIR "${CMAKE_BINARY_DIR}/$<$<BOOL:GENERATOR_IS_MULTI_CONFIG>:$<CONFIG>>")
-set(FONT_TARGETS "${FONT_TARGET_DIR}/$<JOIN:${FONTS},;${FONT_TARGET_DIR}/>")
-add_custom_command(
-    OUTPUT "${FONT_TARGETS}"
-    COMMAND "${CMAKE_COMMAND}"
-    ARGS -E copy_if_different "${FONT_SOURCES}" "${FONT_TARGET_DIR}"
-    COMMENT "Copying fonts"
-    COMMAND_EXPAND_LISTS
-    DEPENDS "${FONT_SOURCES}"
-)
-add_custom_target(midi_connector_fonts DEPENDS "${FONT_TARGETS}")
-add_dependencies(midi_connector midi_connector_fonts)
 
 if(WIN32)
     set(CMAKE_INSTALL_BINDIR ".")
@@ -106,7 +95,6 @@ install(TARGETS midi_connector
     RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
 install(IMPORTED_RUNTIME_ARTIFACTS spdlog::spdlog fmt::fmt SDL2::SDL2
     RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
-install(FILES "${FONT_SOURCES}" DESTINATION "${CMAKE_INSTALL_BINDIR}")
 set(CPACK_INSTALL_CMAKE_PROJECTS "")
 
 if(WIN32)

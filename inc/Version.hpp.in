@@ -1,8 +1,8 @@
 #pragma once
 
-#define MC_MAJOR_VERSION "0"
-#define MC_MINOR_VERSION "1"
-#define MC_PATCH_VERSION "0"
+#define MC_MAJOR_VERSION "@CMAKE_PROJECT_VERSION_MAJOR@"
+#define MC_MINOR_VERSION "@CMAKE_PROJECT_VERSION_MINOR@"
+#define MC_PATCH_VERSION "@CMAKE_PROJECT_VERSION_PATCH@"
 #define MC_BUILD_NUMBER  @BUILD_NUM@
 #define MC_FULL_VERSION                                                                            \
     MC_MAJOR_VERSION "." MC_MINOR_VERSION "." MC_PATCH_VERSION "." MC_BUILD_NUMBER

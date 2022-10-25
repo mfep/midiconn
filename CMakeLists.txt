@@ -90,6 +90,9 @@ target_compile_definitions(midi_connector PRIVATE
     IMGUI_ENABLE_FREETYPE
 )
 
+set(CPACK_PACKAGE_NAME "MIDI Connector")
+set(CPACK_PACKAGE_VENDOR "mfep")
+set(CPACK_PACKAGE_ICON "graphics/mc_logo.svg")
 if(WIN32)
     set(CMAKE_INSTALL_BINDIR ".")
     install(IMPORTED_RUNTIME_ARTIFACTS spdlog::spdlog fmt::fmt SDL2::SDL2 freetype

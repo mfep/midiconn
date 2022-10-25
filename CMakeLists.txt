@@ -9,8 +9,12 @@ project(midi_connector LANGUAGES CXX)
 find_package(fmt REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(SDL2 REQUIRED)
-find_package(Freetype REQUIRED)
 find_package(rtmidi REQUIRED)
+if(WIN32)
+    find_package(freetype CONFIG REQUIRED)
+else()
+    find_package(Freetype REQUIRED)
+endif()
 
 configure_file(
     inc/Version.hpp.in
@@ -72,8 +76,7 @@ target_include_directories(midi_connector PRIVATE
     deps/imgui
     deps/imnodes
     deps/portable-file-dialogs
-    deps/IconFontCppHeaders
-    "${FREETYPE_INCLUDE_DIRS}")
+    deps/IconFontCppHeaders)
 target_link_libraries(midi_connector PRIVATE
     nlohmann_json::nlohmann_json
     RtMidi::rtmidi
@@ -89,7 +92,7 @@ target_compile_definitions(midi_connector PRIVATE
 
 if(WIN32)
     set(CMAKE_INSTALL_BINDIR ".")
-    install(IMPORTED_RUNTIME_ARTIFACTS spdlog::spdlog fmt::fmt SDL2::SDL2
+    install(IMPORTED_RUNTIME_ARTIFACTS spdlog::spdlog fmt::fmt SDL2::SDL2 freetype
         RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
     set(CPACK_INSTALL_CMAKE_PROJECTS "")
     target_compile_definitions(midi_connector PRIVATE

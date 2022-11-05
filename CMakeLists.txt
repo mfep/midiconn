@@ -1,10 +1,9 @@
 cmake_minimum_required(VERSION 3.22)
 
-include(CPack)
 include(deps/CMakeRC.cmake)
 set(CMAKE_CXX_STANDARD 17)
 
-project(midi_connector LANGUAGES CXX)
+project(midi_connector VERSION 0.1.0 LANGUAGES CXX)
 
 find_package(fmt REQUIRED)
 find_package(spdlog REQUIRED)
@@ -92,12 +91,13 @@ target_compile_definitions(midi_connector PRIVATE
 
 set(CPACK_PACKAGE_NAME "MIDI Connector")
 set(CPACK_PACKAGE_VENDOR "mfep")
-set(CPACK_PACKAGE_ICON "graphics/mc_logo.svg")
 if(WIN32)
     set(CMAKE_INSTALL_BINDIR ".")
+    set(CPACK_PACKAGE_INSTALL_DIRECTORY "MIDI Connector")
+    set(CPACK_GENERATOR "WIX")
+    set(CPACK_WIX_UPGRADE_GUID "96D23EBE-7D9E-4C53-8CD7-6E5CC32A5CE1")
     install(IMPORTED_RUNTIME_ARTIFACTS spdlog::spdlog fmt::fmt SDL2::SDL2 freetype
         RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
-    set(CPACK_INSTALL_CMAKE_PROJECTS "")
     target_compile_definitions(midi_connector PRIVATE
         WINVER=0x0A00
         NTDDI_VERSION=0x0A000000
@@ -118,3 +118,4 @@ endif()
 
 install(TARGETS midi_connector
     RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
+include(CPack)

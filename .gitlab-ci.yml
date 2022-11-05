@@ -16,8 +16,11 @@ build-linux:
   image: registry.gitlab.com/mfep/midi-connector:latest
   stage: build
   script:
-    - cmake -S . -B build -D CMAKE_CXX_FLAGS="-Wall -Wextra" -D COMMIT_HASH=${CI_COMMIT_SHA}
-    - cmake --build build --config Release
+    - cmake -S . -B build
+      -D CMAKE_CXX_FLAGS="-Wall -Wextra"
+      -D CMAKE_BUILD_TYPE=Release
+      -D MC_COMMIT_SHA=${CI_COMMIT_SHA}
+    - cmake --build build -j `nproc`
   artifacts:
     paths:
       - build/midi_connector

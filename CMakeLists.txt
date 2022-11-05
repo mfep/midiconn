@@ -75,7 +75,8 @@ target_include_directories(midi_connector PRIVATE
     deps/imgui
     deps/imnodes
     deps/portable-file-dialogs
-    deps/IconFontCppHeaders)
+    deps/IconFontCppHeaders
+    "${FREETYPE_INCLUDE_DIRS}")
 target_link_libraries(midi_connector PRIVATE
     nlohmann_json::nlohmann_json
     RtMidi::rtmidi

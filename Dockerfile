@@ -29,7 +29,7 @@ RUN git clone --depth 1 https://github.com/thestk/rtmidi.git /src/rtmidi \
 	&& cd /src/rtmidi \
 	&& git checkout 806e18f575b68c23b26f9398e1b6866b335b5308 \
 	&& cmake -S . -B build \
-	  -D BUILD_SHARED_LIBS=ON \
+	  -D BUILD_SHARED_LIBS=OFF \
 	  -D CMAKE_BUILD_TYPE=Release \
 	  -D RTMIDI_BUILD_TESTING=OFF \
 	&& cmake --build build --target install -j `nproc`

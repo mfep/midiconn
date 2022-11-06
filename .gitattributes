@@ -1,0 +1,1 @@
+graphics/appicon.ico filter=lfs diff=lfs merge=lfs -text

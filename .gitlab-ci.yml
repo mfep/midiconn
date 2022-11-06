@@ -20,6 +20,7 @@ build-linux:
       -D CMAKE_CXX_FLAGS="-Wall -Wextra"
       -D CMAKE_BUILD_TYPE=Release
       -D MC_COMMIT_SHA=${CI_COMMIT_SHA}
+      -D MC_BUILD_NUMBER=${CI_JOB_ID}
     - cmake --build build -j `nproc`
   artifacts:
     paths:
@@ -53,7 +54,7 @@ build-windows:
     - windows
     - windows-1809
   before_script:
-    - pwd
+    - choco install cmake
     - cd C:/vcpkg
     - git fetch
     - git checkout master
@@ -62,13 +63,17 @@ build-windows:
   script:
     - cd C:/GitLab-Runner/builds/mfep/midi-connector
     - vcpkg install spdlog:x64-windows sdl2:x64-windows freetype[core]:x64-windows rtmidi:x64-windows
-    - wget.exe https://github.com/Kitware/CMake/releases/download/v3.22.2/cmake-3.22.2-windows-x86_64.zip
-    - 7z x -y cmake-3.22.2-windows-x86_64.zip
     - git submodule update --init
-    - cmake-3.22.2-windows-x86_64/bin/cmake -S . -B build -D CMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake -D COMMIT_HASH=${CI_COMMIT_SHA}
-    - cmake-3.22.2-windows-x86_64/bin/cmake --build build --config Release
+    - cmake -S . -B build
+      -D CMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake
+      -D MC_COMMIT_SHA=${CI_COMMIT_SHA}
+      -D MC_BUILD_NUMBER=${CI_JOB_ID}
+    - cmake --build build --config Release
+    - cd build
+    - cpack -C Release
   artifacts:
     paths:
       - build/Release/midi_connector.exe
       - build/Release/*.dll
+      - build/*.msi
     expire_in: 1 week

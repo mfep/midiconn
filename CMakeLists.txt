@@ -98,6 +98,7 @@ if(WIN32)
     set(CMAKE_INSTALL_BINDIR ".")
     set(CPACK_PACKAGE_INSTALL_DIRECTORY "MIDI Connector")
     set(CPACK_PACKAGE_EXECUTABLES midi_connector "MIDI Connector")
+    set(CPACK_WIX_PRODUCT_ICON "${CMAKE_CURRENT_SOURCE_DIR}/graphics/appicon.ico")
     set(CPACK_GENERATOR "WIX")
     set(CPACK_WIX_UPGRADE_GUID "96D23EBE-7D9E-4C53-8CD7-6E5CC32A5CE1")
     install(IMPORTED_RUNTIME_ARTIFACTS spdlog::spdlog fmt::fmt SDL2::SDL2 freetype

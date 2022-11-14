@@ -1,5 +1,5 @@
-command: midi_connector
-id: xyz.safeworlds.midi_connector
+command: midiconn
+id: xyz.safeworlds.midiconn
 runtime: org.freedesktop.Platform
 runtime-version: '21.08'
 sdk: org.freedesktop.Sdk
@@ -39,7 +39,7 @@ modules:
       - type: git
         url: https://github.com/thestk/rtmidi
         commit: 806e18f575b68c23b26f9398e1b6866b335b5308
-  - name: midi_connector
+  - name: midiconn
     buildsystem: cmake-ninja
     config-opts:
       - -DCMAKE_BUILD_TYPE=Release

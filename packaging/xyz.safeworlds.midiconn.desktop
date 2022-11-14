@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=midiconn
+Exec=midiconn
+Type=Application
+Icon=xyz.safeworlds.midiconn
+Categories=AudioVideo

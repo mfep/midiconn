@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop-application">
-  <id>xyz.safeworlds.midi_connector</id>
+  <id>xyz.safeworlds.midiconn</id>
   
-  <name>MIDI Connector</name>
+  <name>midiconn</name>
   <summary>Turn your computer into a MIDI hub</summary>
   
   <metadata_license>MIT</metadata_license>
@@ -14,5 +14,5 @@
     </p>
   </description>
   
-  <launchable type="desktop-id">xyz.safeworlds.midi_connector.desktop</launchable>
+  <launchable type="desktop-id">xyz.safeworlds.midiconn.desktop</launchable>
 </component>

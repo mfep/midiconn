@@ -15,7 +15,7 @@
 #include "ConfigFile.hpp"
 
 bool ImGui_ImplSDLRenderer_CreateFontsTexture();
-CMRC_DECLARE(midi_connector_fonts);
+CMRC_DECLARE(midiconn_fonts);
 
 namespace
 {
@@ -92,7 +92,7 @@ void ThemeControl::set_scale_internal(const InterfaceScale scale)
     auto& io = ImGui::GetIO();
     io.Fonts->Clear();
 
-    auto embedded_fs = cmrc::midi_connector_fonts::get_filesystem();
+    auto embedded_fs = cmrc::midiconn_fonts::get_filesystem();
 
     const auto   font_file = embedded_fs.open("fonts/DroidSans.ttf");
     ImFontConfig font_config{};

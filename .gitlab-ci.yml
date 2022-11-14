@@ -24,7 +24,7 @@ build-linux:
     - cmake --build build -j `nproc`
   artifacts:
     paths:
-      - build/midi_connector
+      - build/midiconn
     expire_in: 1 week
 
 build-linux-flatpak:
@@ -36,7 +36,7 @@ build-linux-flatpak:
     - apt-get update -y && apt-get install -y flatpak-builder
     - flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
     - flatpak install -y flathub org.freedesktop.Sdk//21.08 org.freedesktop.Platform//21.08
-    - flatpak-builder build/flatpak packaging/midi_connector.yml
+    - flatpak-builder build/flatpak packaging/midiconn.yml
   artifacts:
     paths:
       - build/flatpak
@@ -69,6 +69,6 @@ build-windows:
     - cmake-3.22.2-windows-x86_64/bin/cmake --build build --config Release
   artifacts:
     paths:
-      - build/Release/midi_connector.exe
+      - build/Release/midiconn.exe
       - build/Release/*.dll
     expire_in: 1 week

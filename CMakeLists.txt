@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.22)
 include(deps/CMakeRC.cmake)
 set(CMAKE_CXX_STANDARD 17)
 
-project(midi_connector VERSION 0.1.0 LANGUAGES CXX)
+project(midiconn VERSION 0.1.0 LANGUAGES CXX)
 
 find_package(fmt REQUIRED)
 find_package(spdlog REQUIRED)
@@ -68,18 +68,18 @@ else()
 endif()
 
 file(GLOB FONTS RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/fonts/*")
-cmrc_add_resource_library(midi_connector_fonts "${FONTS}" ALIAS fonts)
+cmrc_add_resource_library(midiconn_fonts "${FONTS}" ALIAS fonts)
 
-add_executable(midi_connector "${sources}")
+add_executable(midiconn "${sources}")
 
-target_include_directories(midi_connector PRIVATE
+target_include_directories(midiconn PRIVATE
     inc
     deps/imgui
     deps/imnodes
     deps/portable-file-dialogs
     deps/IconFontCppHeaders
     "${FREETYPE_INCLUDE_DIRS}")
-target_link_libraries(midi_connector PRIVATE
+target_link_libraries(midiconn PRIVATE
     nlohmann_json::nlohmann_json
     RtMidi::rtmidi
     spdlog::spdlog
@@ -87,40 +87,40 @@ target_link_libraries(midi_connector PRIVATE
     fmt::fmt
     freetype
     fonts)
-target_compile_definitions(midi_connector PRIVATE
+target_compile_definitions(midiconn PRIVATE
     SPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_DEBUG
     IMGUI_ENABLE_FREETYPE
 )
 
-set(CPACK_PACKAGE_NAME "MIDI Connector")
+set(CPACK_PACKAGE_NAME "midiconn")
 set(CPACK_PACKAGE_VENDOR "mfep")
 if(WIN32)
     set(CMAKE_INSTALL_BINDIR ".")
-    set(CPACK_PACKAGE_INSTALL_DIRECTORY "MIDI Connector")
-    set(CPACK_PACKAGE_EXECUTABLES midi_connector "MIDI Connector")
+    set(CPACK_PACKAGE_INSTALL_DIRECTORY "midiconn")
+    set(CPACK_PACKAGE_EXECUTABLES midiconn "midiconn")
     set(CPACK_WIX_PRODUCT_ICON "${CMAKE_CURRENT_SOURCE_DIR}/graphics/appicon.ico")
     set(CPACK_GENERATOR "WIX")
     set(CPACK_WIX_UPGRADE_GUID "96D23EBE-7D9E-4C53-8CD7-6E5CC32A5CE1")
     install(IMPORTED_RUNTIME_ARTIFACTS spdlog::spdlog fmt::fmt SDL2::SDL2 freetype
         RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
-    target_compile_definitions(midi_connector PRIVATE
+    target_compile_definitions(midiconn PRIVATE
         WINVER=0x0A00
         NTDDI_VERSION=0x0A000000
     )
-    target_link_libraries(midi_connector PRIVATE
+    target_link_libraries(midiconn PRIVATE
         Shcore.lib
     )
-    target_link_options(midi_connector PRIVATE "/SUBSYSTEM:WINDOWS")
+    target_link_options(midiconn PRIVATE "/SUBSYSTEM:WINDOWS")
 else()
     install(FILES "graphics/mc_logo.svg"
         DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/scalable/apps/"
-        RENAME "xyz.safeworlds.midi_connector.svg")
-    install(FILES "packaging/xyz.safeworlds.midi_connector.desktop"
+        RENAME "xyz.safeworlds.midiconn.svg")
+    install(FILES "packaging/xyz.safeworlds.midiconn.desktop"
         DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/applications/")
-    install(FILES "packaging/xyz.safeworlds.midi_connector.metainfo.xml"
+    install(FILES "packaging/xyz.safeworlds.midiconn.metainfo.xml"
         DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/metainfo/")
 endif()
 
-install(TARGETS midi_connector
+install(TARGETS midiconn
     RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
 include(CPack)

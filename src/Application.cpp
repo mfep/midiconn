@@ -280,7 +280,7 @@ void Application::render_main_menu()
             "About " MIDI_APPLICATION_NAME, &dummy, ImGuiWindowFlags_AlwaysAutoResize))
     {
         ImGui::TextUnformatted(MC_FULL_VERSION);
-        ImGui::TextUnformatted(MC_COMMIT_HASH);
+        ImGui::TextUnformatted(MC_COMMIT_SHA);
         ImGui::TextUnformatted(MC_BUILD_OS);
         if (ImGui::CollapsingHeader("Open source licenses"))
         {

@@ -1,13 +1,19 @@
 cmake_minimum_required(VERSION 3.22)
 
+include(deps/CMakeRC.cmake)
 set(CMAKE_CXX_STANDARD 17)
 
-project(midi_connector LANGUAGES CXX)
+project(midi_connector VERSION 0.1.0 LANGUAGES CXX)
 
 find_package(fmt REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(SDL2 REQUIRED)
-find_package(Freetype REQUIRED)
+find_package(rtmidi REQUIRED)
+if(WIN32)
+    find_package(freetype CONFIG REQUIRED)
+else()
+    find_package(Freetype REQUIRED)
+endif()
 
 configure_file(
     inc/Version.hpp.in
@@ -17,8 +23,6 @@ configure_file(
 set(JSON_BuildTests OFF CACHE INTERNAL "")
 set(JSON_MultipleHeaders ON CACHE INTERNAL "")
 add_subdirectory(deps/json)
-set(RTMIDI_BUILD_TESTING OFF CACHE INTERNAL "")
-add_subdirectory(deps/rtmidi)
 
 set(sources
     ${g_font_cpp_path}
@@ -54,11 +58,17 @@ set(sources
     src/PresetManager.cpp
     src/Theme.cpp
 )
+
 if(WIN32)
-    list(APPEND sources src/PlatformUtilsWin.cpp)
+    list(APPEND sources
+        src/PlatformUtilsWin.cpp
+        graphics/appicon.rc)
 else()
     list(APPEND sources src/PlatformUtilsLinux.cpp)
 endif()
+
+file(GLOB FONTS RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/fonts/*")
+cmrc_add_resource_library(midi_connector_fonts "${FONTS}" ALIAS fonts)
 
 add_executable(midi_connector "${sources}")
 
@@ -68,29 +78,31 @@ target_include_directories(midi_connector PRIVATE
     deps/imnodes
     deps/portable-file-dialogs
     deps/IconFontCppHeaders
-    ${FREETYPE_INCLUDE_DIRS})
+    "${FREETYPE_INCLUDE_DIRS}")
 target_link_libraries(midi_connector PRIVATE
     nlohmann_json::nlohmann_json
-    rtmidi
+    RtMidi::rtmidi
     spdlog::spdlog
     SDL2::SDL2
     fmt::fmt
-    ${FREETYPE_LIBRARIES})
+    freetype
+    fonts)
 target_compile_definitions(midi_connector PRIVATE
     SPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_DEBUG
     IMGUI_ENABLE_FREETYPE
 )
-install(TARGETS midi_connector
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 
-add_custom_command(TARGET midi_connector POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-    ${CMAKE_CURRENT_LIST_DIR}/fonts/DroidSans.ttf
-    ${CMAKE_CURRENT_LIST_DIR}/fonts/forkawesome-webfont.ttf
-    $<TARGET_FILE_DIR:midi_connector>
-)
-
+set(CPACK_PACKAGE_NAME "MIDI Connector")
+set(CPACK_PACKAGE_VENDOR "mfep")
 if(WIN32)
+    set(CMAKE_INSTALL_BINDIR ".")
+    set(CPACK_PACKAGE_INSTALL_DIRECTORY "MIDI Connector")
+    set(CPACK_PACKAGE_EXECUTABLES midi_connector "MIDI Connector")
+    set(CPACK_WIX_PRODUCT_ICON "${CMAKE_CURRENT_SOURCE_DIR}/graphics/appicon.ico")
+    set(CPACK_GENERATOR "WIX")
+    set(CPACK_WIX_UPGRADE_GUID "96D23EBE-7D9E-4C53-8CD7-6E5CC32A5CE1")
+    install(IMPORTED_RUNTIME_ARTIFACTS spdlog::spdlog fmt::fmt SDL2::SDL2 freetype
+        RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
     target_compile_definitions(midi_connector PRIVATE
         WINVER=0x0A00
         NTDDI_VERSION=0x0A000000
@@ -98,16 +110,17 @@ if(WIN32)
     target_link_libraries(midi_connector PRIVATE
         Shcore.lib
     )
-    add_custom_command(TARGET midi_connector POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        $<TARGET_FILE:rtmidi>
-        $<TARGET_FILE:spdlog::spdlog>
-        $<TARGET_FILE:fmt::fmt>
-        $<TARGET_FILE:SDL2::SDL2>
-        $<TARGET_FILE_DIR:midi_connector>
-    )
+    target_link_options(midi_connector PRIVATE "/SUBSYSTEM:WINDOWS")
+else()
+    install(FILES "graphics/mc_logo.svg"
+        DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/scalable/apps/"
+        RENAME "xyz.safeworlds.midi_connector.svg")
+    install(FILES "packaging/xyz.safeworlds.midi_connector.desktop"
+        DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/applications/")
+    install(FILES "packaging/xyz.safeworlds.midi_connector.metainfo.xml"
+        DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/metainfo/")
 endif()
 
-if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    target_link_options(midi_connector PRIVATE "/SUBSYSTEM:WINDOWS")
-endif()
+install(TARGETS midi_connector
+    RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
+include(CPack)

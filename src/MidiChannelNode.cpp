@@ -67,7 +67,7 @@ void MidiChannelNode::render_internal()
     }
     if (ImGui::Button("Default"))
     {
-        std::iota(m_channels.begin(), m_channels.end(), 1ull);
+        std::iota(m_channels.begin(), m_channels.end(), 1);
     }
     ImGui::SameLine();
     if (ImGui::Button("Disable all"))

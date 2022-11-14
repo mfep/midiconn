@@ -4,9 +4,6 @@
 [submodule "deps/imnodes"]
 	path = deps/imnodes
 	url = https://github.com/Nelarius/imnodes.git
-[submodule "deps/rtmidi"]
-	path = deps/rtmidi
-	url = https://github.com/thestk/rtmidi.git
 [submodule "deps/json"]
 	path = deps/json
 	url = https://github.com/nlohmann/json.git

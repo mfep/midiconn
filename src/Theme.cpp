@@ -8,12 +8,14 @@
 #endif
 #include "IconsFontaudio.h"
 #include "IconsForkAwesome.h"
+#include "cmrc/cmrc.hpp"
 #include "imgui.h"
 #include "spdlog/spdlog.h"
 
 #include "ConfigFile.hpp"
 
 bool ImGui_ImplSDLRenderer_CreateFontsTexture();
+CMRC_DECLARE(midi_connector_fonts);
 
 namespace
 {
@@ -89,13 +91,28 @@ void ThemeControl::set_scale_internal(const InterfaceScale scale)
     spdlog::info("Setting application scale to {}", scale_value);
     auto& io = ImGui::GetIO();
     io.Fonts->Clear();
-    io.Fonts->AddFontFromFileTTF("DroidSans.ttf", 16 * scale_value);
+
+    auto embedded_fs = cmrc::midi_connector_fonts::get_filesystem();
+
+    const auto   font_file = embedded_fs.open("fonts/DroidSans.ttf");
+    ImFontConfig font_config{};
+    font_config.FontDataOwnedByAtlas = false;
+    io.Fonts->AddFontFromMemoryTTF(const_cast<char*>(font_file.begin()),
+                                   std::distance(font_file.begin(), font_file.end()),
+                                   16 * scale_value,
+                                   &font_config);
+
+    const auto    icons_file     = embedded_fs.open("fonts/forkawesome-webfont.ttf");
     const ImWchar icons_ranges[] = {ICON_MIN_FK, ICON_MAX_16_FK, 0};
     ImFontConfig  icons_config;
     icons_config.MergeMode  = true;
     icons_config.PixelSnapH = true;
-    io.Fonts->AddFontFromFileTTF(
-        "forkawesome-webfont.ttf", 12 * scale_value, &icons_config, icons_ranges);
+    icons_config.FontDataOwnedByAtlas = false;
+    io.Fonts->AddFontFromMemoryTTF(const_cast<char*>(icons_file.begin()),
+                                   std::distance(icons_file.begin(), icons_file.end()),
+                                   12 * scale_value,
+                                   &icons_config,
+                                   icons_ranges);
 
     // workaround, otherwise the fonts won't rebuild properly
     ImGui_ImplSDLRenderer_CreateFontsTexture();

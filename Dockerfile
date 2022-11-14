@@ -1,16 +1,17 @@
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 WORKDIR /src
 RUN export DEBIAN_FRONTEND=noninteractive \
 	&& apt-get update \
 	&& apt-get install -y \
-		git \
 		build-essential \
+		git \
+		libasound2-dev \
+		libfmt-dev \
+		libfreetype-dev \
+		libsdl2-dev \
+		libspdlog-dev \
 		wget \
 		xorg-dev \
-		libspdlog-dev \
-		libfmt-dev \
-		libasound2-dev \
-		libfreetype-dev \
 	&& apt-get autoremove --purge -y \
 	&& apt-get autoclean \
 	&& rm -rf /var/cache/apt/*
@@ -24,13 +25,14 @@ RUN wget https://github.com/Kitware/CMake/releases/download/v3.22.2/cmake-3.22.2
 	
 ENV PATH /cmake/bin:$PATH
 
-RUN wget https://www.libsdl.org/release/SDL2-2.0.20.tar.gz \
-	&& tar -xf SDL2-2.0.20.tar.gz \
-	&& cd SDL2-2.0.20 \
-	&& mkdir build \
-	&& cd build \
-	&& ../configure \
-	&& make \
-	&& make install
+RUN git clone --depth 1 https://github.com/thestk/rtmidi.git /src/rtmidi \
+	&& cd /src/rtmidi \
+	&& git checkout 806e18f575b68c23b26f9398e1b6866b335b5308 \
+	&& cmake -S . -B build \
+	  -D BUILD_SHARED_LIBS=OFF \
+	  -D CMAKE_BUILD_TYPE=Release \
+	  -D RTMIDI_BUILD_TESTING=OFF \
+	&& cmake --build build --target install -j `nproc`
 	
 RUN rm -rf /src/*
+

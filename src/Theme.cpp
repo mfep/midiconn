@@ -1,11 +1,5 @@
 #include "Theme.hpp"
 
-#ifdef WIN32
-#define WIN32_LEAN_AND_MEAN
-#include "shellscalingapi.h"
-#include "windows.h"
-#include "winuser.h"
-#endif
 #include "IconsFontaudio.h"
 #include "IconsForkAwesome.h"
 #include "cmrc/cmrc.hpp"
@@ -13,6 +7,7 @@
 #include "spdlog/spdlog.h"
 
 #include "ConfigFile.hpp"
+#include "PlatformUtils.hpp"
 
 bool ImGui_ImplSDLRenderer_CreateFontsTexture();
 CMRC_DECLARE(midiconn_fonts);
@@ -22,7 +17,7 @@ namespace
 #ifdef WIN32
 
 const auto unused = []() {
-    SetProcessDpiAwareness(PROCESS_SYSTEM_DPI_AWARE);
+    mc::platform::set_process_dpi_aware();
     return 0;
 }();
 
@@ -105,8 +100,8 @@ void ThemeControl::set_scale_internal(const InterfaceScale scale)
     const auto    icons_file     = embedded_fs.open("fonts/forkawesome-webfont.ttf");
     const ImWchar icons_ranges[] = {ICON_MIN_FK, ICON_MAX_16_FK, 0};
     ImFontConfig  icons_config;
-    icons_config.MergeMode  = true;
-    icons_config.PixelSnapH = true;
+    icons_config.MergeMode            = true;
+    icons_config.PixelSnapH           = true;
     icons_config.FontDataOwnedByAtlas = false;
     io.Fonts->AddFontFromMemoryTTF(const_cast<char*>(icons_file.begin()),
                                    std::distance(icons_file.begin(), icons_file.end()),
@@ -143,21 +138,9 @@ float ThemeControl::get_auto_interface_scale() const
 {
     if (!m_detected_interface_scale.has_value())
     {
-#ifdef WIN32
-        SDL_SysWMinfo window_info{};
-        const bool    result = SDL_GetWindowWMInfo(m_window, &window_info);
-        if (!result)
-        {
-            throw std::runtime_error("Could not query window info");
-        }
-        const auto window_handle = window_info.info.win.window;
-        const auto dpi           = GetDpiForWindow(window_handle);
+        const auto dpi = platform::get_window_dpi(m_window);
         spdlog::info("Detected DPI: {}", dpi);
         m_detected_interface_scale = dpi / 96.F;
-#else
-        spdlog::warn("Automatic interface scaling is not supported on the current platform.");
-        m_detected_interface_scale = 1.f;
-#endif
     }
     return m_detected_interface_scale.value();
 }

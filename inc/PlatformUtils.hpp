@@ -14,11 +14,15 @@
 
 #endif
 
+struct SDL_Window;
+
 namespace mc::platform
 {
 
 std::filesystem::path get_config_dir();
 std::filesystem::path get_logfile_path();
 void                  open_logfile_external();
+void                  set_process_dpi_aware();
+unsigned              get_window_dpi(SDL_Window* window);
 
 } // namespace mc::platform

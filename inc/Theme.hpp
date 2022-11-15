@@ -4,10 +4,9 @@
 #include <optional>
 #include <string_view>
 
-#include "SDL2/SDL_syswm.h"
 #include "imnodes.h"
 
-class SDL_Window;
+struct SDL_Window;
 
 namespace mc
 {

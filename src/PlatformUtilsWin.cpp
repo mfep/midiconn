@@ -4,10 +4,15 @@
 #include <stdexcept>
 #include <string>
 
+#include "SDL2/SDL.h"
+#include "SDL2/SDL_syswm.h"
+
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 #include <shellapi.h>
+#include <shellscalingapi.h>
 #include <shlobj_core.h>
+#include <winuser.h>
 
 #include "ApplicationName.hpp"
 
@@ -29,10 +34,32 @@ std::filesystem::path get_config_dir()
 
 void open_logfile_external()
 {
-    if (reinterpret_cast<INT_PTR>(ShellExecute(nullptr, "open", get_logfile_path().string().c_str(), nullptr, nullptr, SW_SHOWNORMAL)) <= 32)
+    if (reinterpret_cast<INT_PTR>(ShellExecute(nullptr,
+                                               "open",
+                                               get_logfile_path().string().c_str(),
+                                               nullptr,
+                                               nullptr,
+                                               SW_SHOWNORMAL)) <= 32)
     {
         throw std::runtime_error("Could not open logfile.");
     }
+}
+
+void set_process_dpi_aware()
+{
+    SetProcessDpiAwareness(PROCESS_SYSTEM_DPI_AWARE);
+}
+
+unsigned get_window_dpi(SDL_Window* window)
+{
+    SDL_SysWMinfo window_info{};
+    const bool    result = SDL_GetWindowWMInfo(window, &window_info);
+    if (!result)
+    {
+        throw std::runtime_error("Could not query window info");
+    }
+    const auto window_handle = window_info.info.win.window;
+    return GetDpiForWindow(window_handle);
 }
 
 } // namespace mc::platform

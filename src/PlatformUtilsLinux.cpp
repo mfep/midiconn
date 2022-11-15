@@ -1,8 +1,10 @@
 #include "PlatformUtils.hpp"
 
-#include "ApplicationName.hpp"
-
 #include <cstdlib>
+
+#include "spdlog/spdlog.h"
+
+#include "ApplicationName.hpp"
 
 namespace mc::platform
 {
@@ -24,6 +26,16 @@ void open_logfile_external()
 {
     const std::string command = "xdg-open " + get_logfile_path().string();
     std::system(command.c_str());
+}
+
+void set_process_dpi_aware()
+{
+    spdlog::info("DPI aware process is not supported on the current platform.");
+}
+
+unsigned get_window_dpi(SDL_Window* window)
+{
+    spdlog::info("Queriying window DPI is not supported on the current platform.");
 }
 
 } // namespace mc::platform

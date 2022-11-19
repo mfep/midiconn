@@ -1,6 +1,5 @@
 #include "PresetManager.hpp"
 
-#include <filesystem>
 #include <fstream>
 
 #include "nlohmann/json.hpp"
@@ -25,13 +24,9 @@ namespace mc::display
 namespace
 {
 
-bool ends_with_dot_json(const std::string& path)
+bool ends_with_dot_json(const std::filesystem::path& path)
 {
-    std::string lower_path;
-    std::transform(path.begin(), path.end(), std::back_inserter(lower_path), [](const auto& ch) {
-        return std::tolower(ch);
-    });
-    return lower_path.size() > 5 && 0 == lower_path.compare(lower_path.size() - 5, 5, ".json");
+    return path.extension() == ".json";
 }
 
 } // namespace
@@ -62,13 +57,13 @@ bool PresetManager::is_dirty(const Preset& preset) const
     return current_editor_state != m_last_editor_state;
 }
 
-Preset PresetManager::open_preset(const std::string& open_path)
+Preset PresetManager::open_preset(const std::filesystem::path& open_path)
 {
-    spdlog::info("Opening preset from path \"{}\"", open_path);
+    spdlog::info("Opening preset from path \"{}\"", open_path.string());
     std::ifstream ifs(open_path);
     if (!ifs.good())
     {
-        throw std::runtime_error("Cannot open preset file at \"" + open_path + "\"");
+        throw std::runtime_error("Cannot open preset file at \"" + open_path.string() + "\"");
     }
     ifs >> m_last_editor_state;
     m_opened_path = open_path;
@@ -116,7 +111,7 @@ void PresetManager::try_saving_last_preset_path() const
 
 void PresetManager::save_preset(const Preset& preset, const bool save_as)
 {
-    std::string save_path;
+    std::filesystem::path save_path;
     if (!save_as && m_opened_path.has_value())
     {
         save_path = m_opened_path.value();
@@ -130,7 +125,7 @@ void PresetManager::save_preset(const Preset& preset, const bool save_as)
     }
     if (!save_path.empty())
     {
-        spdlog::info("Saving preset file to \"{}\"", save_path);
+        spdlog::info("Saving preset file to \"{}\"", save_path.string());
         if (!ends_with_dot_json(save_path))
         {
             save_path += ".json";

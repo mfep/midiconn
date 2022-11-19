@@ -28,6 +28,7 @@ MAIN
     rotating_logger->sinks().push_back(std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
     rotating_logger->flush_on(spdlog::level::err);
     spdlog::set_default_logger(rotating_logger);
+    const auto file_to_open = mc::platform::get_arg(argv);
 
     // Setup SDL
     // (Some versions of SDL before <2.0.10 appears to have performance/stalling issues on a
@@ -91,7 +92,7 @@ MAIN
     // ImGui::GetIO().Fonts->AddFontFromFileTTF("DroidSans.ttf", 16);
 
     // Main loop
-    mc::display::Application app(window);
+    mc::display::Application app(window, file_to_open);
     bool                     done = false;
     size_t                   frame_idx{};
     while (!done)

@@ -36,6 +36,7 @@ void set_process_dpi_aware()
 unsigned get_window_dpi(SDL_Window* window)
 {
     spdlog::info("Queriying window DPI is not supported on the current platform.");
+    return 96;
 }
 
 } // namespace mc::platform

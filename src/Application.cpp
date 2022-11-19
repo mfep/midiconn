@@ -141,7 +141,8 @@ void Application::open_preset_command()
 {
     spdlog::info("Executing open_preset_command");
     const auto open_path =
-        pfd::open_file("Open preset", ".", {"JSON files (*.json)", "*.json"}).result();
+        pfd::open_file("Open preset", ".", {"midiconn presets (*.mcpreset)", "*.mcpreset"})
+            .result();
     if (open_path.size() == 1 && !open_path.front().empty())
     {
         m_preset = m_preset_manager.open_preset(open_path.front());

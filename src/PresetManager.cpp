@@ -21,16 +21,6 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(MessageTypeMask,
 namespace mc::display
 {
 
-namespace
-{
-
-bool ends_with_dot_json(const std::filesystem::path& path)
-{
-    return path.extension() == ".json";
-}
-
-} // namespace
-
 void Preset::to_json(nlohmann::json& j) const
 {
     m_node_editor.to_json(j["editor"]);
@@ -119,16 +109,17 @@ void PresetManager::save_preset(const Preset& preset, const bool save_as)
     else
     {
         const auto filename =
-            std::filesystem::path(m_opened_path.value_or("preset.json")).filename().string();
+            std::filesystem::path(m_opened_path.value_or("preset.mcpreset")).filename().string();
         save_path =
-            pfd::save_file("Save preset", filename, {"JSON files (*.json)", "*.json"}).result();
+            pfd::save_file("Save preset", filename, {"midiconn presets (*.mcpreset)", "*.mcpreset"})
+                .result();
     }
     if (!save_path.empty())
     {
         spdlog::info("Saving preset file to \"{}\"", save_path.string());
-        if (!ends_with_dot_json(save_path))
+        if (save_path.extension() != ".mcpreset")
         {
-            save_path += ".json";
+            save_path += ".mcpreset";
         }
         nlohmann::json j;
         preset.to_json(j);

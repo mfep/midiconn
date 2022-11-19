@@ -39,4 +39,10 @@ unsigned get_window_dpi(SDL_Window* window)
     return 96;
 }
 
+template <>
+std::filesystem::path get_cli_path(int argc, char** argv)
+{
+    return {};
+}
+
 } // namespace mc::platform

@@ -64,7 +64,7 @@ unsigned get_window_dpi(SDL_Window* window)
 }
 
 template <>
-std::filesystem::path get_arg(PSTR arg)
+std::filesystem::path get_cli_path(PSTR arg)
 {
     std::filesystem::path path(arg);
     if (!path.empty() && !std::filesystem::is_regular_file(path))

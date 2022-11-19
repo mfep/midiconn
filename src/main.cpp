@@ -21,7 +21,7 @@
 #error This backend requires SDL 2.0.17+ because of SDL_RenderGeometry() function
 #endif
 
-MAIN
+MC_MAIN
 {
     using namespace std::chrono_literals;
     // Setup spdlog
@@ -34,8 +34,8 @@ MAIN
     spdlog::set_default_logger(rotating_logger);
     spdlog::flush_every(3s);
 
-    const auto file_to_open = mc::wrap_exception([argv]() {
-        return mc::platform::get_arg(argv);
+    const auto file_to_open = mc::wrap_exception([&]() {
+        return MC_GET_CLI_PATH;
     });
 
     // Setup SDLP

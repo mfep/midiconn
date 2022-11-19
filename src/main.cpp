@@ -1,5 +1,7 @@
 #define SDL_MAIN_HANDLED
 
+#include <chrono>
+
 #include "SDL2/SDL.h"
 #include "SDL2/SDL_syswm.h"
 #include "backends/imgui_impl_sdl.h"
@@ -11,6 +13,7 @@
 #include "spdlog/spdlog.h"
 
 #include "Application.hpp"
+#include "ErrorHandler.hpp"
 #include "KeyboardShotcutAggregator.hpp"
 #include "PlatformUtils.hpp"
 
@@ -20,6 +23,7 @@
 
 MAIN
 {
+    using namespace std::chrono_literals;
     // Setup spdlog
     static constexpr size_t max_logfile_size = 5 * 1024 * 1024; // 5 MiB
     static constexpr size_t num_logfiles     = 2;
@@ -28,9 +32,13 @@ MAIN
     rotating_logger->sinks().push_back(std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
     rotating_logger->flush_on(spdlog::level::err);
     spdlog::set_default_logger(rotating_logger);
-    const auto file_to_open = mc::platform::get_arg(argv);
+    spdlog::flush_every(3s);
 
-    // Setup SDL
+    const auto file_to_open = mc::wrap_exception([argv]() {
+        return mc::platform::get_arg(argv);
+    });
+
+    // Setup SDLP
     // (Some versions of SDL before <2.0.10 appears to have performance/stalling issues on a
     // minority of Windows systems, depending on whether SDL_INIT_GAMECONTROLLER is enabled or
     // disabled.. updating to latest version of SDL is recommended!)

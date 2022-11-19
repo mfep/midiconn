@@ -9,6 +9,7 @@
 #include "portable-file-dialogs.h"
 #include "spdlog/spdlog.h"
 
+#include "ErrorHandler.hpp"
 #include "Licenses.hpp"
 #include "PlatformUtils.hpp"
 #include "Version.hpp"
@@ -53,16 +54,10 @@ void Application::render()
                      ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
                      ImGuiWindowFlags_MenuBar);
 
-    try
-    {
+    wrap_exception([this]() {
         render_main_menu();
         m_preset.m_node_editor.render();
-    }
-    catch (std::exception& ex)
-    {
-        spdlog::error(ex.what());
-        pfd::message("Error", ex.what(), pfd::choice::ok, pfd::icon::error);
-    }
+    });
 
     ImGui::End();
 #ifndef NDEBUG

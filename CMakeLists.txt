@@ -120,6 +120,8 @@ else()
         DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/applications/")
     install(FILES "packaging/xyz.safeworlds.midiconn.metainfo.xml"
         DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/metainfo/")
+    install(FILES "packaging/xyz.safeworlds.midiconn.mime.xml"
+        DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/mime/packages/")
 endif()
 
 install(TARGETS midiconn

@@ -93,7 +93,7 @@ target_compile_definitions(midiconn PRIVATE
 )
 
 set(CPACK_PACKAGE_NAME "midiconn")
-set(CPACK_PACKAGE_VENDOR "mfep")
+set(CPACK_PACKAGE_VENDOR "safeworlds")
 if(WIN32)
     set(CMAKE_INSTALL_BINDIR ".")
     set(CPACK_PACKAGE_INSTALL_DIRECTORY "midiconn")
@@ -101,6 +101,7 @@ if(WIN32)
     set(CPACK_WIX_PRODUCT_ICON "${CMAKE_CURRENT_SOURCE_DIR}/graphics/appicon.ico")
     set(CPACK_GENERATOR "WIX")
     set(CPACK_WIX_UPGRADE_GUID "96D23EBE-7D9E-4C53-8CD7-6E5CC32A5CE1")
+    set(CPACK_WIX_PATCH_FILE "${CMAKE_CURRENT_SOURCE_DIR}/packaging/wix_patch.xml")
     install(IMPORTED_RUNTIME_ARTIFACTS spdlog::spdlog fmt::fmt SDL2::SDL2 freetype
         RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
     target_compile_definitions(midiconn PRIVATE
@@ -119,6 +120,8 @@ else()
         DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/applications/")
     install(FILES "packaging/xyz.safeworlds.midiconn.metainfo.xml"
         DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/metainfo/")
+    install(FILES "packaging/xyz.safeworlds.midiconn.mime.xml"
+        DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/mime/packages/")
 endif()
 
 install(TARGETS midiconn

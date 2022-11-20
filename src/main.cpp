@@ -1,5 +1,7 @@
 #define SDL_MAIN_HANDLED
 
+#include <chrono>
+
 #include "SDL2/SDL.h"
 #include "SDL2/SDL_syswm.h"
 #include "backends/imgui_impl_sdl.h"
@@ -11,6 +13,7 @@
 #include "spdlog/spdlog.h"
 
 #include "Application.hpp"
+#include "ErrorHandler.hpp"
 #include "KeyboardShotcutAggregator.hpp"
 #include "PlatformUtils.hpp"
 
@@ -18,8 +21,9 @@
 #error This backend requires SDL 2.0.17+ because of SDL_RenderGeometry() function
 #endif
 
-MAIN
+MC_MAIN
 {
+    using namespace std::chrono_literals;
     // Setup spdlog
     static constexpr size_t max_logfile_size = 5 * 1024 * 1024; // 5 MiB
     static constexpr size_t num_logfiles     = 2;
@@ -28,8 +32,13 @@ MAIN
     rotating_logger->sinks().push_back(std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
     rotating_logger->flush_on(spdlog::level::err);
     spdlog::set_default_logger(rotating_logger);
+    spdlog::flush_every(3s);
 
-    // Setup SDL
+    const auto file_to_open = mc::wrap_exception([&]() {
+        return MC_GET_CLI_PATH;
+    });
+
+    // Setup SDLP
     // (Some versions of SDL before <2.0.10 appears to have performance/stalling issues on a
     // minority of Windows systems, depending on whether SDL_INIT_GAMECONTROLLER is enabled or
     // disabled.. updating to latest version of SDL is recommended!)
@@ -91,7 +100,7 @@ MAIN
     // ImGui::GetIO().Fonts->AddFontFromFileTTF("DroidSans.ttf", 16);
 
     // Main loop
-    mc::display::Application app(window);
+    mc::display::Application app(window, file_to_open);
     bool                     done = false;
     size_t                   frame_idx{};
     while (!done)

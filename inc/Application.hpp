@@ -1,4 +1,5 @@
 #pragma once
+#include <filesystem>
 #include <string>
 
 #include "SDL2/SDL.h"
@@ -18,7 +19,7 @@ namespace mc::display
 class Application final
 {
 public:
-    Application(SDL_Window* window);
+    Application(SDL_Window* window, const std::filesystem::path& path_to_preset);
     ~Application();
     void        render();
     void        update_outside_frame();

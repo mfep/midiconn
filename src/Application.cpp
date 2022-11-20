@@ -9,6 +9,7 @@
 #include "portable-file-dialogs.h"
 #include "spdlog/spdlog.h"
 
+#include "ErrorHandler.hpp"
 #include "Licenses.hpp"
 #include "PlatformUtils.hpp"
 #include "Version.hpp"
@@ -16,16 +17,24 @@
 namespace mc::display
 {
 
-Application::Application(SDL_Window* window)
+Application::Application(SDL_Window* window, const std::filesystem::path& path_to_preset)
     : m_theme_control(m_config, window),
       m_node_factory(m_midi_engine, m_theme_control), m_preset{NodeEditor(m_node_factory)},
       m_preset_manager(m_preset, m_node_factory, m_config)
 {
     spdlog::info("Starting " MIDI_APPLICATION_NAME " version {}", MC_FULL_VERSION);
-    auto last_opened_editor = m_preset_manager.try_loading_last_preset();
-    if (last_opened_editor.has_value())
+    std::optional<Preset> opened_preset;
+    if (path_to_preset.empty())
     {
-        m_preset = std::move(last_opened_editor.value());
+        opened_preset = m_preset_manager.try_loading_last_preset();
+    }
+    else
+    {
+        opened_preset = m_preset_manager.open_preset(path_to_preset);
+    }
+    if (opened_preset.has_value())
+    {
+        m_preset = std::move(opened_preset.value());
     }
 }
 
@@ -45,16 +54,10 @@ void Application::render()
                      ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
                      ImGuiWindowFlags_MenuBar);
 
-    try
-    {
+    wrap_exception([this]() {
         render_main_menu();
         m_preset.m_node_editor.render();
-    }
-    catch (std::exception& ex)
-    {
-        spdlog::error(ex.what());
-        pfd::message("Error", ex.what(), pfd::choice::ok, pfd::icon::error);
-    }
+    });
 
     ImGui::End();
 #ifndef NDEBUG
@@ -90,7 +93,7 @@ void Application::handle_done(bool& done)
 std::string Application::get_window_title() const
 {
     auto prefix = m_preset_manager.is_dirty(m_preset) ? "* " : "";
-    return prefix + m_preset_manager.get_opened_path().value_or("Untitled") +
+    return prefix + m_preset_manager.get_opened_path().value_or("Untitled").string() +
            " - " MIDI_APPLICATION_NAME;
 }
 
@@ -133,7 +136,8 @@ void Application::open_preset_command()
 {
     spdlog::info("Executing open_preset_command");
     const auto open_path =
-        pfd::open_file("Open preset", ".", {"JSON files (*.json)", "*.json"}).result();
+        pfd::open_file("Open preset", ".", {"midiconn presets (*.mcpreset)", "*.mcpreset"})
+            .result();
     if (open_path.size() == 1 && !open_path.front().empty())
     {
         m_preset = m_preset_manager.open_preset(open_path.front());

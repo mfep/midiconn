@@ -1,6 +1,7 @@
 #include "PlatformUtils.hpp"
 
 #include <array>
+#include <sstream>
 #include <stdexcept>
 #include <string>
 
@@ -60,6 +61,19 @@ unsigned get_window_dpi(SDL_Window* window)
     }
     const auto window_handle = window_info.info.win.window;
     return GetDpiForWindow(window_handle);
+}
+
+template <>
+std::filesystem::path get_cli_path(PSTR arg)
+{
+    std::filesystem::path path(arg);
+    if (!path.empty() && !std::filesystem::is_regular_file(path))
+    {
+        std::stringstream sstream;
+        sstream << "Path \"" << arg << "\" is not a file.";
+        throw std::runtime_error(sstream.str());
+    }
+    return path;
 }
 
 } // namespace mc::platform

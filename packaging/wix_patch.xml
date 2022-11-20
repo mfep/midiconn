@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CPackWiXPatch>
+  <CPackWiXFragment Id="CM_CP_midiconn.exe">
+    <RegistryValue Root="HKCR" Key="midiconn\shell\open\command" Type="string" Value="&quot;C:\Program Files\midiconn\midiconn.exe&quot; &quot;%1&quot;"/>
+    <RegistryValue Root="HKCR" Key=".mcpreset" Type="string" Value="midiconn"/>
+  </CPackWiXFragment>
+</CPackWiXPatch>

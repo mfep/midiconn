@@ -25,7 +25,7 @@ std::filesystem::path get_config_dir()
 void open_logfile_external()
 {
     const std::string command = "xdg-open " + get_logfile_path().string();
-    std::system(command.c_str());
+    (void)std::system(command.c_str());
 }
 
 void set_process_dpi_aware()
@@ -37,6 +37,12 @@ unsigned get_window_dpi(SDL_Window* window)
 {
     spdlog::info("Queriying window DPI is not supported on the current platform.");
     return 96;
+}
+
+template <>
+std::filesystem::path get_cli_path(int argc, char** argv)
+{
+    return {};
 }
 
 } // namespace mc::platform

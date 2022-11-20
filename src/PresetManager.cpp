@@ -1,6 +1,5 @@
 #include "PresetManager.hpp"
 
-#include <filesystem>
 #include <fstream>
 
 #include "nlohmann/json.hpp"
@@ -21,20 +20,6 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(MessageTypeMask,
 
 namespace mc::display
 {
-
-namespace
-{
-
-bool ends_with_dot_json(const std::string& path)
-{
-    std::string lower_path;
-    std::transform(path.begin(), path.end(), std::back_inserter(lower_path), [](const auto& ch) {
-        return std::tolower(ch);
-    });
-    return lower_path.size() > 5 && 0 == lower_path.compare(lower_path.size() - 5, 5, ".json");
-}
-
-} // namespace
 
 void Preset::to_json(nlohmann::json& j) const
 {
@@ -62,13 +47,13 @@ bool PresetManager::is_dirty(const Preset& preset) const
     return current_editor_state != m_last_editor_state;
 }
 
-Preset PresetManager::open_preset(const std::string& open_path)
+Preset PresetManager::open_preset(const std::filesystem::path& open_path)
 {
-    spdlog::info("Opening preset from path \"{}\"", open_path);
+    spdlog::info("Opening preset from path \"{}\"", open_path.string());
     std::ifstream ifs(open_path);
     if (!ifs.good())
     {
-        throw std::runtime_error("Cannot open preset file at \"" + open_path + "\"");
+        throw std::runtime_error("Cannot open preset file at \"" + open_path.string() + "\"");
     }
     ifs >> m_last_editor_state;
     m_opened_path = open_path;
@@ -116,7 +101,7 @@ void PresetManager::try_saving_last_preset_path() const
 
 void PresetManager::save_preset(const Preset& preset, const bool save_as)
 {
-    std::string save_path;
+    std::filesystem::path save_path;
     if (!save_as && m_opened_path.has_value())
     {
         save_path = m_opened_path.value();
@@ -124,16 +109,17 @@ void PresetManager::save_preset(const Preset& preset, const bool save_as)
     else
     {
         const auto filename =
-            std::filesystem::path(m_opened_path.value_or("preset.json")).filename().string();
+            std::filesystem::path(m_opened_path.value_or("preset.mcpreset")).filename().string();
         save_path =
-            pfd::save_file("Save preset", filename, {"JSON files (*.json)", "*.json"}).result();
+            pfd::save_file("Save preset", filename, {"midiconn presets (*.mcpreset)", "*.mcpreset"})
+                .result();
     }
     if (!save_path.empty())
     {
-        spdlog::info("Saving preset file to \"{}\"", save_path);
-        if (!ends_with_dot_json(save_path))
+        spdlog::info("Saving preset file to \"{}\"", save_path.string());
+        if (save_path.extension() != ".mcpreset")
         {
-            save_path += ".json";
+            save_path += ".mcpreset";
         }
         nlohmann::json j;
         preset.to_json(j);

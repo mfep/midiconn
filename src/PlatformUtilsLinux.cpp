@@ -25,7 +25,7 @@ std::filesystem::path get_config_dir()
 void open_logfile_external()
 {
     const std::string command = "xdg-open " + get_logfile_path().string();
-    std::system(command.c_str());
+    (void)std::system(command.c_str());
 }
 
 void set_process_dpi_aware()

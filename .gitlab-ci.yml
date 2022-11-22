@@ -13,7 +13,7 @@ variables:
       allow_failure: true
 
 build-linux:
-  image: registry.gitlab.com/mfep/midi-connector:latest
+  image: registry.gitlab.com/mfep/midiconn:latest
   stage: build
   script:
     - cmake -S . -B build
@@ -61,16 +61,16 @@ build-windows:
     - bootstrap-vcpkg.bat
     - vcpkg install spdlog:x64-windows sdl2:x64-windows freetype[core]:x64-windows rtmidi:x64-windows
   script:
-    - cd C:/GitLab-Runner/builds/mfep/midi-connector
+    - cd C:/GitLab-Runner/builds/mfep/midiconn
     - wget.exe https://github.com/Kitware/CMake/releases/download/v3.22.2/cmake-3.22.2-windows-x86_64.zip
     - 7z x -y cmake-3.22.2-windows-x86_64.zip
     - wget.exe https://github.com/wixtoolset/wix3/releases/download/wix3112rtm/wix311-binaries.zip
     - 7z x -y wix311-binaries.zip
-    - $env:PATH = "$env:PATH;C:/GitLab-Runner/builds/mfep/midi-connector"
+    - $env:PATH = "$env:PATH;C:/GitLab-Runner/builds/mfep/midiconn"
     - git submodule update --init
     - cmake-3.22.2-windows-x86_64/bin/cmake -S . -B build -D CMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake -D MC_COMMIT_SHA=${CI_COMMIT_SHA}
     - cmake-3.22.2-windows-x86_64/bin/cmake --build build --config Release
-    - cd C:/GitLab-Runner/builds/mfep/midi-connector/build
+    - cd C:/GitLab-Runner/builds/mfep/midiconn/build
     - ../cmake-3.22.2-windows-x86_64/bin/cpack -C Release
   artifacts:
     paths:

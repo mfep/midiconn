@@ -10,19 +10,6 @@
 
 namespace mc
 {
-namespace
-{
-
-struct ConfigContent
-{
-    std::string    m_last_preset_path;
-    Theme          m_theme;
-    InterfaceScale m_scale;
-};
-
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ConfigContent, m_last_preset_path, m_theme, m_scale);
-
-} // namespace
 
 ConfigFile::ConfigFile()
 {
@@ -30,6 +17,12 @@ ConfigFile::ConfigFile()
     if (!std::filesystem::exists(m_config_json_path))
     {
         spdlog::info("Config file does not exist at \"{}\"", m_config_json_path.string());
+
+        // default values
+        m_scale                = InterfaceScale::Auto;
+        m_show_full_port_names = false;
+        m_theme                = Theme::Default;
+        save_config_file();
         return;
     }
     try
@@ -40,10 +33,31 @@ ConfigFile::ConfigFile()
             std::ifstream ifs(m_config_json_path);
             ifs >> j;
         }
-        const auto config  = j.get<ConfigContent>();
-        m_last_preset_path = config.m_last_preset_path;
-        m_theme            = config.m_theme;
-        m_scale            = config.m_scale;
+        bool       save_defaults = false;
+        const auto try_load_item =
+            [&](auto& item, auto default_value, const std::string_view name) {
+                if (!j.contains(name))
+                {
+                    save_defaults = true;
+                    item          = default_value;
+                }
+                else
+                {
+                    j[name.data()].get_to(item);
+                }
+            };
+        try_load_item(m_scale, InterfaceScale::Auto, "scale");
+        try_load_item(m_show_full_port_names, false, "show_full_port_names");
+        try_load_item(m_theme, Theme::Default, "theme");
+        if (j.contains("last_preset_path"))
+        {
+            m_last_preset_path = j["last_preset_path"].get<std::string>();
+        }
+        if (save_defaults)
+        {
+            spdlog::info("Updating config file with defaults.");
+            save_config_file();
+        }
     }
     catch (const std::exception& ex)
     {
@@ -69,14 +83,24 @@ void ConfigFile::set_scale(const InterfaceScale scale)
     save_config_file();
 }
 
+void ConfigFile::set_show_port_full_names(const bool value)
+{
+    m_show_full_port_names = value;
+    save_config_file();
+}
+
 void ConfigFile::save_config_file() const
 {
     spdlog::info("Saving config file to: \"{}\"", m_config_json_path.string());
-    const ConfigContent config{m_last_preset_path.value_or("").string(),
-                               m_theme.value_or(Theme::Default),
-                               m_scale.value_or(InterfaceScale::Scale_1_00)};
-    nlohmann::json      j = config;
-    j["version"]          = MC_FULL_VERSION;
+    nlohmann::json j;
+    j["version"]              = MC_FULL_VERSION;
+    j["scale"]                = m_scale;
+    j["theme"]                = m_theme;
+    j["show_full_port_names"] = m_show_full_port_names;
+    if (m_last_preset_path)
+    {
+        j["last_preset_path"] = *m_last_preset_path;
+    }
     std::ofstream ofs(m_config_json_path);
     if (ofs.good())
     {

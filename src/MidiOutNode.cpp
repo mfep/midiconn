@@ -5,12 +5,16 @@
 
 #include "MidiEngine.hpp"
 #include "NodeSerializer.hpp"
+#include "PortNameDisplay.hpp"
 
 namespace mc
 {
 
-MidiOutNode::MidiOutNode(const midi::OutputInfo& output_info, midi::Engine& midi_engine)
-    : m_output_info(output_info), m_midi_engine(&midi_engine)
+MidiOutNode::MidiOutNode(const midi::OutputInfo& output_info,
+                         midi::Engine&           midi_engine,
+                         const PortNameDisplay&  port_name_display)
+    : m_output_info(output_info), m_midi_engine(&midi_engine),
+      m_port_name_display(&port_name_display)
 {
     m_midi_engine->create(output_info, this);
 }
@@ -28,7 +32,8 @@ void MidiOutNode::accept_serializer(nlohmann::json& j, const NodeSerializer& ser
 void MidiOutNode::render_internal()
 {
     ImNodes::BeginNodeTitleBar();
-    ImGui::TextUnformatted(m_output_info.m_name.c_str());
+    const std::string node_title = m_port_name_display->get_port_name(m_output_info);
+    ImGui::TextUnformatted(node_title.c_str());
     ImNodes::EndNodeTitleBar();
     ImNodes::BeginInputAttribute(in_id());
     constexpr double fade_time_ms          = 1000;

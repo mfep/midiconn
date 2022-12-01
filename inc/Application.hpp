@@ -10,6 +10,7 @@
 #include "MidiEngine.hpp"
 #include "NodeEditor.hpp"
 #include "NodeFactory.hpp"
+#include "PortNameDisplay.hpp"
 #include "PresetManager.hpp"
 #include "Theme.hpp"
 
@@ -37,14 +38,15 @@ private:
     void render_main_menu();
     bool query_save();
 
-    bool          m_is_done{};
-    ConfigFile    m_config;
-    ThemeControl  m_theme_control;
-    midi::Engine  m_midi_engine;
-    NodeFactory   m_node_factory;
-    Preset        m_preset;
-    PresetManager m_preset_manager;
-    bool          m_debug_log_enabled{};
+    bool            m_is_done{};
+    ConfigFile      m_config;
+    ThemeControl    m_theme_control;
+    midi::Engine    m_midi_engine;
+    NodeFactory     m_node_factory;
+    Preset          m_preset;
+    PresetManager   m_preset_manager;
+    bool            m_debug_log_enabled{};
+    PortNameDisplay m_port_name_display;
 };
 
 } // namespace mc::display

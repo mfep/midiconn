@@ -31,9 +31,9 @@ ThemeControl::ThemeControl(ConfigFile& config, SDL_Window* window)
     : m_config(&config), m_window(window)
 {
     m_original_nodes_style = ImNodes::GetStyle();
-    set_theme_internal(m_config->get_theme().value_or(Theme::Default));
+    set_theme_internal(m_config->get_theme());
 
-    m_new_scale = m_config->get_scale().value_or(InterfaceScale::Auto);
+    m_new_scale = m_config->get_scale();
     update_scale_if_needed();
 }
 

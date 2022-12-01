@@ -56,6 +56,7 @@ set(sources
     src/OutputObserver.cpp
     src/PlatformUtils.cpp
     src/PresetManager.cpp
+    src/PortNameDisplay.cpp
     src/Theme.cpp
 )
 

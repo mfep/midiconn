@@ -11,10 +11,14 @@ namespace midi
 class Engine;
 }
 
+class PortNameDisplay;
+
 class MidiOutNode final : public Node, private midi::OutputObserver
 {
 public:
-    MidiOutNode(const midi::OutputInfo& output_info, midi::Engine& midi_engine);
+    MidiOutNode(const midi::OutputInfo& output_info,
+                midi::Engine&           midi_engine,
+                const PortNameDisplay&  port_name_display);
     ~MidiOutNode();
 
     void accept_serializer(nlohmann::json& j, const NodeSerializer& serializer) const override;
@@ -29,6 +33,7 @@ private:
     midi::Engine*                                      m_midi_engine;
     Node::midi_sources                                 m_previous_sources;
     std::chrono::time_point<std::chrono::system_clock> m_last_message_sent;
+    const PortNameDisplay*                             m_port_name_display;
 
     friend class NodeSerializer;
 };

@@ -11,6 +11,7 @@ namespace mc
 {
 class ConfigFile;
 class NodeFactory;
+class PortNameDisplay;
 
 namespace display
 {
@@ -21,13 +22,18 @@ struct Preset
     midi::MessageTypeMask m_message_type_mask;
 
     void          to_json(nlohmann::json& j) const;
-    static Preset from_json(const NodeFactory& node_factory, const nlohmann::json& j);
+    static Preset from_json(const NodeFactory&     node_factory,
+                            const PortNameDisplay& port_name_display,
+                            const nlohmann::json&  j);
 };
 
 class PresetManager final
 {
 public:
-    PresetManager(const Preset& preset, const NodeFactory& node_factory, ConfigFile& config);
+    PresetManager(const Preset&          preset,
+                  const NodeFactory&     node_factory,
+                  ConfigFile&            config,
+                  const PortNameDisplay& port_name_display);
 
     bool                                        is_dirty(const Preset& preset) const;
     Preset                                      open_preset(const std::filesystem::path& path);
@@ -44,6 +50,7 @@ private:
     ConfigFile*                          m_config;
     nlohmann::json                       m_last_editor_state;
     std::optional<std::filesystem::path> m_opened_path;
+    const PortNameDisplay*               m_port_name_display;
 };
 
 } // namespace display

@@ -19,8 +19,10 @@ namespace mc::display
 
 Application::Application(SDL_Window* window, const std::filesystem::path& path_to_preset)
     : m_theme_control(m_config, window),
-      m_node_factory(m_midi_engine, m_theme_control), m_preset{NodeEditor(m_node_factory)},
-      m_preset_manager(m_preset, m_node_factory, m_config)
+      m_node_factory(m_midi_engine, m_theme_control, m_port_name_display),
+      m_preset{NodeEditor(m_node_factory, m_port_name_display)},
+      m_preset_manager(m_preset, m_node_factory, m_config, m_port_name_display),
+      m_port_name_display(m_config.get_show_full_port_names())
 {
     spdlog::info("Starting " MIDI_APPLICATION_NAME " version {}", MC_FULL_VERSION);
     std::optional<Preset> opened_preset;
@@ -127,8 +129,8 @@ void Application::new_preset_command()
     }
     if (new_preset)
     {
-        m_preset         = {NodeEditor(m_node_factory)};
-        m_preset_manager = PresetManager(m_preset, m_node_factory, m_config);
+        m_preset         = {NodeEditor(m_node_factory, m_port_name_display)};
+        m_preset_manager = PresetManager(m_preset, m_node_factory, m_config, m_port_name_display);
     }
 }
 
@@ -245,6 +247,12 @@ void Application::render_main_menu()
                     }
                 }
                 ImGui::EndMenu();
+            }
+            bool show_full_port_names = m_port_name_display.get_show_full_port_names();
+            if (ImGui::MenuItem("Show full port names", nullptr, &show_full_port_names))
+            {
+                m_port_name_display.set_show_full_port_names(show_full_port_names);
+                m_config.set_show_port_full_names(show_full_port_names);
             }
             ImGui::EndMenu();
         }

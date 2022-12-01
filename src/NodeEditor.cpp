@@ -13,6 +13,7 @@
 #include "MidiProbe.hpp"
 #include "NodeFactory.hpp"
 #include "NodeSerializer.hpp"
+#include "PortNameDisplay.hpp"
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ImVec2, x, y);
 
@@ -24,7 +25,8 @@ constexpr std::string_view contex_popup_name = "NodeEditorContextMenu";
 namespace mc::display
 {
 
-NodeEditor::NodeEditor(const NodeFactory& node_factory) : m_node_factory(&node_factory)
+NodeEditor::NodeEditor(const NodeFactory& node_factory, const PortNameDisplay& port_name_display)
+    : m_node_factory(&node_factory), m_port_name_display(&port_name_display)
 {
 }
 
@@ -70,12 +72,14 @@ void NodeEditor::to_json(nlohmann::json& j) const
     };
 }
 
-NodeEditor NodeEditor::from_json(const NodeFactory& node_factory, const nlohmann::json& j)
+NodeEditor NodeEditor::from_json(const NodeFactory&     node_factory,
+                                 const PortNameDisplay& port_name_display,
+                                 const nlohmann::json&  j)
 {
     const ImVec2 panning = j.at("panning");
     ImNodes::EditorContextResetPanning(panning);
 
-    NodeEditor     editor(node_factory);
+    NodeEditor     editor(node_factory, port_name_display);
     NodeSerializer deserializer(node_factory);
 
     // 1st iter -> create nodes
@@ -115,7 +119,8 @@ std::shared_ptr<Node> NodeEditor::renderContextMenu(bool show_outputting_nodes,
     auto render_contents = [this, leaf_flags](auto& infos) -> std::shared_ptr<Node> {
         for (const auto& info : infos)
         {
-            ImGui::TreeNodeEx(info.m_name.c_str(), leaf_flags);
+            const std::string port_name = m_port_name_display->get_port_name(info);
+            ImGui::TreeNodeEx(port_name.c_str(), leaf_flags);
             if (ImGui::IsItemClicked())
             {
                 std::shared_ptr<Node> node;
@@ -141,7 +146,7 @@ std::shared_ptr<Node> NodeEditor::renderContextMenu(bool show_outputting_nodes,
 
     std::shared_ptr<Node> node;
     ImGui::SetNextWindowSizeConstraints({300, 0}, {500, 500});
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.f, 0.f));
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(5.f, 5.f));
     if (ImGui::BeginPopup(contex_popup_name.data()))
     {
         if (ImGui::IsWindowAppearing())

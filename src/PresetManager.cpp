@@ -27,15 +27,19 @@ void Preset::to_json(nlohmann::json& j) const
     j["enabled_message_types"] = m_message_type_mask;
 }
 
-Preset Preset::from_json(const NodeFactory& node_factory, const nlohmann::json& j)
+Preset Preset::from_json(const NodeFactory&     node_factory,
+                         const PortNameDisplay& port_name_display,
+                         const nlohmann::json&  j)
 {
-    return {NodeEditor::from_json(node_factory, j.at("editor")), j.at("enabled_message_types")};
+    return {NodeEditor::from_json(node_factory, port_name_display, j.at("editor")),
+            j.at("enabled_message_types")};
 }
 
-PresetManager::PresetManager(const Preset&      preset,
-                             const NodeFactory& node_factory,
-                             ConfigFile&        config)
-    : m_node_factory(&node_factory), m_config(&config)
+PresetManager::PresetManager(const Preset&          preset,
+                             const NodeFactory&     node_factory,
+                             ConfigFile&            config,
+                             const PortNameDisplay& port_name_display)
+    : m_node_factory(&node_factory), m_config(&config), m_port_name_display(&port_name_display)
 {
     preset.to_json(m_last_editor_state);
 }
@@ -57,7 +61,7 @@ Preset PresetManager::open_preset(const std::filesystem::path& open_path)
     }
     ifs >> m_last_editor_state;
     m_opened_path = open_path;
-    return Preset::from_json(*m_node_factory, m_last_editor_state);
+    return Preset::from_json(*m_node_factory, *m_port_name_display, m_last_editor_state);
 }
 
 void PresetManager::save_preset(const Preset& preset)

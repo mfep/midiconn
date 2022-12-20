@@ -99,7 +99,7 @@ void ConfigFile::save_config_file() const
     j["show_full_port_names"] = m_show_full_port_names;
     if (m_last_preset_path)
     {
-        j["last_preset_path"] = *m_last_preset_path;
+        j["last_preset_path"] = m_last_preset_path->string();
     }
     std::ofstream ofs(m_config_json_path);
     if (ofs.good())

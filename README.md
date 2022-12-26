@@ -12,7 +12,7 @@
 
 ## Installing
 
-## Build
+## Building
 
 ### Windows installer (x64)
 - From the x64 Native Tools Command Prompt.
@@ -31,5 +31,22 @@
 > cpack -C Release
 ```
 ### Linux binary
+Make sure that the development packages of the dependencies are installed or use an image built from the provided [Dockerfile](./Dockerfile). The list of library dependencies is the following:
+- libasound2
+- libfmt
+- libfreetype
+- libsdl2 (>= 2.0.17)
+- libspdlog
 
+```
+$ git clone --recursive https://gitlab.com/mfep/midiconn.git
+$ cmake -S ./midiconn -B ./midiconn/build -D CMAKE_BUILD_TYPE=Release
+$ cmake --build ./midiconn/build
+```
 ### Linux Flatpak
+```
+$ git clone --recursive https://gitlab.com/mfep/midiconn.git
+$ flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+$ flatpak install -y flathub org.freedesktop.Sdk//21.08 org.freedesktop.Platform//21.08
+$ flatpak-builder ./midiconn/build/flatpak ./midiconn/packaging/midiconn.yml
+```

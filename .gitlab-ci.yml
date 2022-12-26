@@ -29,7 +29,7 @@ build-linux:
 
 build-linux-flatpak:
   stage: build
-  image: ubuntu
+  image: ubuntu:22.04
   extends:
     - .rules:optional
   script:

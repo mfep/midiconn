@@ -5,12 +5,17 @@ default:
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
 
+stages:
+  - build
+  - release
+
 .rules:optional:
   rules:
     - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
     - if: '$CI_PIPELINE_SOURCE == "push"'
       when: manual
       allow_failure: true
+    - if: $CI_COMMIT_TAG
 
 build-linux:
   image: registry.gitlab.com/mfep/midiconn:latest
@@ -78,3 +83,29 @@ build-windows:
       - build/Release/*.dll
       - build/*.msi
     expire_in: 1 week
+
+release-job:
+  stage: release
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  needs:
+    - build-linux
+    - build-windows
+  rules:
+    - if: $CI_COMMIT_TAG
+  script:
+    - echo "Running release"
+  artifacts:
+    paths:
+      - build/*.msi
+      - build/midiconn
+    expire_in: never
+  release:
+    tag_name: $CI_COMMIT_TAG
+    name: Release $CI_COMMIT_TAG
+    description: Release $CI_COMMIT_TAG
+    assets:
+      links:
+        - name: Linux x64 binary
+          url: ${CI_PROJECT_URL}/-/jobs/${CI_JOB_ID}/artifacts/raw/build/midiconn
+        - name: Windows installer
+          url: ${CI_PROJECT_URL}/-/jobs/${CI_JOB_ID}/artifacts/raw/build/midiconn-${CI_COMMIT_TAG}-win64.msi

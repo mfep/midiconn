@@ -6,6 +6,8 @@
 
 ## Features
 - An intuitive, node-based user interface with predictable interactions - one does not have to be a power user or MIDI expert to start using it.
+- Detection of device disconnects and reconnects without program restart.
+- Channel node to filter and remap MIDI message channels.
 - Platform-independent preset files to port the MIDI device setup across various computers.
 - Various themes and UI scaling.
 - Minimal resource footprint - no web technologies are employed in **midiconn**.

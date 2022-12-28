@@ -15,6 +15,14 @@
 
 ## Installing
 
+### Windows
+Download and execute the [installer package of the latest release](https://gitlab.com/mfep/midiconn/-/releases/permalink/latest).
+
+### Linux
+The recommended way to install **midiconn** on a Linux system is via the Flathub Flatpak repository.
+
+Alternatively, the build instructions can be found below.
+
 ## Building
 
 ### Windows installer (x64)

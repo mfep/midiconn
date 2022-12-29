@@ -95,6 +95,7 @@ target_compile_definitions(midiconn PRIVATE
 
 set(CPACK_PACKAGE_NAME "midiconn")
 set(CPACK_PACKAGE_VENDOR "safeworlds")
+set(CPACK_PACKAGE_CONTACT "Lőrinc Serfőző <lorinc.serfozo@mailbox.org>")
 if(WIN32)
     set(CMAKE_INSTALL_BINDIR ".")
     set(CPACK_PACKAGE_INSTALL_DIRECTORY "midiconn")
@@ -124,6 +125,9 @@ else()
         DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/metainfo/")
     install(FILES "packaging/xyz.safeworlds.midiconn.mime.xml"
         DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/mime/packages/")
+    set(CPACK_DEBIAN_PACKAGE_DEPENDS "libasound2, libfmt8, libfreetype6, libsdl2-2.0-0, libspdlog1")
+    set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://gitlab.com/mfep/midiconn")
+    set(CPACK_DEBIAN_PACKAGE_SECTION sound)
 endif()
 
 install(TARGETS midiconn

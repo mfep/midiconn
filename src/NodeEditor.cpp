@@ -145,7 +145,7 @@ std::shared_ptr<Node> NodeEditor::renderContextMenu(bool show_outputting_nodes,
     };
 
     std::shared_ptr<Node> node;
-    ImGui::SetNextWindowSizeConstraints({300, 0}, {500, 500});
+    ImGui::SetNextWindowSizeConstraints({300, 0}, {FLT_MAX, FLT_MAX});
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(5.f, 5.f));
     if (ImGui::BeginPopup(contex_popup_name.data()))
     {

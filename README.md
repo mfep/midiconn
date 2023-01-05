@@ -10,8 +10,7 @@
 - Channel node to filter and remap MIDI message channels.
 - Platform-independent preset files to port the MIDI device setup across various computers.
 - Various themes and UI scaling.
-- Minimal resource footprint - no web technologies are employed in **midiconn**.
-- 100% free and open source.
+- Minimal resource footprint - quick to launch up.
 
 ## Installing
 

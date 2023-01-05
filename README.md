@@ -2,7 +2,7 @@
 
 **midiconn** is a virtual hub to connect MIDI hardware through the computer.
 
-*To Do: insert screenshot*
+<img src="./graphics/screenshot_0.png" alt="Screenshot of midiconn" width=600px />
 
 ## Features
 - An intuitive, node-based user interface with predictable interactions - one does not have to be a power user or MIDI expert to start using it.

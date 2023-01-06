@@ -12,8 +12,8 @@ stages:
 .rules:optional:
   rules:
     - if: $CI_COMMIT_TAG
-    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
-    - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_TAG == ""'
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_TAG == null
       when: manual
       allow_failure: true
 
@@ -113,3 +113,19 @@ release-job:
           url: ${CI_PROJECT_URL}/-/jobs/${CI_JOB_ID}/artifacts/raw/build/midiconn-${CI_COMMIT_TAG}-Linux.deb
         - name: Windows MSI installer
           url: ${CI_PROJECT_URL}/-/jobs/${CI_JOB_ID}/artifacts/raw/build/midiconn-${CI_COMMIT_TAG}-win64.msi
+
+release-itch:
+  stage: release
+  image: ubuntu:22.04
+  needs:
+    - release-job
+  rules:
+    - if: $CI_COMMIT_TAG
+  before_script:
+    - apt update -y
+    - apt install -y wget unzip
+  script:
+    - wget https://broth.itch.ovh/butler/linux-amd64/LATEST/archive/default -O butler.zip
+    - unzip butler.zip
+    - ./butler push ${CI_PROJECT_DIR}/build/midiconn-${CI_COMMIT_TAG}-win64.msi mfeproject/midiconn:windows-msi --userversion ${CI_COMMIT_TAG}
+    - ./butler push ${CI_PROJECT_DIR}/build/midiconn-${CI_COMMIT_TAG}-Linux.deb mfeproject/midiconn:ubuntu2204-deb --userversion ${CI_COMMIT_TAG}

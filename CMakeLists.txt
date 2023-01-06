@@ -95,6 +95,7 @@ target_compile_definitions(midiconn PRIVATE
 
 set(CPACK_PACKAGE_NAME "midiconn")
 set(CPACK_PACKAGE_VENDOR "safeworlds")
+set(CPACK_PACKAGE_CONTACT "Lőrinc Serfőző <lorinc.serfozo@mailbox.org>")
 if(WIN32)
     set(CMAKE_INSTALL_BINDIR ".")
     set(CPACK_PACKAGE_INSTALL_DIRECTORY "midiconn")
@@ -103,6 +104,7 @@ if(WIN32)
     set(CPACK_GENERATOR "WIX")
     set(CPACK_WIX_UPGRADE_GUID "96D23EBE-7D9E-4C53-8CD7-6E5CC32A5CE1")
     set(CPACK_WIX_PATCH_FILE "${CMAKE_CURRENT_SOURCE_DIR}/packaging/wix_patch.xml")
+    set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.txt")
     install(IMPORTED_RUNTIME_ARTIFACTS spdlog::spdlog fmt::fmt SDL2::SDL2 freetype
         RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
     target_compile_definitions(midiconn PRIVATE
@@ -123,6 +125,9 @@ else()
         DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/metainfo/")
     install(FILES "packaging/xyz.safeworlds.midiconn.mime.xml"
         DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/mime/packages/")
+    set(CPACK_DEBIAN_PACKAGE_DEPENDS "libasound2, libfmt8, libfreetype6, libsdl2-2.0-0, libspdlog1")
+    set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://gitlab.com/mfep/midiconn")
+    set(CPACK_DEBIAN_PACKAGE_SECTION sound)
 endif()
 
 install(TARGETS midiconn

@@ -3,16 +3,41 @@
   <id>xyz.safeworlds.midiconn</id>
   
   <name>midiconn</name>
-  <summary>Turn your computer into a MIDI hub</summary>
+  <summary>Virtual MIDI hub</summary>
   
-  <metadata_license>MIT</metadata_license>
+  <metadata_license>CC0-1.0</metadata_license>
   <project_license>MIT</project_license>
   
   <description>
-    <p>
-      To Do
-    </p>
+    <ul>
+      <li>Intuitive, node-based user interface with predictable interactions - one does not have to be a power user or MIDI expert to start using it.</li>
+      <li>Detection of device disconnects and reconnects without program restart.</li>
+      <li>Channel node to filter and remap MIDI message channels.</li>
+      <li>Platform-independent preset files to port the MIDI device setup across various computers.</li>
+      <li>Various themes and UI scaling.</li>
+      <li>Minimal resource footprint - quick to launch up.</li>
+    </ul>
   </description>
-  
+
+  <screenshots>
+    <screenshot type="default">
+      <image width="1280" height="800">https://gitlab.com/mfep/midiconn/-/raw/39-readme/graphics/screenshot_0.png</image>
+    </screenshot>
+  </screenshots>
+
+  <content_rating type="oars-1.1" />
+
+  <requires>
+    <internet>offline-only</internet>
+  </requires>
+
+  <categories>
+    <category>AudioVideo</category>
+    <category>Audio</category>
+  </categories>
+
+  <url type="homepage">https://mfeproject.itch.io/midiconn</url>
+  <url type="bugtracker">https://gitlab.com/mfep/midiconn/issues</url>
+ 
   <launchable type="desktop-id">xyz.safeworlds.midiconn.desktop</launchable>
 </component>

@@ -9,11 +9,11 @@ namespace
 
 std::string abbreviate_port_name(const std::string& port_name)
 {
-    const std::regex re(R"(^.+:(.+) \d+:\d+$)");
+    const std::regex re(R"(^(.+):(\1.*) \d+:\d+$)");
     std::smatch      results;
     if (std::regex_match(port_name, results, re))
     {
-        return results[1].str();
+        return results[2].str();
     }
     else
     {

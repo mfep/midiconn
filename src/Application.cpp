@@ -269,7 +269,7 @@ void Application::render_main_menu()
             }
             if (ImGui::MenuItem(ICON_FK_GLOBE " Visit website"))
             {
-                SDL_OpenURL("https://mfeproject.itch.io");
+                SDL_OpenURL("https://mfeproject.itch.io/midiconn");
             }
             if (ImGui::MenuItem(ICON_FK_QUESTION "  About"))
             {

@@ -36,7 +36,8 @@
     <category>Audio</category>
   </categories>
 
-  <url type="homepage">https://gitlab.com/mfep/midiconn/</url>
+  <url type="homepage">https://mfeproject.itch.io/midiconn</url>
+  <url type="bugtracker">https://gitlab.com/mfep/midiconn/issues</url>
  
   <launchable type="desktop-id">xyz.safeworlds.midiconn.desktop</launchable>
 </component>

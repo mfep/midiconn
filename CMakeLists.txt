@@ -95,7 +95,6 @@ target_compile_definitions(midiconn PRIVATE
 
 set(CPACK_PACKAGE_NAME "midiconn")
 set(CPACK_PACKAGE_VENDOR "safeworlds")
-set(CPACK_PACKAGE_CONTACT "Lőrinc Serfőző <lorinc.serfozo@mailbox.org>")
 if(WIN32)
     set(CMAKE_INSTALL_BINDIR ".")
     set(CPACK_PACKAGE_INSTALL_DIRECTORY "midiconn")
@@ -116,6 +115,7 @@ if(WIN32)
     )
     target_link_options(midiconn PRIVATE "/SUBSYSTEM:WINDOWS")
 else()
+    set(CPACK_PACKAGE_CONTACT "Lőrinc Serfőző <lorinc.serfozo@mailbox.org>")
     install(FILES "graphics/mc_logo.svg"
         DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/scalable/apps/"
         RENAME "xyz.safeworlds.midiconn.svg")

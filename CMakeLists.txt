@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.22)
 include(deps/CMakeRC.cmake)
 set(CMAKE_CXX_STANDARD 17)
 
-project(midiconn VERSION 0.1.0 LANGUAGES CXX)
+project(midiconn VERSION 0.1.1 LANGUAGES CXX)
 
 find_package(fmt REQUIRED)
 find_package(spdlog REQUIRED)

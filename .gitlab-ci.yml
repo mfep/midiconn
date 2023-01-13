@@ -42,10 +42,11 @@ build-linux-flatpak:
   extends:
     - .rules:optional
   script:
-    - apt-get update -y && apt-get install -y flatpak-builder
+    - apt-get update -y && apt-get install -y flatpak-builder appstream-util
+    - appstream-util validate $CI_PROJECT_DIR/packaging/xyz.safeworlds.midiconn.metainfo.xml
     - flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
     - flatpak install -y flathub org.freedesktop.Sdk//22.08 org.freedesktop.Platform//22.08
-    - flatpak-builder build/flatpak packaging/midiconn.yml
+    - flatpak-builder build/flatpak $CI_PROJECT_DIR/packaging/xyz.safeworlds.midiconn.yml
   artifacts:
     paths:
       - build/flatpak

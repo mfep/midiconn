@@ -9,6 +9,8 @@
   <project_license>MIT</project_license>
   
   <description>
+    <p>midiconn is a virtual hub to connect MIDI hardware through the computer.</p>
+    <p>Features:</p> 
     <ul>
       <li>Intuitive, node-based user interface with predictable interactions - one does not have to be a power user or MIDI expert to start using it.</li>
       <li>Detection of device disconnects and reconnects without program restart.</li>
@@ -21,7 +23,7 @@
 
   <screenshots>
     <screenshot type="default">
-      <image width="1280" height="800">https://gitlab.com/mfep/midiconn/-/raw/39-readme/graphics/screenshot_0.png</image>
+      <image width="1280" height="800">https://gitlab.com/mfep/midiconn/-/raw/master/graphics/screenshot_0.png</image>
     </screenshot>
   </screenshots>
 
@@ -40,4 +42,12 @@
   <url type="bugtracker">https://gitlab.com/mfep/midiconn/issues</url>
  
   <launchable type="desktop-id">xyz.safeworlds.midiconn.desktop</launchable>
+
+  <releases>
+    <release version="0.1.0" date="2023-01-07">
+      <description>
+        <p>Initial release of midiconn.</p>
+      </description>
+    </release>
+  </releases>
 </component>

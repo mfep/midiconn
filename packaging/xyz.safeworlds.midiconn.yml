@@ -1,15 +1,22 @@
-command: midiconn
 id: xyz.safeworlds.midiconn
+command: midiconn
 runtime: org.freedesktop.Platform
 runtime-version: '22.08'
 sdk: org.freedesktop.Sdk
+cleanup:
+  - /bin/sdl2-config
+  - /include
+  - /lib/cmake
+  - /lib/pkgconfig
+  - /lib/*.a
+  - /lib/*.la
+  - /share/aclocal
+  - /share/rtmidi
+finish-args:
+  - --socket=x11
+  - --socket=pulseaudio
+  - --device=dri
 modules:
-  - name: SDL2
-    buildsystem: autotools
-    sources:
-      - type: git
-        url: https://github.com/libsdl-org/SDL
-        tag: release-2.26.1
   - name: fmt
     buildsystem: cmake-ninja
     config-opts:
@@ -46,17 +53,3 @@ modules:
     sources:
       - type: dir
         path: './..'
-cleanup:
-  - /bin/sdl2-config
-  - /include
-  - /lib/cmake
-  - /lib/debug
-  - /lib/pkgconfig
-  - /lib/*.a
-  - /lib/*.la
-  - /share/aclocal
-  - /share/rtmidi
-finish-args:
-- --socket=x11
-- --socket=pulseaudio
-- --device=dri

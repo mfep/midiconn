@@ -33,13 +33,13 @@ std::shared_ptr<MidiOutNode> NodeFactory::build_midi_out_node(
 std::shared_ptr<DisconnectedMidiInNode> NodeFactory::build_disconnected_midi_in_node(
     const std::string& input_name) const
 {
-    return std::make_shared<DisconnectedMidiInNode>(input_name);
+    return std::make_shared<DisconnectedMidiInNode>(input_name, *m_port_name_display);
 }
 
 std::shared_ptr<DisconnectedMidiOutNode> NodeFactory::build_disconnected_midi_out_node(
     const std::string& output_name) const
 {
-    return std::make_shared<DisconnectedMidiOutNode>(output_name);
+    return std::make_shared<DisconnectedMidiOutNode>(output_name, *m_port_name_display);
 }
 
 std::shared_ptr<MidiChannelNode> NodeFactory::build_midi_channel_node() const

@@ -44,6 +44,23 @@
   <launchable type="desktop-id">xyz.safeworlds.midiconn.desktop</launchable>
 
   <releases>
+    <release version="0.1.2" date="2023-01-24">
+      <description>
+        <p>Improvements and bug fixes in the current release:</p>
+        <ul>
+          <li>Added support for Wayland in the Flatpak distribution</li>
+          <li>Fixed abbreaviated name display of disabled MIDI input and output nodes</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.1.1" date="2023-01-13">
+      <description>
+        <p>Improvements and bug fixes in the current release:</p>
+        <ul>
+          <li>Updated AppStream metadata</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.1.0" date="2023-01-07">
       <description>
         <p>Initial release of midiconn.</p>

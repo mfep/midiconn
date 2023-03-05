@@ -73,6 +73,7 @@ set(sources
     src/PresetManager.cpp
     src/PortNameDisplay.cpp
     src/Theme.cpp
+    src/WelcomeWindow.cpp
 )
 
 if(WIN32)

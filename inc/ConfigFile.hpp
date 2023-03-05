@@ -22,11 +22,13 @@ public:
     InterfaceScale get_scale() const { return m_scale; }
     bool           get_show_full_port_names() const { return m_show_full_port_names; }
     bool           get_check_updates() const { return m_check_updates; }
+    bool           get_show_welcome() const { return m_show_welcome; }
     void           set_last_preset_path(const std::filesystem::path& path);
     void           set_theme(const Theme theme);
     void           set_scale(const InterfaceScale scale);
     void           set_show_port_full_names(const bool value);
     void           set_check_updates(const bool value);
+    void           set_show_welcome(const bool value);
 
 private:
     void save_config_file() const;
@@ -37,6 +39,7 @@ private:
     InterfaceScale                       m_scale;
     bool                                 m_show_full_port_names;
     bool                                 m_check_updates;
+    bool                                 m_show_welcome;
 };
 
 } // namespace mc

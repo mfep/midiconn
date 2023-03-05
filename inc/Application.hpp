@@ -14,6 +14,7 @@
 #include "PresetManager.hpp"
 #include "Theme.hpp"
 #include "UpdateChecker.hpp"
+#include "WelcomeWindow.hpp"
 
 namespace mc::display
 {
@@ -49,6 +50,7 @@ private:
     bool            m_debug_log_enabled{};
     PortNameDisplay m_port_name_display;
     UpdateChecker   m_update_checker;
+    WelcomeWindow   m_welcome_window;
 };
 
 } // namespace mc::display

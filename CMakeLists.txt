@@ -1,9 +1,12 @@
 cmake_minimum_required(VERSION 3.22)
 
+include(FetchContent)
 include(deps/CMakeRC.cmake)
 set(CMAKE_CXX_STANDARD 17)
 
-project(midiconn VERSION 0.1.2 LANGUAGES CXX)
+project(midiconn VERSION 0.2.0 LANGUAGES CXX)
+
+option(MC_CHECK_FOR_UPDATES "Build ${PROJECT_NAME} to check for updates on start" OFF)
 
 find_package(fmt REQUIRED)
 find_package(spdlog REQUIRED)
@@ -13,6 +16,18 @@ if(WIN32)
     find_package(freetype CONFIG REQUIRED)
 else()
     find_package(Freetype REQUIRED)
+endif()
+
+set(JSON_BuildTests OFF CACHE INTERNAL "")
+set(JSON_MultipleHeaders ON CACHE INTERNAL "")
+
+FetchContent_Declare(cpr
+    GIT_REPOSITORY https://github.com/libcpr/cpr.git
+    GIT_TAG 1.10.0
+    GIT_PROGRESS TRUE
+    GIT_SHALLOW TRUE)
+if(MC_CHECK_FOR_UPDATES)
+    FetchContent_MakeAvailable(cpr)
 endif()
 
 configure_file(
@@ -67,6 +82,11 @@ if(WIN32)
 else()
     list(APPEND sources src/PlatformUtilsLinux.cpp)
 endif()
+if (MC_CHECK_FOR_UPDATES)
+    list(APPEND sources src/UpdateChecker.cpp)
+else()
+    list(APPEND sources src/UpdateCheckerStub.cpp)
+endif()
 
 file(GLOB FONTS RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/fonts/*")
 cmrc_add_resource_library(midiconn_fonts "${FONTS}" ALIAS fonts)
@@ -88,6 +108,9 @@ target_link_libraries(midiconn PRIVATE
     fmt::fmt
     freetype
     fonts)
+if(MC_CHECK_FOR_UPDATES)
+    target_link_libraries(midiconn PRIVATE cpr::cpr)
+endif()
 target_compile_definitions(midiconn PRIVATE
     SPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_DEBUG
     IMGUI_ENABLE_FREETYPE
@@ -104,7 +127,7 @@ if(WIN32)
     set(CPACK_WIX_UPGRADE_GUID "96D23EBE-7D9E-4C53-8CD7-6E5CC32A5CE1")
     set(CPACK_WIX_PATCH_FILE "${CMAKE_CURRENT_SOURCE_DIR}/packaging/wix_patch.xml")
     set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.txt")
-    install(IMPORTED_RUNTIME_ARTIFACTS spdlog::spdlog fmt::fmt SDL2::SDL2 freetype
+    install(IMPORTED_RUNTIME_ARTIFACTS spdlog::spdlog fmt::fmt SDL2::SDL2 freetype cpr
         RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
     target_compile_definitions(midiconn PRIVATE
         WINVER=0x0A00

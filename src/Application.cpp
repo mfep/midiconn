@@ -58,6 +58,7 @@ void Application::render()
 
     wrap_exception([this]() {
         render_main_menu();
+        m_update_checker.show_latest_version_message();
         m_preset.m_node_editor.render();
     });
 
@@ -269,7 +270,7 @@ void Application::render_main_menu()
             }
             if (ImGui::MenuItem(ICON_FK_GLOBE " Visit website"))
             {
-                SDL_OpenURL("https://mfeproject.itch.io/midiconn");
+                SDL_OpenURL(MC_WEBSITE_URL);
             }
             if (ImGui::MenuItem(ICON_FK_QUESTION "  About"))
             {

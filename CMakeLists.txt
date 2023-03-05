@@ -46,7 +46,7 @@ set(sources
     deps/imgui/imgui_draw.cpp
     deps/imgui/imgui_tables.cpp
     deps/imgui/imgui_widgets.cpp
-    deps/imgui/backends/imgui_impl_sdl.cpp
+    deps/imgui/backends/imgui_impl_sdl2.cpp
     deps/imgui/backends/imgui_impl_sdlrenderer.cpp
     deps/imgui/misc/freetype/imgui_freetype.cpp
     deps/imnodes/imnodes.cpp

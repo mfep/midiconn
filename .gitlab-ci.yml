@@ -78,7 +78,12 @@ build-windows:
     - 7z x -y wix311-binaries.zip
     - $env:PATH = "$env:PATH;C:/GitLab-Runner/builds/mfep/midiconn"
     - git submodule update --init
-    - cmake-3.22.2-windows-x86_64/bin/cmake -S . -B build -D CMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake -D MC_COMMIT_SHA=${CI_COMMIT_SHA}
+    - cmake-3.22.2-windows-x86_64/bin/cmake
+      -S .
+      -B build
+      -D CMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake
+      -D MC_COMMIT_SHA=${CI_COMMIT_SHA}
+      -D MC_CHECK_FOR_UPDATES=ON
     - cmake-3.22.2-windows-x86_64/bin/cmake --build build --config Release
     - cd C:/GitLab-Runner/builds/mfep/midiconn/build
     - ../cmake-3.22.2-windows-x86_64/bin/cpack -C Release

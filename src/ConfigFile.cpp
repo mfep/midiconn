@@ -49,6 +49,7 @@ ConfigFile::ConfigFile()
         try_load_item(m_scale, InterfaceScale::Auto, "scale");
         try_load_item(m_show_full_port_names, false, "show_full_port_names");
         try_load_item(m_theme, Theme::Default, "theme");
+        try_load_item(m_check_updates, true, "check_updates");
         if (j.contains("last_preset_path"))
         {
             m_last_preset_path = j["last_preset_path"].get<std::string>();
@@ -89,6 +90,12 @@ void ConfigFile::set_show_port_full_names(const bool value)
     save_config_file();
 }
 
+void ConfigFile::set_check_updates(const bool value)
+{
+    m_check_updates = value;
+    save_config_file();
+}
+
 void ConfigFile::save_config_file() const
 {
     spdlog::info("Saving config file to: \"{}\"", m_config_json_path.string());
@@ -97,6 +104,7 @@ void ConfigFile::save_config_file() const
     j["scale"]                = m_scale;
     j["theme"]                = m_theme;
     j["show_full_port_names"] = m_show_full_port_names;
+    j["check_updates"]        = m_check_updates;
     if (m_last_preset_path)
     {
         j["last_preset_path"] = m_last_preset_path->string();

@@ -4,7 +4,9 @@ include(FetchContent)
 include(deps/CMakeRC.cmake)
 set(CMAKE_CXX_STANDARD 17)
 
-project(midiconn VERSION 0.1.2 LANGUAGES CXX)
+project(midiconn VERSION 0.2.0 LANGUAGES CXX)
+
+option(MC_CHECK_FOR_UPDATES "Build ${PROJECT_NAME} to check for updates on start" OFF)
 
 find_package(fmt REQUIRED)
 find_package(spdlog REQUIRED)
@@ -19,22 +21,23 @@ endif()
 set(JSON_BuildTests OFF CACHE INTERNAL "")
 set(JSON_MultipleHeaders ON CACHE INTERNAL "")
 
-FetchContent_Declare(nlohmann_json
-    GIT_REPOSITORY https://github.com/nlohmann/json.git
-    GIT_TAG v3.11.2
+FetchContent_Declare(cpr
+    GIT_REPOSITORY https://github.com/libcpr/cpr.git
+    GIT_TAG 1.10.0
     GIT_PROGRESS TRUE
     GIT_SHALLOW TRUE)
-FetchContent_Declare(portable_file_dialogs
-    GIT_REPOSITORY https://github.com/samhocevar/portable-file-dialogs.git
-    GIT_TAG 0.1.0
-    GIT_PROGRESS TRUE
-    GIT_SHALLOW TRUE)
-FetchContent_MakeAvailable(nlohmann_json portable_file_dialogs)
+if(MC_CHECK_FOR_UPDATES)
+    FetchContent_MakeAvailable(cpr)
+endif()
 
 configure_file(
     inc/Version.hpp.in
     ${CMAKE_CURRENT_SOURCE_DIR}/inc/Version.hpp
 )
+
+set(JSON_BuildTests OFF CACHE INTERNAL "")
+set(JSON_MultipleHeaders ON CACHE INTERNAL "")
+add_subdirectory(deps/json)
 
 set(sources
     ${g_font_cpp_path}
@@ -43,7 +46,7 @@ set(sources
     deps/imgui/imgui_draw.cpp
     deps/imgui/imgui_tables.cpp
     deps/imgui/imgui_widgets.cpp
-    deps/imgui/backends/imgui_impl_sdl.cpp
+    deps/imgui/backends/imgui_impl_sdl2.cpp
     deps/imgui/backends/imgui_impl_sdlrenderer.cpp
     deps/imgui/misc/freetype/imgui_freetype.cpp
     deps/imnodes/imnodes.cpp
@@ -79,6 +82,11 @@ if(WIN32)
 else()
     list(APPEND sources src/PlatformUtilsLinux.cpp)
 endif()
+if (MC_CHECK_FOR_UPDATES)
+    list(APPEND sources src/UpdateChecker.cpp)
+else()
+    list(APPEND sources src/UpdateCheckerStub.cpp)
+endif()
 
 file(GLOB FONTS RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/fonts/*")
 cmrc_add_resource_library(midiconn_fonts "${FONTS}" ALIAS fonts)
@@ -89,6 +97,7 @@ target_include_directories(midiconn PRIVATE
     inc
     deps/imgui
     deps/imnodes
+    deps/portable-file-dialogs
     deps/IconFontCppHeaders
     "${FREETYPE_INCLUDE_DIRS}")
 target_link_libraries(midiconn PRIVATE
@@ -98,8 +107,10 @@ target_link_libraries(midiconn PRIVATE
     SDL2::SDL2
     fmt::fmt
     freetype
-    fonts
-    portable_file_dialogs)
+    fonts)
+if(MC_CHECK_FOR_UPDATES)
+    target_link_libraries(midiconn PRIVATE cpr::cpr)
+endif()
 target_compile_definitions(midiconn PRIVATE
     SPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_DEBUG
     IMGUI_ENABLE_FREETYPE
@@ -116,7 +127,7 @@ if(WIN32)
     set(CPACK_WIX_UPGRADE_GUID "96D23EBE-7D9E-4C53-8CD7-6E5CC32A5CE1")
     set(CPACK_WIX_PATCH_FILE "${CMAKE_CURRENT_SOURCE_DIR}/packaging/wix_patch.xml")
     set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.txt")
-    install(IMPORTED_RUNTIME_ARTIFACTS spdlog::spdlog fmt::fmt SDL2::SDL2 freetype
+    install(IMPORTED_RUNTIME_ARTIFACTS spdlog::spdlog fmt::fmt SDL2::SDL2 freetype cpr
         RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
     target_compile_definitions(midiconn PRIVATE
         WINVER=0x0A00

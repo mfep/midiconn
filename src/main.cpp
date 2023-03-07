@@ -4,7 +4,7 @@
 
 #include "SDL2/SDL.h"
 #include "SDL2/SDL_syswm.h"
-#include "backends/imgui_impl_sdl.h"
+#include "backends/imgui_impl_sdl2.h"
 #include "backends/imgui_impl_sdlrenderer.h"
 #include "imgui.h"
 #include "imnodes.h"
@@ -74,8 +74,8 @@ MC_MAIN
     ImNodes::GetIO().EmulateThreeButtonMouse.Modifier = &ImGui::GetIO().KeyCtrl;
 
     // Setup Platform/Renderer backends
-    ImGui_ImplSDL2_InitForSDLRenderer(window);
     ImGui_ImplSDLRenderer_Init(renderer);
+    ImGui_ImplSDL2_InitForSDLRenderer(window, renderer);
 
     // Load Fonts
     // - If no fonts are loaded, dear imgui will use the default font. You can also load multiple

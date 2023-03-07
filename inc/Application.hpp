@@ -13,6 +13,7 @@
 #include "PortNameDisplay.hpp"
 #include "PresetManager.hpp"
 #include "Theme.hpp"
+#include "UpdateChecker.hpp"
 
 namespace mc::display
 {
@@ -47,6 +48,7 @@ private:
     PresetManager   m_preset_manager;
     bool            m_debug_log_enabled{};
     PortNameDisplay m_port_name_display;
+    UpdateChecker   m_update_checker;
 };
 
 } // namespace mc::display

@@ -2,12 +2,13 @@
 
 #include "ApplicationName.hpp"
 #include "ConfigFile.hpp"
+#include "Licenses.hpp"
 #include "UpdateChecker.hpp"
 #include "Utils.hpp"
 #include "Version.hpp"
 
 #include "imgui.h"
-#include "SDL2/SDL_misc.h"
+#include "SDL2/SDL.h"
 
 namespace mc
 {
@@ -28,7 +29,11 @@ void WelcomeWindow::render()
     ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
     if (ImGui::BeginPopup("Welcome", ImGuiWindowFlags_AlwaysAutoResize))
     {
-        ImGui::TextUnformatted("Welcome to " MIDI_APPLICATION_NAME " " MC_SHORT_VERSION);
+        ImGui::TextUnformatted("Welcome to " MIDI_APPLICATION_NAME);
+        ImGui::TextUnformatted(MC_FULL_VERSION);
+        ImGui::TextUnformatted(MC_COMMIT_SHA);
+        ImGui::TextUnformatted(MC_BUILD_OS);
+
         const auto latest_version = m_update_checker->get_latest_version();
         std::visit(utils::overloads{
                        [](const UpdateChecker::StatusNotSupported&) {},
@@ -89,8 +94,24 @@ void WelcomeWindow::render()
             ImGui::SetTooltip("%s", last_preset_opt.value().c_str());
         }
         ImGui::EndDisabled();
+        if (ImGui::CollapsingHeader("Open source licenses"))
+        {
+            for (auto& license : g_licenses)
+            {
+                if (ImGui::TreeNode(license.m_library_name.c_str()))
+                {
+                    ImGui::TextWrapped("%s", license.m_license_text.c_str());
+                    ImGui::TreePop();
+                }
+            }
+        }
         ImGui::EndPopup();
     }
+}
+
+void WelcomeWindow::show()
+{
+    m_enabled = true;
 }
 
 } // namespace mc

@@ -10,7 +10,6 @@
 #include "spdlog/spdlog.h"
 
 #include "ErrorHandler.hpp"
-#include "Licenses.hpp"
 #include "PlatformUtils.hpp"
 #include "Version.hpp"
 
@@ -65,7 +64,7 @@ void Application::render()
 
     ImGui::End();
 #ifndef NDEBUG
-    // ImGui::ShowDemoWindow();
+    ImGui::ShowDemoWindow();
 #endif
 }
 
@@ -168,7 +167,6 @@ void Application::exit_command()
 
 void Application::render_main_menu()
 {
-    bool open_about_popup = false;
     if (ImGui::BeginMenuBar())
     {
         if (ImGui::BeginMenu(ICON_FK_FILE_O " File"))
@@ -275,39 +273,11 @@ void Application::render_main_menu()
             }
             if (ImGui::MenuItem(ICON_FK_QUESTION "  About"))
             {
-                open_about_popup = true;
+                m_welcome_window.show();
             }
             ImGui::EndMenu();
         }
         ImGui::EndMenuBar();
-    }
-    if (open_about_popup)
-    {
-        ImGui::OpenPopup("About " MIDI_APPLICATION_NAME);
-    }
-
-    ImVec2 center = ImGui::GetMainViewport()->GetCenter();
-    ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
-    ImGui::SetNextWindowSizeConstraints({600, 0}, {600, 400});
-    bool dummy{true};
-    if (ImGui::BeginPopupModal(
-            "About " MIDI_APPLICATION_NAME, &dummy, ImGuiWindowFlags_AlwaysAutoResize))
-    {
-        ImGui::TextUnformatted(MC_FULL_VERSION);
-        ImGui::TextUnformatted(MC_COMMIT_SHA);
-        ImGui::TextUnformatted(MC_BUILD_OS);
-        if (ImGui::CollapsingHeader("Open source licenses"))
-        {
-            for (auto& license : g_licenses)
-            {
-                if (ImGui::TreeNode(license.m_library_name.c_str()))
-                {
-                    ImGui::TextWrapped("%s", license.m_license_text.c_str());
-                    ImGui::TreePop();
-                }
-            }
-        }
-        ImGui::EndPopup();
     }
 }
 

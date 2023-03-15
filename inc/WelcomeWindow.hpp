@@ -12,6 +12,7 @@ public:
     WelcomeWindow(ConfigFile& config, UpdateChecker& update_checker);
 
     void render();
+    void show();
 
 private:
     ConfigFile*    m_config;

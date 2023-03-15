@@ -3,21 +3,15 @@
 namespace mc
 {
 
-UpdateChecker::UpdateChecker(ConfigFile&)
-{
-}
-
-void UpdateChecker::show_latest_version_message()
-{
-}
+UpdateChecker::UpdateChecker() = default;
 
 void UpdateChecker::trigger_check()
 {
 }
 
-bool UpdateChecker::update_check_supported() const
+UpdateChecker::CheckResult UpdateChecker::get_latest_version() const
 {
-    return false;
+    return StatusNotSupported{};
 }
 
 } // namespace mc

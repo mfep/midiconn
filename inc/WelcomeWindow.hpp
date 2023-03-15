@@ -4,17 +4,19 @@ namespace mc
 {
 
 class ConfigFile;
+class UpdateChecker;
 
 class WelcomeWindow final
 {
 public:
-    WelcomeWindow(ConfigFile& config);
+    WelcomeWindow(ConfigFile& config, UpdateChecker& update_checker);
 
     void render();
 
 private:
-    ConfigFile* m_config;
-    bool        m_enabled;
+    ConfigFile*    m_config;
+    UpdateChecker* m_update_checker;
+    bool           m_enabled;
 };
 
 } // namespace mc

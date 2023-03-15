@@ -22,8 +22,8 @@ Application::Application(SDL_Window* window, const std::filesystem::path& path_t
       m_node_factory(m_midi_engine, m_theme_control, m_port_name_display),
       m_preset{NodeEditor(m_node_factory, m_port_name_display), {}},
       m_preset_manager(m_preset, m_node_factory, m_config, m_port_name_display),
-      m_port_name_display(m_config.get_show_full_port_names()), m_update_checker(m_config),
-      m_welcome_window(m_config)
+      m_port_name_display(m_config.get_show_full_port_names()),
+      m_welcome_window(m_config, m_update_checker)
 {
     spdlog::info("Starting " MIDI_APPLICATION_NAME " version {}", MC_FULL_VERSION);
     std::optional<Preset> opened_preset;
@@ -60,13 +60,12 @@ void Application::render()
     wrap_exception([this]() {
         m_welcome_window.render();
         render_main_menu();
-        m_update_checker.show_latest_version_message();
         m_preset.m_node_editor.render();
     });
 
     ImGui::End();
 #ifndef NDEBUG
-    ImGui::ShowDemoWindow();
+    // ImGui::ShowDemoWindow();
 #endif
 }
 
@@ -273,11 +272,6 @@ void Application::render_main_menu()
             if (ImGui::MenuItem(ICON_FK_GLOBE " Visit website"))
             {
                 SDL_OpenURL(MC_WEBSITE_URL);
-            }
-            if (m_update_checker.update_check_supported() &&
-                ImGui::MenuItem(ICON_FK_GLOBE_E " Check for updates"))
-            {
-                m_update_checker.trigger_check();
             }
             if (ImGui::MenuItem(ICON_FK_QUESTION "  About"))
             {

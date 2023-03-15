@@ -1,8 +1,10 @@
 #pragma once
 
 #include <atomic>
+#include <optional>
 #include <string>
 #include <utility>
+#include <variant>
 
 namespace mc
 {
@@ -11,16 +13,32 @@ struct ConfigFile;
 
 struct UpdateChecker
 {
-    UpdateChecker(ConfigFile& config);
-    void show_latest_version_message();
-    void trigger_check();
-    bool update_check_supported() const;
+    struct StatusNotSupported
+    {
+    };
+    struct StatusFetching
+    {
+    };
+    struct StatusError
+    {
+        std::string message;
+    };
+    struct StatusFetched
+    {
+        bool        is_latest_version;
+        std::string latest_version_name;
+    };
+    using CheckResult =
+        std::variant<StatusNotSupported, StatusFetching, StatusError, StatusFetched>;
+
+    UpdateChecker();
+    void        trigger_check();
+    CheckResult get_latest_version() const;
 
 private:
-    bool                         m_update_check_finished = false;
-    std::pair<bool, std::string> m_latest_version_result = {}; // is latest, latest version string
-    std::atomic_bool             m_latest_version_written;
-    ConfigFile*                  m_config;
+    bool             m_update_check_finished = false;
+    CheckResult      m_latest_version_result = {};
+    std::atomic_bool m_latest_version_written;
 };
 
 } // namespace mc

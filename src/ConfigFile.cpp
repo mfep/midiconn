@@ -49,7 +49,6 @@ ConfigFile::ConfigFile()
         try_load_item(m_scale, InterfaceScale::Auto, "scale");
         try_load_item(m_show_full_port_names, false, "show_full_port_names");
         try_load_item(m_theme, Theme::Default, "theme");
-        try_load_item(m_check_updates, true, "check_updates");
         try_load_item(m_show_welcome, true, "show_welcome");
         if (j.contains("last_preset_path"))
         {
@@ -91,12 +90,6 @@ void ConfigFile::set_show_port_full_names(const bool value)
     save_config_file();
 }
 
-void ConfigFile::set_check_updates(const bool value)
-{
-    m_check_updates = value;
-    save_config_file();
-}
-
 void ConfigFile::set_show_welcome(const bool value)
 {
     m_show_welcome = value;
@@ -111,7 +104,6 @@ void ConfigFile::save_config_file() const
     j["scale"]                = m_scale;
     j["theme"]                = m_theme;
     j["show_full_port_names"] = m_show_full_port_names;
-    j["check_updates"]        = m_check_updates;
     j["show_welcome"]         = m_show_welcome;
     if (m_last_preset_path)
     {

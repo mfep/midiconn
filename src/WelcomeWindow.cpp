@@ -3,18 +3,22 @@
 #include "ApplicationName.hpp"
 #include "ConfigFile.hpp"
 #include "Licenses.hpp"
+#include "Theme.hpp"
 #include "UpdateChecker.hpp"
 #include "Utils.hpp"
 #include "Version.hpp"
 
-#include "imgui.h"
 #include "SDL2/SDL.h"
+#include "imgui.h"
 
 namespace mc
 {
 
-WelcomeWindow::WelcomeWindow(ConfigFile& config, UpdateChecker& update_checker)
-    : m_config(&config), m_update_checker(&update_checker), m_enabled(config.get_show_welcome())
+WelcomeWindow::WelcomeWindow(ConfigFile&         config,
+                             UpdateChecker&      update_checker,
+                             const ThemeControl& theme_control)
+    : m_config(&config), m_update_checker(&update_checker), m_theme_control(&theme_control),
+      m_enabled(config.get_show_welcome())
 {
 }
 
@@ -27,6 +31,8 @@ void WelcomeWindow::render()
     }
     const ImVec2 center = ImGui::GetMainViewport()->GetCenter();
     ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+    const float scale = m_theme_control->get_scale_value();
+    ImGui::SetNextWindowSizeConstraints({600 * scale, 0}, {600 * scale, 400 * scale});
     if (ImGui::BeginPopup("Welcome", ImGuiWindowFlags_AlwaysAutoResize))
     {
         ImGui::TextUnformatted("Welcome to " MIDI_APPLICATION_NAME);
@@ -58,11 +64,11 @@ void WelcomeWindow::render()
                                ImGui::Text("A new version of " MIDI_APPLICATION_NAME
                                            " is available: %s",
                                            fetched.latest_version_name.c_str());
-                                ImGui::SameLine();
-                                if (ImGui::Button("Visit website"))
-                                {
-                                    SDL_OpenURL(MC_WEBSITE_URL);
-                                }
+                               ImGui::SameLine();
+                               if (ImGui::Button("Visit website"))
+                               {
+                                   SDL_OpenURL(MC_WEBSITE_URL);
+                               }
                            }
                        },
                    },

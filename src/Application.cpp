@@ -22,7 +22,7 @@ Application::Application(SDL_Window* window, const std::filesystem::path& path_t
       m_preset{NodeEditor(m_node_factory, m_port_name_display), {}},
       m_preset_manager(m_preset, m_node_factory, m_config, m_port_name_display),
       m_port_name_display(m_config.get_show_full_port_names()),
-      m_welcome_window(m_config, m_update_checker)
+      m_welcome_window(m_config, m_update_checker, m_theme_control)
 {
     spdlog::info("Starting " MIDI_APPLICATION_NAME " version {}", MC_FULL_VERSION);
     std::optional<Preset> opened_preset;

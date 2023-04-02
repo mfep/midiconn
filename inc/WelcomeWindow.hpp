@@ -1,5 +1,10 @@
 #pragma once
 
+#include "ResourceLoader.hpp"
+
+class SDL_Renderer;
+class SDL_Texture;
+
 namespace mc
 {
 
@@ -12,7 +17,8 @@ class WelcomeWindow final
 public:
     WelcomeWindow(ConfigFile&         config,
                   UpdateChecker&      update_checker,
-                  const ThemeControl& theme_control);
+                  const ThemeControl& theme_control,
+                  SDL_Renderer*       renderer);
 
     void render();
     void show();
@@ -22,6 +28,7 @@ private:
     UpdateChecker*      m_update_checker;
     const ThemeControl* m_theme_control;
     bool                m_enabled;
+    Texture             m_logo_texture;
 };
 
 } // namespace mc

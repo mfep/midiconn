@@ -16,9 +16,11 @@ namespace mc
 
 WelcomeWindow::WelcomeWindow(ConfigFile&         config,
                              UpdateChecker&      update_checker,
-                             const ThemeControl& theme_control)
+                             const ThemeControl& theme_control,
+                             SDL_Renderer*       renderer)
     : m_config(&config), m_update_checker(&update_checker), m_theme_control(&theme_control),
-      m_enabled(config.get_show_welcome())
+      m_enabled(config.get_show_welcome()),
+      m_logo_texture(ResourceLoader::load_texture(renderer, "graphics/mc_logo.png"))
 {
 }
 
@@ -35,10 +37,14 @@ void WelcomeWindow::render()
     ImGui::SetNextWindowSizeConstraints({600 * scale, 0}, {600 * scale, 400 * scale});
     if (ImGui::BeginPopup("Welcome", ImGuiWindowFlags_AlwaysAutoResize))
     {
+        ImGui::Image(m_logo_texture.m_texture, ImVec2{96 * scale, 96 * scale});
+        ImGui::SameLine();
+        ImGui::BeginGroup();
         ImGui::TextUnformatted("Welcome to " MIDI_APPLICATION_NAME);
         ImGui::TextUnformatted(MC_FULL_VERSION);
         ImGui::TextUnformatted(MC_COMMIT_SHA);
         ImGui::TextUnformatted(MC_BUILD_OS);
+        ImGui::EndGroup();
 
         const auto latest_version = m_update_checker->get_latest_version();
         std::visit(utils::overloads{

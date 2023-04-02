@@ -4,7 +4,7 @@ include(FetchContent)
 include(deps/CMakeRC.cmake)
 set(CMAKE_CXX_STANDARD 17)
 
-project(midiconn VERSION 0.2.0 LANGUAGES CXX)
+project(midiconn VERSION 0.2.0 LANGUAGES C CXX)
 
 option(MC_CHECK_FOR_UPDATES "Build ${PROJECT_NAME} to check for updates on start" OFF)
 
@@ -50,6 +50,7 @@ set(sources
     deps/imgui/backends/imgui_impl_sdlrenderer.cpp
     deps/imgui/misc/freetype/imgui_freetype.cpp
     deps/imnodes/imnodes.cpp
+    deps/libspng/spng/spng.c
     src/Application.cpp
     src/ConfigFile.cpp
     src/DisconnectedMidiInNode.cpp
@@ -72,6 +73,7 @@ set(sources
     src/PlatformUtils.cpp
     src/PresetManager.cpp
     src/PortNameDisplay.cpp
+    src/ResourceLoader.cpp
     src/Theme.cpp
     src/WelcomeWindow.cpp
 )
@@ -90,7 +92,7 @@ else()
 endif()
 
 file(GLOB FONTS RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/fonts/*")
-cmrc_add_resource_library(midiconn_fonts "${FONTS}" ALIAS fonts)
+cmrc_add_resource_library(midiconn_fonts "${FONTS}" "${CMAKE_CURRENT_SOURCE_DIR}/graphics/mc_logo.png" ALIAS fonts)
 
 add_executable(midiconn "${sources}")
 
@@ -98,6 +100,7 @@ target_include_directories(midiconn PRIVATE
     inc
     deps/imgui
     deps/imnodes
+    deps/libspng/spng
     deps/portable-file-dialogs
     deps/IconFontCppHeaders
     "${FREETYPE_INCLUDE_DIRS}")

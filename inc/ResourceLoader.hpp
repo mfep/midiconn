@@ -25,6 +25,7 @@ struct ResourceLoader final
     ResourceLoader() = delete;
 
     static Texture load_texture(SDL_Renderer* renderer, const std::string& path);
+    static void    load_fonts(const float scale);
 };
 
 } // namespace mc

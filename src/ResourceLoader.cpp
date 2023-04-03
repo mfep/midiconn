@@ -1,13 +1,16 @@
 #include "ResourceLoader.hpp"
 
+#include "IconsForkAwesome.h"
 #include "SDL2/SDL.h"
 #include "cmrc/cmrc.hpp"
+#include "imgui.h"
 #include "spng.h"
 
 #include <cstddef>
 #include <vector>
 
-CMRC_DECLARE(midiconn_fonts);
+CMRC_DECLARE(midiconn_resources);
+bool ImGui_ImplSDLRenderer_CreateFontsTexture();
 
 namespace mc
 {
@@ -22,15 +25,15 @@ Texture::~Texture()
 
 Texture ResourceLoader::load_texture(SDL_Renderer* renderer, const std::string& path)
 {
-    auto       embedded_fs = cmrc::midiconn_fonts::get_filesystem();
-    const auto font_file   = embedded_fs.open(path);
+    auto       embedded_fs = cmrc::midiconn_resources::get_filesystem();
+    const auto image_file  = embedded_fs.open(path);
 
     auto ctx = spng_ctx_new(0);
     if (ctx == nullptr)
     {
         throw std::runtime_error("Error creating SPNG context");
     }
-    int error = spng_set_png_buffer(ctx, font_file.begin(), font_file.size());
+    int error = spng_set_png_buffer(ctx, image_file.begin(), image_file.size());
     if (error)
     {
         throw std::runtime_error("Error setting SPNG buffer");
@@ -70,6 +73,37 @@ Texture ResourceLoader::load_texture(SDL_Renderer* renderer, const std::string& 
     }
 
     return {texture};
+}
+
+void ResourceLoader::load_fonts(const float scale)
+{
+    auto& io = ImGui::GetIO();
+    io.Fonts->Clear();
+
+    auto       embedded_fs = cmrc::midiconn_resources::get_filesystem();
+    const auto font_file   = embedded_fs.open("fonts/DroidSans.ttf");
+
+    ImFontConfig font_config{};
+    font_config.FontDataOwnedByAtlas = false;
+    io.Fonts->AddFontFromMemoryTTF(const_cast<char*>(font_file.begin()),
+                                   std::distance(font_file.begin(), font_file.end()),
+                                   16 * scale,
+                                   &font_config);
+
+    const auto    icons_file     = embedded_fs.open("fonts/forkawesome-webfont.ttf");
+    const ImWchar icons_ranges[] = {ICON_MIN_FK, ICON_MAX_16_FK, 0};
+    ImFontConfig  icons_config;
+    icons_config.MergeMode            = true;
+    icons_config.PixelSnapH           = true;
+    icons_config.FontDataOwnedByAtlas = false;
+    io.Fonts->AddFontFromMemoryTTF(const_cast<char*>(icons_file.begin()),
+                                   std::distance(icons_file.begin(), icons_file.end()),
+                                   12 * scale,
+                                   &icons_config,
+                                   icons_ranges);
+
+    // workaround, otherwise the fonts won't rebuild properly
+    ImGui_ImplSDLRenderer_CreateFontsTexture();
 }
 
 } // namespace mc

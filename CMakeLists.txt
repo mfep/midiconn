@@ -92,7 +92,7 @@ else()
 endif()
 
 file(GLOB FONTS RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/fonts/*")
-cmrc_add_resource_library(midiconn_fonts "${FONTS}" "${CMAKE_CURRENT_SOURCE_DIR}/graphics/mc_logo.png" ALIAS fonts)
+cmrc_add_resource_library(midiconn_resources "${FONTS}" "${CMAKE_CURRENT_SOURCE_DIR}/graphics/mc_logo.png" ALIAS resources)
 
 add_executable(midiconn "${sources}")
 
@@ -111,7 +111,7 @@ target_link_libraries(midiconn PRIVATE
     SDL2::SDL2
     fmt::fmt
     freetype
-    fonts)
+    resources)
 if(MC_CHECK_FOR_UPDATES)
     target_link_libraries(midiconn PRIVATE cpr::cpr)
 endif()

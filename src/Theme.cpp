@@ -1,16 +1,11 @@
 #include "Theme.hpp"
 
-#include "IconsFontaudio.h"
-#include "IconsForkAwesome.h"
-#include "cmrc/cmrc.hpp"
 #include "imgui.h"
 #include "spdlog/spdlog.h"
 
 #include "ConfigFile.hpp"
 #include "PlatformUtils.hpp"
-
-bool ImGui_ImplSDLRenderer_CreateFontsTexture();
-CMRC_DECLARE(midiconn_fonts);
+#include "ResourceLoader.hpp"
 
 namespace
 {
@@ -84,33 +79,8 @@ void ThemeControl::set_scale_internal(const InterfaceScale scale)
 {
     const float scale_value = calculate_scale_value(scale);
     spdlog::info("Setting application scale to {}", scale_value);
-    auto& io = ImGui::GetIO();
-    io.Fonts->Clear();
 
-    auto embedded_fs = cmrc::midiconn_fonts::get_filesystem();
-
-    const auto   font_file = embedded_fs.open("fonts/DroidSans.ttf");
-    ImFontConfig font_config{};
-    font_config.FontDataOwnedByAtlas = false;
-    io.Fonts->AddFontFromMemoryTTF(const_cast<char*>(font_file.begin()),
-                                   std::distance(font_file.begin(), font_file.end()),
-                                   16 * scale_value,
-                                   &font_config);
-
-    const auto    icons_file     = embedded_fs.open("fonts/forkawesome-webfont.ttf");
-    const ImWchar icons_ranges[] = {ICON_MIN_FK, ICON_MAX_16_FK, 0};
-    ImFontConfig  icons_config;
-    icons_config.MergeMode            = true;
-    icons_config.PixelSnapH           = true;
-    icons_config.FontDataOwnedByAtlas = false;
-    io.Fonts->AddFontFromMemoryTTF(const_cast<char*>(icons_file.begin()),
-                                   std::distance(icons_file.begin(), icons_file.end()),
-                                   12 * scale_value,
-                                   &icons_config,
-                                   icons_ranges);
-
-    // workaround, otherwise the fonts won't rebuild properly
-    ImGui_ImplSDLRenderer_CreateFontsTexture();
+    ResourceLoader::load_fonts(scale_value);
 
     auto& current_nodes_style         = ImNodes::GetStyle();
     current_nodes_style.GridSpacing   = m_original_nodes_style.GridSpacing * scale_value;

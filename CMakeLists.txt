@@ -75,7 +75,6 @@ set(sources
     src/PortNameDisplay.cpp
     src/ResourceLoader.cpp
     src/Theme.cpp
-    src/WelcomeWindow.cpp
 )
 
 if(WIN32)

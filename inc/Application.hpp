@@ -12,9 +12,9 @@
 #include "NodeFactory.hpp"
 #include "PortNameDisplay.hpp"
 #include "PresetManager.hpp"
+#include "ResourceLoader.hpp"
 #include "Theme.hpp"
 #include "UpdateChecker.hpp"
-#include "WelcomeWindow.hpp"
 
 namespace mc
 {
@@ -33,12 +33,14 @@ public:
 
     void new_preset();
     void open_preset();
+    void open_last_preset();
     void save_preset();
     void save_preset_as();
     void exit();
 
 private:
     void render_main_menu();
+    void render_welcome_window();
     bool query_save();
 
     bool            m_is_done{};
@@ -51,7 +53,8 @@ private:
     bool            m_debug_log_enabled{};
     PortNameDisplay m_port_name_display;
     UpdateChecker   m_update_checker;
-    WelcomeWindow   m_welcome_window;
+    bool            m_welcome_enabled;
+    Texture         m_logo_texture;
 };
 
 } // namespace mc

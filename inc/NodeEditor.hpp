@@ -12,9 +12,6 @@ class Node;
 class NodeFactory;
 class PortNameDisplay;
 
-namespace display
-{
-
 class NodeEditor final
 {
 public:
@@ -43,5 +40,4 @@ private:
     const PortNameDisplay*             m_port_name_display;
 };
 
-} // namespace display
 } // namespace mc

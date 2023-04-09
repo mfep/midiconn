@@ -13,7 +13,7 @@
 #include "PlatformUtils.hpp"
 #include "Version.hpp"
 
-namespace mc::display
+namespace mc
 {
 
 Application::Application(SDL_Window*                  window,
@@ -303,4 +303,4 @@ bool Application::query_save()
     return true;
 }
 
-} // namespace mc::display
+} // namespace mc

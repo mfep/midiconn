@@ -13,9 +13,6 @@ class ConfigFile;
 class NodeFactory;
 class PortNameDisplay;
 
-namespace display
-{
-
 struct Preset
 {
     NodeEditor            m_node_editor;
@@ -53,5 +50,4 @@ private:
     const PortNameDisplay*               m_port_name_display;
 };
 
-} // namespace display
 } // namespace mc

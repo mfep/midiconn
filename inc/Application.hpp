@@ -16,7 +16,7 @@
 #include "UpdateChecker.hpp"
 #include "WelcomeWindow.hpp"
 
-namespace mc::display
+namespace mc
 {
 
 class Application final
@@ -55,4 +55,4 @@ private:
     WelcomeWindow   m_welcome_window;
 };
 
-} // namespace mc::display
+} // namespace mc

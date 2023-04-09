@@ -18,7 +18,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(MessageTypeMask,
                                    m_sensing_enabled);
 }
 
-namespace mc::display
+namespace mc
 {
 
 void Preset::to_json(nlohmann::json& j) const
@@ -137,4 +137,4 @@ void PresetManager::save_preset(const Preset& preset, const bool save_as)
     }
 }
 
-} // namespace mc::display
+} // namespace mc

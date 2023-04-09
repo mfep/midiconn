@@ -100,7 +100,7 @@ MC_MAIN
     // ImGui::GetIO().Fonts->AddFontFromFileTTF("DroidSans.ttf", 16);
 
     // Main loop
-    mc::display::Application app(window, renderer, file_to_open);
+    mc::Application          app(window, renderer, file_to_open);
     bool                     done = false;
     size_t                   frame_idx{};
     while (!done)

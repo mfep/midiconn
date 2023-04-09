@@ -22,7 +22,7 @@ namespace
 constexpr std::string_view contex_popup_name = "NodeEditorContextMenu";
 }
 
-namespace mc::display
+namespace mc
 {
 
 NodeEditor::NodeEditor(const NodeFactory& node_factory, const PortNameDisplay& port_name_display)
@@ -301,4 +301,4 @@ void NodeEditor::handleLinkDropped()
     }
 }
 
-} // namespace mc::display
+} // namespace mc

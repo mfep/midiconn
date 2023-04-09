@@ -5,8 +5,8 @@
 #include "SDL2/SDL.h"
 
 #include "ApplicationName.hpp"
+#include "Commands.hpp"
 #include "ConfigFile.hpp"
-#include "KeyboardShotcutAggregator.hpp"
 #include "MidiEngine.hpp"
 #include "NodeEditor.hpp"
 #include "NodeFactory.hpp"
@@ -30,15 +30,14 @@ public:
     void        update_outside_frame();
     void        handle_done(bool& done);
     std::string get_window_title() const;
-    void        handle_shortcuts(const KeyboardShortcutAggregator& shortcuts);
+
+    void new_preset();
+    void open_preset();
+    void save_preset();
+    void save_preset_as();
+    void exit();
 
 private:
-    void new_preset_command();
-    void open_preset_command();
-    void save_preset_command();
-    void save_preset_as_command();
-    void exit_command();
-
     void render_main_menu();
     bool query_save();
 

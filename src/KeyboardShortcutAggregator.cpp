@@ -1,4 +1,4 @@
-#include "KeyboardShotcutAggregator.hpp"
+#include "KeyboardShortcutAggregator.hpp"
 
 #include <algorithm>
 #include <array>

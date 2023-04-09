@@ -14,7 +14,7 @@
 
 #include "Application.hpp"
 #include "ErrorHandler.hpp"
-#include "KeyboardShotcutAggregator.hpp"
+#include "KeyboardShortcutAggregator.hpp"
 #include "PlatformUtils.hpp"
 
 #if !SDL_VERSION_ATLEAST(2, 0, 17)
@@ -141,7 +141,7 @@ MC_MAIN
         ImGui_ImplSDL2_NewFrame();
         ImGui::NewFrame();
 
-        app.handle_shortcuts(shortcuts);
+        shortcuts.process(app);
         app.render();
         app.handle_done(done);
 

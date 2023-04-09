@@ -102,29 +102,9 @@ std::string Application::get_window_title() const
            " - " MIDI_APPLICATION_NAME;
 }
 
-void Application::handle_shortcuts(const KeyboardShortcutAggregator& shortcuts)
+void Application::new_preset()
 {
-    if (shortcuts.is_shortcut_pressed(KeyboardShortcut::CtrlN))
-    {
-        new_preset_command();
-    }
-    if (shortcuts.is_shortcut_pressed(KeyboardShortcut::CtrlO))
-    {
-        open_preset_command();
-    }
-    if (shortcuts.is_shortcut_pressed(KeyboardShortcut::CtrlS))
-    {
-        save_preset_command();
-    }
-    if (shortcuts.is_shortcut_pressed(KeyboardShortcut::CtrlShiftS))
-    {
-        save_preset_as_command();
-    }
-}
-
-void Application::new_preset_command()
-{
-    spdlog::info("Executing new_preset_command");
+    spdlog::info("Executing new_preset");
     bool new_preset = true;
     if (m_preset_manager.is_dirty(m_preset))
     {
@@ -137,9 +117,9 @@ void Application::new_preset_command()
     }
 }
 
-void Application::open_preset_command()
+void Application::open_preset()
 {
-    spdlog::info("Executing open_preset_command");
+    spdlog::info("Executing open_preset");
     const auto open_path =
         pfd::open_file("Open preset", ".", {"midiconn presets (*.mcpreset)", "*.mcpreset"})
             .result();
@@ -149,21 +129,21 @@ void Application::open_preset_command()
     }
 }
 
-void Application::save_preset_command()
+void Application::save_preset()
 {
-    spdlog::info("Executing save_preset_command");
+    spdlog::info("Executing save_preset");
     m_preset_manager.save_preset(m_preset);
 }
 
-void Application::save_preset_as_command()
+void Application::save_preset_as()
 {
-    spdlog::info("Executing save_preset_as_command");
+    spdlog::info("Executing save_preset_as");
     m_preset_manager.save_preset_as(m_preset);
 }
 
-void Application::exit_command()
+void Application::exit()
 {
-    spdlog::info("Executing exit_command");
+    spdlog::info("Executing exit");
     m_is_done = true;
 }
 
@@ -175,19 +155,19 @@ void Application::render_main_menu()
         {
             if (ImGui::MenuItem(ICON_FK_FILE_O "  New preset", "Ctrl+N"))
             {
-                new_preset_command();
+                new_preset();
             }
             if (ImGui::MenuItem(ICON_FK_FOLDER_OPEN_O " Open preset", "Ctrl+O"))
             {
-                open_preset_command();
+                open_preset();
             }
             if (ImGui::MenuItem(ICON_FK_FLOPPY_O "  Save preset", "Ctrl+S"))
             {
-                save_preset_command();
+                save_preset();
             }
             if (ImGui::MenuItem(ICON_FK_FLOPPY_O "  Save preset as", "Ctrl+Shift+S"))
             {
-                save_preset_as_command();
+                save_preset_as();
             }
             ImGui::Separator();
             if (ImGui::BeginMenu("MIDI message filter"))
@@ -210,7 +190,7 @@ void Application::render_main_menu()
             ImGui::Separator();
             if (ImGui::MenuItem(" " ICON_FK_TIMES "  Exit", "Alt+F4"))
             {
-                exit_command();
+                exit();
             }
             ImGui::EndMenu();
         }

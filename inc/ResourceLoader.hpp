@@ -11,6 +11,8 @@ struct Texture
 {
     SDL_Texture* m_texture{};
 
+    Texture(SDL_Texture* texture) : m_texture(texture) {}
+
     Texture(const Texture&) = delete;
     Texture(Texture&&)      = default;
 

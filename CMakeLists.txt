@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.22)
 
 include(FetchContent)
 include(deps/CMakeRC.cmake)
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 
 project(midiconn VERSION 0.2.0 LANGUAGES C CXX)
 

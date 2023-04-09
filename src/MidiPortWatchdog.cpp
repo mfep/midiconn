@@ -50,7 +50,7 @@ struct NodeBuilder
 std::shared_ptr<Node> build_node(const NodeBuilder<MidiInNode>& builder,
                                  const midi::InputInfo&         input_info)
 {
-    return builder.m_node_factory->build_midi_in_node(input_info);
+    return builder.m_node_factory->build_midi_node(input_info);
 }
 
 std::shared_ptr<Node> build_node(const NodeBuilder<DisconnectedMidiInNode>& builder,
@@ -62,7 +62,7 @@ std::shared_ptr<Node> build_node(const NodeBuilder<DisconnectedMidiInNode>& buil
 std::shared_ptr<Node> build_node(const NodeBuilder<MidiOutNode>& builder,
                                  const midi::OutputInfo&         output_info)
 {
-    return builder.m_node_factory->build_midi_out_node(output_info);
+    return builder.m_node_factory->build_midi_node(output_info);
 }
 
 std::shared_ptr<Node> build_node(const NodeBuilder<DisconnectedMidiOutNode>& builder,

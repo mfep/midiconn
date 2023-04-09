@@ -89,7 +89,7 @@ std::shared_ptr<Node> NodeSerializer::deserialize_node(const json& j) const
         const auto input_info_opt = MidiProbe::get_valid_input(input_name);
         if (input_info_opt.has_value())
         {
-            node = m_node_factory->build_midi_in_node(input_info_opt.value());
+            node = m_node_factory->build_midi_node(input_info_opt.value());
         }
         else
         {
@@ -102,7 +102,7 @@ std::shared_ptr<Node> NodeSerializer::deserialize_node(const json& j) const
         const auto output_info_opt = MidiProbe::get_valid_output(output_name);
         if (output_info_opt.has_value())
         {
-            node = m_node_factory->build_midi_out_node(output_info_opt.value());
+            node = m_node_factory->build_midi_node(output_info_opt.value());
         }
         else
         {

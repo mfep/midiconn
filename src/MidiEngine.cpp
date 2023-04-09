@@ -63,7 +63,8 @@ void check_output_port(unsigned id, const OutputInfo& output_info)
 
 } // namespace
 
-Engine::MidiInput::MidiInput(const InputInfo& info) : m_info(info)
+Engine::MidiInput::MidiInput(const InputInfo& info)
+    : m_info(info), m_midi_in(RtMidi::UNSPECIFIED, MidiProbe::get_midi_client_name())
 {
 }
 
@@ -94,7 +95,8 @@ void Engine::MidiInput::error_callback(RtMidiError::Type  error_code,
     spdlog::error("Error {} occured in MIDI input: \"{}\"", error_code, message);
 }
 
-Engine::MidiOutput::MidiOutput(const OutputInfo& info) : m_info(info)
+Engine::MidiOutput::MidiOutput(const OutputInfo& info)
+    : m_info(info), m_midi_out(RtMidi::UNSPECIFIED, MidiProbe::get_midi_client_name())
 {
     m_midi_out.setErrorCallback(error_callback, nullptr);
     m_midi_out.openPort(info.m_id);

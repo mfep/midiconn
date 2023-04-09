@@ -31,7 +31,7 @@ public:
     void        handle_done(bool& done);
     std::string get_window_title() const;
 
-    void new_preset();
+    void new_preset(bool create_nodes = false);
     void open_preset();
     void open_last_preset();
     void save_preset();

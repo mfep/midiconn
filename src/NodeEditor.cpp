@@ -14,6 +14,7 @@
 #include "NodeFactory.hpp"
 #include "NodeSerializer.hpp"
 #include "PortNameDisplay.hpp"
+#include "Theme.hpp"
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ImVec2, x, y);
 
@@ -25,9 +26,17 @@ constexpr std::string_view contex_popup_name = "NodeEditorContextMenu";
 namespace mc
 {
 
-NodeEditor::NodeEditor(const NodeFactory& node_factory, const PortNameDisplay& port_name_display)
-    : m_node_factory(&node_factory), m_port_name_display(&port_name_display)
+NodeEditor::NodeEditor(const NodeFactory&     node_factory,
+                       const PortNameDisplay& port_name_display,
+                       const ThemeControl&    theme_control,
+                       bool                   create_nodes)
+    : m_node_factory(&node_factory), m_port_name_display(&port_name_display),
+      m_theme_control(&theme_control)
 {
+    if (create_nodes)
+    {
+        instantiate_available_inputs_and_outputs();
+    }
 }
 
 void NodeEditor::render()
@@ -67,19 +76,20 @@ void NodeEditor::to_json(nlohmann::json& j) const
     }
     const ImVec2 panning = ImNodes::EditorContextGetPanning();
     j                    = json{
-        {"nodes",   node_array},
-        {"panning", panning   }
+                           {"nodes",   node_array},
+                           {"panning", panning   }
     };
 }
 
 NodeEditor NodeEditor::from_json(const NodeFactory&     node_factory,
                                  const PortNameDisplay& port_name_display,
+                                 const ThemeControl& theme_control,
                                  const nlohmann::json&  j)
 {
     const ImVec2 panning = j.at("panning");
     ImNodes::EditorContextResetPanning(panning);
 
-    NodeEditor     editor(node_factory, port_name_display);
+    NodeEditor     editor(node_factory, port_name_display, theme_control);
     NodeSerializer deserializer(node_factory);
 
     // 1st iter -> create nodes
@@ -126,11 +136,11 @@ std::shared_ptr<Node> NodeEditor::renderContextMenu(bool show_outputting_nodes,
                 std::shared_ptr<Node> node;
                 if constexpr (std::is_same_v<midi::InputInfo, std::decay_t<decltype(info)>>)
                 {
-                    node = m_node_factory->build_midi_in_node(info);
+                    node = m_node_factory->build_midi_node(info);
                 }
                 else
                 {
-                    node = m_node_factory->build_midi_out_node(info);
+                    node = m_node_factory->build_midi_node(info);
                 }
 
                 m_nodes.push_back(node);
@@ -299,6 +309,28 @@ void NodeEditor::handleLinkDropped()
             new_node->connect_output(std::weak_ptr(*end_node_it), std::weak_ptr(new_node));
         }
     }
+}
+
+void NodeEditor::instantiate_available_inputs_and_outputs()
+{
+    const float scale = m_theme_control->get_scale_value();
+    const float y_start = 25 * scale;
+    ImVec2 node_pos{25 * scale, y_start};
+
+    const auto instantiate_nodes = [&](const auto& infos)
+    {
+        for (const auto& info : infos)
+        {
+            auto& node = m_nodes.emplace_back(m_node_factory->build_midi_node(info));
+            ImNodes::SetNodeGridSpacePos(node->id(), node_pos);
+            node_pos.y += 100 * scale;
+        }
+    };
+
+    instantiate_nodes(MidiProbe::get_inputs());
+    node_pos.x += 300 * scale;
+    node_pos.y = y_start;
+    instantiate_nodes(MidiProbe::get_outputs());
 }
 
 } // namespace mc

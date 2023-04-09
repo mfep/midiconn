@@ -23,8 +23,8 @@ Application::Application(SDL_Window*                  window,
                          const std::filesystem::path& path_to_preset)
     : m_theme_control(m_config, window),
       m_node_factory(m_midi_engine, m_theme_control, m_port_name_display),
-      m_preset{NodeEditor(m_node_factory, m_port_name_display), {}},
-      m_preset_manager(m_preset, m_node_factory, m_config, m_port_name_display),
+      m_preset{NodeEditor(m_node_factory, m_port_name_display, m_theme_control), {}},
+      m_preset_manager(m_preset, m_node_factory, m_config, m_port_name_display, m_theme_control),
       m_port_name_display(m_config.get_show_full_port_names()),
       m_welcome_enabled(m_config.get_show_welcome()),
       m_logo_texture(ResourceLoader::load_texture(renderer, "graphics/mc_logo.png"))
@@ -34,10 +34,6 @@ Application::Application(SDL_Window*                  window,
     if (!path_to_preset.empty())
     {
         m_preset = m_preset_manager.open_preset(path_to_preset);
-    }
-    else
-    {
-        open_last_preset();
     }
 }
 
@@ -101,7 +97,7 @@ std::string Application::get_window_title() const
            " - " MIDI_APPLICATION_NAME;
 }
 
-void Application::new_preset()
+void Application::new_preset(bool create_nodes)
 {
     spdlog::info("Executing new_preset");
     bool new_preset = true;
@@ -111,8 +107,10 @@ void Application::new_preset()
     }
     if (new_preset)
     {
-        m_preset         = {NodeEditor(m_node_factory, m_port_name_display), {}};
-        m_preset_manager = PresetManager(m_preset, m_node_factory, m_config, m_port_name_display);
+        m_preset = {NodeEditor(m_node_factory, m_port_name_display, m_theme_control, create_nodes),
+                    {}};
+        m_preset_manager =
+            PresetManager(m_preset, m_node_factory, m_config, m_port_name_display, m_theme_control);
     }
 }
 
@@ -340,6 +338,7 @@ void Application::render_welcome_window()
         ImGui::SameLine();
         if (ImGui::Button("New preset - add all MIDI devices"))
         {
+            new_preset(true);
             ImGui::CloseCurrentPopup();
         }
         ImGui::SameLine();

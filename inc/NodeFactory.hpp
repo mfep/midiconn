@@ -28,8 +28,8 @@ public:
                 const ThemeControl&    theme_control,
                 const PortNameDisplay& port_name_display);
 
-    std::shared_ptr<MidiInNode>  build_midi_in_node(const midi::InputInfo& input_info) const;
-    std::shared_ptr<MidiOutNode> build_midi_out_node(const midi::OutputInfo& output_info) const;
+    std::shared_ptr<MidiInNode>  build_midi_node(const midi::InputInfo& input_info) const;
+    std::shared_ptr<MidiOutNode> build_midi_node(const midi::OutputInfo& output_info) const;
     std::shared_ptr<DisconnectedMidiInNode> build_disconnected_midi_in_node(
         const std::string& input_name) const;
     std::shared_ptr<DisconnectedMidiOutNode> build_disconnected_midi_out_node(

@@ -126,7 +126,7 @@ std::shared_ptr<Node> NodeEditor::renderContextMenu(bool show_outputting_nodes,
 {
     constexpr ImGuiTreeNodeFlags leaf_flags =
         ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
-    auto render_contents = [this, leaf_flags](auto& infos) -> std::shared_ptr<Node> {
+    auto render_contents = [this](auto& infos) -> std::shared_ptr<Node> {
         for (const auto& info : infos)
         {
             const std::string port_name = m_port_name_display->get_port_name(info);

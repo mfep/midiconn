@@ -1,8 +1,8 @@
 #pragma once
 #include <string>
 
-class SDL_Texture;
-class SDL_Renderer;
+struct SDL_Texture;
+struct SDL_Renderer;
 
 namespace mc
 {

@@ -44,7 +44,7 @@ std::shared_ptr<DisconnectedMidiOutNode> NodeFactory::build_disconnected_midi_ou
 
 std::shared_ptr<MidiChannelNode> NodeFactory::build_midi_channel_node() const
 {
-    return std::make_shared<MidiChannelNode>([=]() {
+    return std::make_shared<MidiChannelNode>([this]() {
         return m_theme_control->get_scale_value();
     });
 }

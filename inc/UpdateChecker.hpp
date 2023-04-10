@@ -9,8 +9,6 @@
 namespace mc
 {
 
-struct ConfigFile;
-
 struct UpdateChecker
 {
     struct StatusNotSupported

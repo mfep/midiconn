@@ -12,6 +12,7 @@ find_package(fmt REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(SDL2 REQUIRED)
 find_package(rtmidi REQUIRED)
+find_package(ZLIB REQUIRED)
 if(WIN32)
     find_package(freetype CONFIG REQUIRED)
 else()
@@ -110,7 +111,8 @@ target_link_libraries(midiconn PRIVATE
     SDL2::SDL2
     fmt::fmt
     freetype
-    resources)
+    resources
+    ZLIB::ZLIB)
 if(MC_CHECK_FOR_UPDATES)
     target_link_libraries(midiconn PRIVATE cpr::cpr)
 endif()

@@ -1,6 +1,7 @@
 #pragma once
 #include <filesystem>
 #include <string>
+#include <string_view>
 #include <vector>
 
 #ifdef _WIN32
@@ -28,5 +29,6 @@ void                  set_process_dpi_aware();
 unsigned              get_window_dpi(SDL_Window* window);
 template <class... Ts>
 std::filesystem::path get_cli_path(Ts...);
+std::string get_request(std::string_view url);
 
 } // namespace mc::platform

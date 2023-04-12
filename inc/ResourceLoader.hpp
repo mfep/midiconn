@@ -14,10 +14,19 @@ struct Texture
     Texture(SDL_Texture* texture) : m_texture(texture) {}
 
     Texture(const Texture&) = delete;
-    Texture(Texture&&)      = default;
+    Texture(Texture&& other)
+    {
+        m_texture       = other.m_texture;
+        other.m_texture = nullptr;
+    }
 
     Texture& operator=(const Texture&) = delete;
-    Texture& operator=(Texture&&)      = default;
+    Texture& operator=(Texture&& other)
+    {
+        m_texture       = other.m_texture;
+        other.m_texture = nullptr;
+        return *this;
+    }
 
     ~Texture();
 };

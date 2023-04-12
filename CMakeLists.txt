@@ -4,7 +4,7 @@ include(FetchContent)
 include(deps/CMakeRC.cmake)
 set(CMAKE_CXX_STANDARD 20)
 
-project(midiconn VERSION 0.2.0 LANGUAGES C CXX)
+project(midiconn VERSION 0.2.0 LANGUAGES CXX)
 
 option(MC_CHECK_FOR_UPDATES "Build ${PROJECT_NAME} to check for updates on start" OFF)
 
@@ -12,7 +12,6 @@ find_package(fmt REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(SDL2 REQUIRED)
 find_package(rtmidi REQUIRED)
-find_package(ZLIB REQUIRED)
 if(WIN32)
     find_package(freetype CONFIG REQUIRED)
 else()
@@ -22,15 +21,6 @@ endif()
 set(JSON_BuildTests OFF CACHE INTERNAL "")
 set(JSON_MultipleHeaders ON CACHE INTERNAL "")
 
-FetchContent_Declare(cpr
-    GIT_REPOSITORY https://github.com/libcpr/cpr.git
-    GIT_TAG 1.10.0
-    GIT_PROGRESS TRUE
-    GIT_SHALLOW TRUE)
-if(MC_CHECK_FOR_UPDATES)
-    FetchContent_MakeAvailable(cpr)
-endif()
-
 configure_file(
     inc/Version.hpp.in
     ${CMAKE_CURRENT_SOURCE_DIR}/inc/Version.hpp
@@ -39,6 +29,9 @@ configure_file(
 set(JSON_BuildTests OFF CACHE INTERNAL "")
 set(JSON_MultipleHeaders ON CACHE INTERNAL "")
 add_subdirectory(deps/json)
+set(BUILD_EXAMPLES OFF)
+set(SPNG_SHARED OFF)
+add_subdirectory(deps/libspng)
 
 set(sources
     ${g_font_cpp_path}
@@ -51,7 +44,6 @@ set(sources
     deps/imgui/backends/imgui_impl_sdlrenderer.cpp
     deps/imgui/misc/freetype/imgui_freetype.cpp
     deps/imnodes/imnodes.cpp
-    deps/libspng/spng/spng.c
     src/Application.cpp
     src/ConfigFile.cpp
     src/DisconnectedMidiInNode.cpp
@@ -100,7 +92,6 @@ target_include_directories(midiconn PRIVATE
     inc
     deps/imgui
     deps/imnodes
-    deps/libspng/spng
     deps/portable-file-dialogs
     deps/IconFontCppHeaders
     "${FREETYPE_INCLUDE_DIRS}")
@@ -108,14 +99,11 @@ target_link_libraries(midiconn PRIVATE
     nlohmann_json::nlohmann_json
     RtMidi::rtmidi
     spdlog::spdlog
+    spng_static
     SDL2::SDL2
     fmt::fmt
     freetype
-    resources
-    ZLIB::ZLIB)
-if(MC_CHECK_FOR_UPDATES)
-    target_link_libraries(midiconn PRIVATE cpr::cpr)
-endif()
+    resources)
 target_compile_definitions(midiconn PRIVATE
     SPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_DEBUG
     IMGUI_ENABLE_FREETYPE
@@ -132,7 +120,7 @@ if(WIN32)
     set(CPACK_WIX_UPGRADE_GUID "96D23EBE-7D9E-4C53-8CD7-6E5CC32A5CE1")
     set(CPACK_WIX_PATCH_FILE "${CMAKE_CURRENT_SOURCE_DIR}/packaging/wix_patch.xml")
     set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.txt")
-    install(IMPORTED_RUNTIME_ARTIFACTS spdlog::spdlog fmt::fmt SDL2::SDL2 freetype cpr
+    install(IMPORTED_RUNTIME_ARTIFACTS spdlog::spdlog fmt::fmt SDL2::SDL2 freetype
         RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
     target_compile_definitions(midiconn PRIVATE
         WINVER=0x0A00

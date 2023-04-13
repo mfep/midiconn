@@ -200,33 +200,6 @@ std::vector<License> g_licenses{
      "of this Software are embedded into a machine-executable object form of such\n"
      "source code, you may redistribute such embedded portions in such object form\n"
      "without including the above copyright and permission notices.\n"             },
-    {"Curl for People",
-     "MIT License\n"
-     "\n"
-     "Copyright (c) 2017-2021 Huu Nguyen\n"
-     "Copyright (c) 2022 libcpr and many other contributors\n"
-     "\n"
-     "Permission is hereby granted, free of charge, to any person\n"
-     "obtaining a copy of this software and associated\n"
-     "documentation files (the \"Software\"), to deal in the\n"
-     "Software without restriction, including without limitation\n"
-     "the rights to use, copy, modify, merge, publish, distribute,\n"
-     "sublicense, and/or sell copies of the Software, and to\n"
-     "permit persons to whom the Software is furnished to do so,\n"
-     "subject to the following conditions:\n"
-     "\n"
-     "The above copyright notice and this permission notice shall\n"
-     "be included in all copies or substantial portions of the\n"
-     "Software.\n"
-     "\n"
-     "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY\n"
-     "KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE\n"
-     "WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR\n"
-     "PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS\n"
-     "OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR\n"
-     "OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR\n"
-     "OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE\n"
-     "SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\n"                    },
     {"libspng",
      "BSD 2-Clause License\n"
      "\n"
@@ -254,5 +227,4 @@ std::vector<License> g_licenses{
      "OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE\n"
      "OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.\n"      }
 };
-
 }

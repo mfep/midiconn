@@ -21,10 +21,10 @@ struct formatter<mc::midi::MessageTypeMask>
     auto format(const mc::midi::MessageTypeMask& mask, FormatContext& ctx) -> decltype(ctx.out())
     {
         return fmt::format_to(ctx.out(),
-                         "[sysex: {}, time: {}, active sense: {}]",
-                         mask.m_sysex_enabled,
-                         mask.m_time_enabled,
-                         mask.m_sensing_enabled);
+                              "[sysex: {}, time: {}, active sense: {}]",
+                              mask.m_sysex_enabled,
+                              mask.m_time_enabled,
+                              mask.m_sensing_enabled);
     }
 };
 

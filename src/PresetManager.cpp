@@ -64,7 +64,8 @@ Preset PresetManager::open_preset(const std::filesystem::path& open_path)
     }
     ifs >> m_last_editor_state;
     m_opened_path = open_path;
-    return Preset::from_json(*m_node_factory, *m_port_name_display, *m_theme_control, m_last_editor_state);
+    return Preset::from_json(
+        *m_node_factory, *m_port_name_display, *m_theme_control, m_last_editor_state);
 }
 
 void PresetManager::save_preset(const Preset& preset)
@@ -131,7 +132,7 @@ void PresetManager::save_preset(const Preset& preset, const bool save_as)
         nlohmann::json j;
         preset.to_json(j);
         m_last_editor_state = j;
-        j["version"]        = MC_FULL_VERSION;
+        j["version"]        = g_current_version_str;
         {
             std::ofstream ofs(save_path);
             ofs << j << std::endl;

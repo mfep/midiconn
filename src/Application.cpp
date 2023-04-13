@@ -29,7 +29,7 @@ Application::Application(SDL_Window*                  window,
       m_welcome_enabled(m_config.get_show_welcome()),
       m_logo_texture(ResourceLoader::load_texture(renderer, "graphics/mc_logo.png"))
 {
-    spdlog::info("Starting " MIDI_APPLICATION_NAME " version {}", MC_FULL_VERSION);
+    spdlog::info("Starting " MIDI_APPLICATION_NAME " version {}", g_current_version);
     std::optional<Preset> opened_preset;
     if (!path_to_preset.empty())
     {
@@ -286,7 +286,7 @@ void Application::render_welcome_window()
         ImGui::SameLine();
         ImGui::BeginGroup();
         ImGui::TextUnformatted("Welcome to " MIDI_APPLICATION_NAME);
-        ImGui::TextUnformatted(MC_FULL_VERSION);
+        ImGui::TextUnformatted(g_current_version_str.c_str());
         ImGui::TextUnformatted(MC_COMMIT_SHA);
         ImGui::TextUnformatted(MC_BUILD_OS);
         ImGui::EndGroup();

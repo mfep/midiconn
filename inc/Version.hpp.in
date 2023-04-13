@@ -1,11 +1,78 @@
 #pragma once
+#include <compare>
+#include <optional>
+#include <ostream>
+#include <string_view>
+
+#include "fmt/format.h"
 
 #define MC_MAJOR_VERSION "@CMAKE_PROJECT_VERSION_MAJOR@"
 #define MC_MINOR_VERSION "@CMAKE_PROJECT_VERSION_MINOR@"
 #define MC_PATCH_VERSION "@CMAKE_PROJECT_VERSION_PATCH@"
 #define MC_BUILD_NUMBER  "@MC_BUILD_NUMBER@"
-#define MC_SHORT_VERSION MC_MAJOR_VERSION "." MC_MINOR_VERSION "." MC_PATCH_VERSION
-#define MC_FULL_VERSION  MC_SHORT_VERSION "." MC_BUILD_NUMBER
-#define MC_COMMIT_SHA    "@MC_COMMIT_SHA@"
-#define MC_BUILD_OS      "@CMAKE_SYSTEM_NAME@-@CMAKE_SYSTEM_PROCESSOR@"
-#define MC_WEBSITE_URL   "https://mfeproject.itch.io/midiconn"
+#define MC_FULL_VERSION                                                                            \
+    MC_MAJOR_VERSION "." MC_MINOR_VERSION "." MC_PATCH_VERSION "." MC_BUILD_NUMBER
+#define MC_COMMIT_SHA  "@MC_COMMIT_SHA@"
+#define MC_BUILD_OS    "@CMAKE_SYSTEM_NAME@-@CMAKE_SYSTEM_PROCESSOR@"
+#define MC_WEBSITE_URL "https://mfeproject.itch.io/midiconn"
+
+namespace mc
+{
+
+class Version
+{
+public:
+    constexpr Version(int major, int minor, int patch, std::optional<int> build_num = std::nullopt)
+        : m_major(major), m_minor(minor), m_patch(patch), m_build_num(build_num)
+    {
+    }
+
+    constexpr std::strong_ordering operator<=>(const Version& other) const
+    {
+        if (m_major != other.m_major)
+            return m_major <=> other.m_major;
+        else if (m_minor != other.m_minor)
+            return m_minor <=> other.m_minor;
+        else if (m_patch != other.m_patch)
+            return m_patch <=> other.m_patch;
+        else if (m_build_num.has_value() && other.m_build_num.has_value() &&
+                 *m_build_num != *other.m_build_num)
+            return *m_build_num <=> *other.m_build_num;
+        return std::strong_ordering::equal;
+    }
+
+    static Version parse(std::string_view str);
+
+private:
+    int                m_major;
+    int                m_minor;
+    int                m_patch;
+    std::optional<int> m_build_num;
+
+    friend struct fmt::formatter<mc::Version>;
+};
+
+} // namespace mc
+
+template <>
+struct fmt::formatter<mc::Version>
+{
+    constexpr auto parse(format_parse_context& ctx) { return ctx.begin(); }
+
+    auto format(const mc::Version& v, format_context& ctx)
+    {
+        if (v.m_build_num.has_value())
+        {
+            return fmt::format_to(ctx.out(), "{}.{}.{}.{}", v.m_major, v.m_minor, v.m_patch, *v.m_build_num);
+        }
+        return fmt::format_to(ctx.out(), "{}.{}.{}", v.m_major, v.m_minor, v.m_patch);
+    }
+};
+
+namespace mc
+{
+
+extern const Version g_current_version;
+extern const std::string g_current_version_str;
+
+}

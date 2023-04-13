@@ -100,7 +100,7 @@ void ConfigFile::save_config_file() const
 {
     spdlog::info("Saving config file to: \"{}\"", m_config_json_path.string());
     nlohmann::json j;
-    j["version"]              = MC_FULL_VERSION;
+    j["version"]              = g_current_version_str;
     j["scale"]                = m_scale;
     j["theme"]                = m_theme;
     j["show_full_port_names"] = m_show_full_port_names;

@@ -83,7 +83,7 @@ void NodeEditor::to_json(nlohmann::json& j) const
 
 NodeEditor NodeEditor::from_json(const NodeFactory&     node_factory,
                                  const PortNameDisplay& port_name_display,
-                                 const ThemeControl& theme_control,
+                                 const ThemeControl&    theme_control,
                                  const nlohmann::json&  j)
 {
     const ImVec2 panning = j.at("panning");
@@ -313,12 +313,11 @@ void NodeEditor::handleLinkDropped()
 
 void NodeEditor::instantiate_available_inputs_and_outputs()
 {
-    const float scale = m_theme_control->get_scale_value();
+    const float scale   = m_theme_control->get_scale_value();
     const float y_start = 25 * scale;
-    ImVec2 node_pos{25 * scale, y_start};
+    ImVec2      node_pos{25 * scale, y_start};
 
-    const auto instantiate_nodes = [&](const auto& infos)
-    {
+    const auto instantiate_nodes = [&](const auto& infos) {
         for (const auto& info : infos)
         {
             auto& node = m_nodes.emplace_back(m_node_factory->build_midi_node(info));

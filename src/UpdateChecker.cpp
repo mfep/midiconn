@@ -27,12 +27,13 @@ void UpdateChecker::trigger_check()
         CheckResult result;
         try
         {
-            const auto response_text = platform::get_request("https://gitlab.com/api/v4/projects/32374118/repository/tags");
-            const auto j        = nlohmann::json::parse(response_text);
-            const auto tag_name = j.at(0).at("name").get<std::string>();
-            const bool is_latest =
-                tag_name == MC_MAJOR_VERSION "." MC_MINOR_VERSION "." MC_PATCH_VERSION;
-            result = StatusFetched{is_latest, tag_name};
+            const auto response_text = platform::get_request(
+                "https://gitlab.com/api/v4/projects/32374118/repository/tags");
+            const auto j           = nlohmann::json::parse(response_text);
+            const auto tag_name    = j.at(0).at("name").get<std::string>();
+            const auto tag_version = Version::parse(tag_name);
+            const bool is_latest   = tag_version <= g_current_version;
+            result                 = StatusFetched{is_latest, tag_name};
         }
         catch (std::exception& ex)
         {

@@ -24,8 +24,7 @@ std::shared_ptr<MidiInNode> NodeFactory::build_midi_node(const midi::InputInfo& 
     return std::make_shared<MidiInNode>(input_info, *m_midi_engine, *m_port_name_display);
 }
 
-std::shared_ptr<MidiOutNode> NodeFactory::build_midi_node(
-    const midi::OutputInfo& output_info) const
+std::shared_ptr<MidiOutNode> NodeFactory::build_midi_node(const midi::OutputInfo& output_info) const
 {
     return std::make_shared<MidiOutNode>(output_info, *m_midi_engine, *m_port_name_display);
 }

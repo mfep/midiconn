@@ -17,6 +17,9 @@ if(WIN32)
 else()
     find_package(Freetype REQUIRED)
 endif()
+if(NOT WIN32 AND MC_CHECK_FOR_UPDATES)
+    find_package(CURL REQUIRED)
+endif()
 
 set(JSON_BuildTests OFF CACHE INTERNAL "")
 set(JSON_MultipleHeaders ON CACHE INTERNAL "")
@@ -68,6 +71,7 @@ set(sources
     src/PortNameDisplay.cpp
     src/ResourceLoader.cpp
     src/Theme.cpp
+    src/Version.cpp
 )
 
 if(WIN32)
@@ -104,6 +108,9 @@ target_link_libraries(midiconn PRIVATE
     fmt::fmt
     freetype
     resources)
+if(NOT WIN32 AND MC_CHECK_FOR_UPDATES)
+    target_link_libraries(midiconn PRIVATE curl)
+endif()
 target_compile_definitions(midiconn PRIVATE
     SPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_DEBUG
     IMGUI_ENABLE_FREETYPE

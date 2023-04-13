@@ -1,7 +1,9 @@
 #include "PlatformUtils.hpp"
 
+#include <cassert>
 #include <cstdlib>
 
+#include "curl/curl.h"
 #include "spdlog/spdlog.h"
 
 #include "ApplicationName.hpp"
@@ -25,7 +27,7 @@ std::filesystem::path get_config_dir()
 void open_logfile_external()
 {
     const std::string command = "xdg-open " + get_logfile_path().string();
-    const auto result = std::system(command.c_str());
+    const auto        result  = std::system(command.c_str());
     (void)result;
 }
 
@@ -43,6 +45,37 @@ unsigned get_window_dpi(SDL_Window* /*window*/)
 template <>
 std::filesystem::path get_cli_path(int /*argc*/, char** /*argv*/)
 {
+    return {};
+}
+
+namespace
+{
+
+size_t write_fun(void* contents, size_t size, size_t nmemb, void* userptr)
+{
+    assert(size == 1);
+    (void)size;
+    auto             full_response = static_cast<std::string*>(userptr);
+    std::string_view current_chunk(static_cast<char*>(contents), nmemb);
+    full_response->append(current_chunk);
+    return nmemb;
+}
+
+} // namespace
+
+std::string get_request(std::string_view url)
+{
+    std::string ret;
+    CURL*       curl_handle = curl_easy_init();
+    curl_easy_setopt(curl_handle, CURLOPT_URL, url.data());
+
+    curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, write_fun);
+    curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, &ret);
+    if (curl_easy_perform(curl_handle) == CURLE_OK)
+    {
+        return ret;
+    }
+    curl_easy_cleanup(curl_handle);
     return {};
 }
 

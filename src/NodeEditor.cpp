@@ -315,7 +315,7 @@ void NodeEditor::instantiate_available_inputs_and_outputs()
 {
     const float scale   = m_theme_control->get_scale_value();
     const float y_start = 25 * scale;
-    ImVec2      node_pos{25 * scale, y_start};
+    ImVec2      node_pos{300 * scale, y_start};
 
     const auto instantiate_nodes = [&](const auto& infos) {
         for (const auto& info : infos)

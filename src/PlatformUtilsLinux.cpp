@@ -3,10 +3,14 @@
 #include <cassert>
 #include <cstdlib>
 
-#include "curl/curl.h"
 #include "spdlog/spdlog.h"
 
 #include "ApplicationName.hpp"
+#include "Version.hpp"
+
+#if defined(MC_CHECK_FOR_UPDATES)
+#include "curl/curl.h"
+#endif
 
 namespace mc::platform
 {
@@ -51,7 +55,7 @@ std::filesystem::path get_cli_path(int /*argc*/, char** /*argv*/)
 namespace
 {
 
-size_t write_fun(void* contents, size_t size, size_t nmemb, void* userptr)
+[[maybe_unused]] size_t write_fun(void* contents, size_t size, size_t nmemb, void* userptr)
 {
     assert(size == 1);
     (void)size;
@@ -65,6 +69,7 @@ size_t write_fun(void* contents, size_t size, size_t nmemb, void* userptr)
 
 std::string get_request(std::string_view url)
 {
+#if defined(MC_CHECK_FOR_UPDATES)
     std::string ret;
     CURL*       curl_handle = curl_easy_init();
     curl_easy_setopt(curl_handle, CURLOPT_URL, url.data());
@@ -76,6 +81,9 @@ std::string get_request(std::string_view url)
         return ret;
     }
     curl_easy_cleanup(curl_handle);
+#else
+    (void)url;
+#endif
     return {};
 }
 

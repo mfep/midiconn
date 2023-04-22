@@ -34,9 +34,9 @@ struct UpdateChecker
     CheckResult get_latest_version() const;
 
 private:
-    bool             m_update_check_finished = false;
-    CheckResult      m_latest_version_result = {};
-    std::atomic_bool m_latest_version_written;
+    [[maybe_unused]] bool m_update_check_finished = false;
+    CheckResult           m_latest_version_result = {};
+    std::atomic_bool      m_latest_version_written;
 };
 
 } // namespace mc

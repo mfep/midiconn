@@ -20,6 +20,8 @@ Download and execute the [installer package of the latest release](https://gitla
 ### Linux
 The recommended way to install **midiconn** on a Linux system is via the Flathub Flatpak repository.
 
+<a href="https://flathub.org/apps/details/xyz.safeworlds.midiconn" target="_blank"><img alt="Download on Flathub" src="https://flathub.org/assets/badges/flathub-badge-en.png" title="Download on Flathub" width="240"></a>
+
 Alternatively, the build instructions can be found below.
 
 ## Building
@@ -47,12 +49,20 @@ Make sure that the development packages of the dependencies are installed or use
 - libfreetype
 - libsdl2 (>= 2.0.17)
 - libspdlog
+- libcurl4 (only if `MC_CHECK_FOR_UPDATES=ON`)
 
 ```
 $ git clone --recursive https://gitlab.com/mfep/midiconn.git
 $ cmake -S ./midiconn -B ./midiconn/build -D CMAKE_BUILD_TYPE=Release
 $ cmake --build ./midiconn/build
 ```
+
+#### CMake options
+
+|Name                   |Description                                       |Default value  |
+|-----------------------|--------------------------------------------------|---------------|
+|`MC_CHECK_FOR_UPDATES` |Check for available updates on application start. |`OFF`          |
+
 ### Linux Flatpak
 ```
 $ git clone --recursive https://gitlab.com/mfep/midiconn.git

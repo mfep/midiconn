@@ -7,11 +7,12 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  build-linux:
     runs-on: ubuntu-22.04
-
     steps:
     - uses: actions/checkout@v3
+      with:
+        submodules: true
     - name: Install prerequisites
       run: sudo apt-get install -y
         libasound2-dev
@@ -29,10 +30,58 @@ jobs:
         -D MC_BUILD_NUMBER=${{github.run_number}}
         -D CPACK_GENERATOR=DEB
     - name: Build
-      run: cmake --build ${{github.workspace}}/build
+      run: cmake --build ${{github.workspace}}/build --target midiconn -j `nproc`
+    - name: Create DEB package
+      run: cd ${{github.workspace}}/build && cpack -C Release
     - name: Upload Artifacts
       uses: actions/upload-artifact@v3.1.2
       with:
         path: |
           ${{github.workspace}}/build/midiconn
           ${{github.workspace}}/build/*.deb
+
+  build-windows:
+    runs-on: windows-2022
+    env:
+      vcpkg-prereqs: spdlog:x64-windows sdl2:x64-windows freetype[core]:x64-windows zlib:x64-windows
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: true
+        lfs: true
+    - name: Restore vcpkg prerequisites cache
+      id: restore-cache-vcpkg
+      uses: actions/cache/restore@v3
+      with:
+        path: C:\vcpkg
+        key: ${{env.vcpkg-prereqs}}
+    - name: Install prerequisites
+      if: ${{ steps.restore-cache-vcpkg.outputs.cache-hit != 'true' }}
+      run: vcpkg install ${{env.vcpkg-prereqs}}
+    - name: Save vcpkg prerequisites cache
+      if: ${{ steps.restore-cache-vcpkg.outputs.cache-hit != 'true' }}
+      uses: actions/cache/save@v3
+      with:
+        path: C:\vcpkg
+        key: ${{env.vcpkg-prereqs}}
+    - name: Configure CMake
+      run: cmake
+        -B ${{github.workspace}}/build
+        -D MC_COMMIT_SHA=${{github.sha}}
+        -D MC_BUILD_NUMBER=${{github.run_number}}
+        -D MC_CHECK_FOR_UPDATES=ON
+        -D CMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake
+        -D CMAKE_CXX_FLAGS="/await /EHsc"
+        -T host=x64
+        -A x64
+    - name: Build
+      run: cmake --build ${{github.workspace}}/build --target midiconn --config Release
+    - name: Build installer
+      run: cd ${{github.workspace}}\build; cpack -C Release
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v3.1.2
+      with:
+        path: |
+          ${{github.workspace}}\build\Release\*.exe
+          ${{github.workspace}}\build\Release\*.dll
+          ${{github.workspace}}\build\*.msi

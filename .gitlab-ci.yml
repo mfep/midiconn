@@ -69,7 +69,7 @@ build-windows:
     - git checkout master
     - git pull
     - bootstrap-vcpkg.bat
-    - vcpkg install spdlog:x64-windows sdl2:x64-windows freetype[core]:x64-windows rtmidi:x64-windows
+    - vcpkg install spdlog:x64-windows sdl2:x64-windows freetype[core]:x64-windows rtmidi:x64-windows zlib:x64-windows
   script:
     - cd C:/GitLab-Runner/builds/mfep/midiconn
     - wget.exe https://github.com/Kitware/CMake/releases/download/v3.22.2/cmake-3.22.2-windows-x86_64.zip

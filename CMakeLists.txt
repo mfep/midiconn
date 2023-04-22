@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.22)
 
 include(FetchContent)
 include(deps/CMakeRC.cmake)
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 
 project(midiconn VERSION 0.2.0 LANGUAGES CXX)
 
@@ -17,18 +17,12 @@ if(WIN32)
 else()
     find_package(Freetype REQUIRED)
 endif()
+if(NOT WIN32 AND MC_CHECK_FOR_UPDATES)
+    find_package(CURL REQUIRED)
+endif()
 
 set(JSON_BuildTests OFF CACHE INTERNAL "")
 set(JSON_MultipleHeaders ON CACHE INTERNAL "")
-
-FetchContent_Declare(cpr
-    GIT_REPOSITORY https://github.com/libcpr/cpr.git
-    GIT_TAG 1.10.0
-    GIT_PROGRESS TRUE
-    GIT_SHALLOW TRUE)
-if(MC_CHECK_FOR_UPDATES)
-    FetchContent_MakeAvailable(cpr)
-endif()
 
 configure_file(
     inc/Version.hpp.in
@@ -38,6 +32,9 @@ configure_file(
 set(JSON_BuildTests OFF CACHE INTERNAL "")
 set(JSON_MultipleHeaders ON CACHE INTERNAL "")
 add_subdirectory(deps/json)
+set(BUILD_EXAMPLES OFF)
+set(SPNG_SHARED OFF)
+add_subdirectory(deps/libspng)
 
 set(sources
     ${g_font_cpp_path}
@@ -72,7 +69,9 @@ set(sources
     src/PlatformUtils.cpp
     src/PresetManager.cpp
     src/PortNameDisplay.cpp
+    src/ResourceLoader.cpp
     src/Theme.cpp
+    src/Version.cpp
 )
 
 if(WIN32)
@@ -89,7 +88,7 @@ else()
 endif()
 
 file(GLOB FONTS RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/fonts/*")
-cmrc_add_resource_library(midiconn_fonts "${FONTS}" ALIAS fonts)
+cmrc_add_resource_library(midiconn_resources "${FONTS}" "${CMAKE_CURRENT_SOURCE_DIR}/graphics/mc_logo.png" ALIAS resources)
 
 add_executable(midiconn "${sources}")
 
@@ -104,12 +103,13 @@ target_link_libraries(midiconn PRIVATE
     nlohmann_json::nlohmann_json
     RtMidi::rtmidi
     spdlog::spdlog
+    spng_static
     SDL2::SDL2
     fmt::fmt
     freetype
-    fonts)
-if(MC_CHECK_FOR_UPDATES)
-    target_link_libraries(midiconn PRIVATE cpr::cpr)
+    resources)
+if(NOT WIN32 AND MC_CHECK_FOR_UPDATES)
+    target_link_libraries(midiconn PRIVATE curl)
 endif()
 target_compile_definitions(midiconn PRIVATE
     SPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_DEBUG
@@ -127,7 +127,7 @@ if(WIN32)
     set(CPACK_WIX_UPGRADE_GUID "96D23EBE-7D9E-4C53-8CD7-6E5CC32A5CE1")
     set(CPACK_WIX_PATCH_FILE "${CMAKE_CURRENT_SOURCE_DIR}/packaging/wix_patch.xml")
     set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.txt")
-    install(IMPORTED_RUNTIME_ARTIFACTS spdlog::spdlog fmt::fmt SDL2::SDL2 freetype cpr
+    install(IMPORTED_RUNTIME_ARTIFACTS spdlog::spdlog fmt::fmt SDL2::SDL2 freetype
         RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
     target_compile_definitions(midiconn PRIVATE
         WINVER=0x0A00
@@ -149,6 +149,9 @@ else()
     install(FILES "packaging/xyz.safeworlds.midiconn.mime.xml"
         DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/mime/packages/")
     set(CPACK_DEBIAN_PACKAGE_DEPENDS "libasound2, libfmt8, libfreetype6, libsdl2-2.0-0, libspdlog1")
+    if(MC_CHECK_FOR_UPDATES)
+        set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, libcurl4")
+    endif()
     set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://gitlab.com/mfep/midiconn")
     set(CPACK_DEBIAN_PACKAGE_SECTION sound)
 endif()

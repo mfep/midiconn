@@ -12,31 +12,28 @@
 #include "ErrorHandler.hpp"
 #include "Licenses.hpp"
 #include "PlatformUtils.hpp"
+#include "Utils.hpp"
 #include "Version.hpp"
 
-namespace mc::display
+namespace mc
 {
 
-Application::Application(SDL_Window* window, const std::filesystem::path& path_to_preset)
+Application::Application(SDL_Window*                  window,
+                         SDL_Renderer*                renderer,
+                         const std::filesystem::path& path_to_preset)
     : m_theme_control(m_config, window),
       m_node_factory(m_midi_engine, m_theme_control, m_port_name_display),
-      m_preset{NodeEditor(m_node_factory, m_port_name_display), {}},
-      m_preset_manager(m_preset, m_node_factory, m_config, m_port_name_display),
-      m_port_name_display(m_config.get_show_full_port_names()), m_update_checker(m_config)
+      m_preset{NodeEditor(m_node_factory, m_port_name_display, m_theme_control), {}},
+      m_preset_manager(m_preset, m_node_factory, m_config, m_port_name_display, m_theme_control),
+      m_port_name_display(m_config.get_show_full_port_names()),
+      m_welcome_enabled(m_config.get_show_welcome()),
+      m_logo_texture(ResourceLoader::load_texture(renderer, "graphics/mc_logo.png"))
 {
-    spdlog::info("Starting " MIDI_APPLICATION_NAME " version {}", MC_FULL_VERSION);
+    spdlog::info("Starting " MIDI_APPLICATION_NAME " version {}", g_current_version);
     std::optional<Preset> opened_preset;
-    if (path_to_preset.empty())
+    if (!path_to_preset.empty())
     {
-        opened_preset = m_preset_manager.try_loading_last_preset();
-    }
-    else
-    {
-        opened_preset = m_preset_manager.open_preset(path_to_preset);
-    }
-    if (opened_preset.has_value())
-    {
-        m_preset = std::move(opened_preset.value());
+        m_preset = m_preset_manager.open_preset(path_to_preset);
     }
 }
 
@@ -57,8 +54,8 @@ void Application::render()
                      ImGuiWindowFlags_MenuBar);
 
     wrap_exception([this]() {
+        render_welcome_window();
         render_main_menu();
-        m_update_checker.show_latest_version_message();
         m_preset.m_node_editor.render();
     });
 
@@ -100,29 +97,9 @@ std::string Application::get_window_title() const
            " - " MIDI_APPLICATION_NAME;
 }
 
-void Application::handle_shortcuts(const KeyboardShortcutAggregator& shortcuts)
+void Application::new_preset(bool create_nodes)
 {
-    if (shortcuts.is_shortcut_pressed(KeyboardShortcut::CtrlN))
-    {
-        new_preset_command();
-    }
-    if (shortcuts.is_shortcut_pressed(KeyboardShortcut::CtrlO))
-    {
-        open_preset_command();
-    }
-    if (shortcuts.is_shortcut_pressed(KeyboardShortcut::CtrlS))
-    {
-        save_preset_command();
-    }
-    if (shortcuts.is_shortcut_pressed(KeyboardShortcut::CtrlShiftS))
-    {
-        save_preset_as_command();
-    }
-}
-
-void Application::new_preset_command()
-{
-    spdlog::info("Executing new_preset_command");
+    spdlog::info("Executing new_preset");
     bool new_preset = true;
     if (m_preset_manager.is_dirty(m_preset))
     {
@@ -130,14 +107,16 @@ void Application::new_preset_command()
     }
     if (new_preset)
     {
-        m_preset         = {NodeEditor(m_node_factory, m_port_name_display), {}};
-        m_preset_manager = PresetManager(m_preset, m_node_factory, m_config, m_port_name_display);
+        m_preset = {NodeEditor(m_node_factory, m_port_name_display, m_theme_control, create_nodes),
+                    {}};
+        m_preset_manager =
+            PresetManager(m_preset, m_node_factory, m_config, m_port_name_display, m_theme_control);
     }
 }
 
-void Application::open_preset_command()
+void Application::open_preset()
 {
-    spdlog::info("Executing open_preset_command");
+    spdlog::info("Executing open_preset");
     const auto open_path =
         pfd::open_file("Open preset", ".", {"midiconn presets (*.mcpreset)", "*.mcpreset"})
             .result();
@@ -147,46 +126,54 @@ void Application::open_preset_command()
     }
 }
 
-void Application::save_preset_command()
+void Application::open_last_preset()
 {
-    spdlog::info("Executing save_preset_command");
+    spdlog::info("Executing open_last_preset");
+    if (auto preset = m_preset_manager.try_loading_last_preset(); preset.has_value())
+    {
+        m_preset = std::move(*preset);
+    }
+}
+
+void Application::save_preset()
+{
+    spdlog::info("Executing save_preset");
     m_preset_manager.save_preset(m_preset);
 }
 
-void Application::save_preset_as_command()
+void Application::save_preset_as()
 {
-    spdlog::info("Executing save_preset_as_command");
+    spdlog::info("Executing save_preset_as");
     m_preset_manager.save_preset_as(m_preset);
 }
 
-void Application::exit_command()
+void Application::exit()
 {
-    spdlog::info("Executing exit_command");
+    spdlog::info("Executing exit");
     m_is_done = true;
 }
 
 void Application::render_main_menu()
 {
-    bool open_about_popup = false;
     if (ImGui::BeginMenuBar())
     {
         if (ImGui::BeginMenu(ICON_FK_FILE_O " File"))
         {
             if (ImGui::MenuItem(ICON_FK_FILE_O "  New preset", "Ctrl+N"))
             {
-                new_preset_command();
+                new_preset();
             }
             if (ImGui::MenuItem(ICON_FK_FOLDER_OPEN_O " Open preset", "Ctrl+O"))
             {
-                open_preset_command();
+                open_preset();
             }
             if (ImGui::MenuItem(ICON_FK_FLOPPY_O "  Save preset", "Ctrl+S"))
             {
-                save_preset_command();
+                save_preset();
             }
             if (ImGui::MenuItem(ICON_FK_FLOPPY_O "  Save preset as", "Ctrl+Shift+S"))
             {
-                save_preset_as_command();
+                save_preset_as();
             }
             ImGui::Separator();
             if (ImGui::BeginMenu("MIDI message filter"))
@@ -209,7 +196,7 @@ void Application::render_main_menu()
             ImGui::Separator();
             if (ImGui::MenuItem(" " ICON_FK_TIMES "  Exit", "Alt+F4"))
             {
-                exit_command();
+                exit();
             }
             ImGui::EndMenu();
         }
@@ -272,34 +259,107 @@ void Application::render_main_menu()
             {
                 SDL_OpenURL(MC_WEBSITE_URL);
             }
-            if (m_update_checker.update_check_supported() &&
-                ImGui::MenuItem(ICON_FK_GLOBE_E " Check for updates"))
-            {
-                m_update_checker.trigger_check();
-            }
             if (ImGui::MenuItem(ICON_FK_QUESTION "  About"))
             {
-                open_about_popup = true;
+                m_welcome_enabled = true;
             }
             ImGui::EndMenu();
         }
         ImGui::EndMenuBar();
     }
-    if (open_about_popup)
-    {
-        ImGui::OpenPopup("About " MIDI_APPLICATION_NAME);
-    }
+}
 
-    ImVec2 center = ImGui::GetMainViewport()->GetCenter();
-    ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
-    ImGui::SetNextWindowSizeConstraints({600, 0}, {600, 400});
-    bool dummy{true};
-    if (ImGui::BeginPopupModal(
-            "About " MIDI_APPLICATION_NAME, &dummy, ImGuiWindowFlags_AlwaysAutoResize))
+void Application::render_welcome_window()
+{
+    if (m_welcome_enabled)
     {
-        ImGui::TextUnformatted(MC_FULL_VERSION);
+        ImGui::OpenPopup("Welcome");
+        m_welcome_enabled = false;
+    }
+    const ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+    ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+    const float scale = m_theme_control.get_scale_value();
+    ImGui::SetNextWindowSizeConstraints({600 * scale, 0}, {600 * scale, 400 * scale});
+    if (ImGui::BeginPopup("Welcome", ImGuiWindowFlags_AlwaysAutoResize))
+    {
+        ImGui::Image(m_logo_texture.m_texture, ImVec2{96 * scale, 96 * scale});
+        ImGui::SameLine();
+        ImGui::BeginGroup();
+        ImGui::TextUnformatted("Welcome to " MIDI_APPLICATION_NAME);
+        ImGui::TextUnformatted(g_current_version_str.c_str());
         ImGui::TextUnformatted(MC_COMMIT_SHA);
         ImGui::TextUnformatted(MC_BUILD_OS);
+        ImGui::EndGroup();
+
+        const auto latest_version = m_update_checker.get_latest_version();
+        std::visit(utils::overloads{
+                       [](const UpdateChecker::StatusNotSupported&) {},
+                       [](const UpdateChecker::StatusFetching&) {
+                           ImGui::TextUnformatted("Fetching latest " MIDI_APPLICATION_NAME
+                                                  " version number...");
+                       },
+                       [](const UpdateChecker::StatusError& error) {
+                           ImGui::TextUnformatted("Error fetching latest " MIDI_APPLICATION_NAME
+                                                  " version number");
+                           if (!error.message.empty() && ImGui::IsItemHovered())
+                               ImGui::SetTooltip("%s", error.message.c_str());
+                       },
+                       [](const UpdateChecker::StatusFetched& fetched) {
+                           if (fetched.is_latest_version)
+                           {
+                               ImGui::TextUnformatted("Congratulations! You are using the latest "
+                                                      "version of " MIDI_APPLICATION_NAME);
+                           }
+                           else
+                           {
+                               ImGui::Text("A new version of " MIDI_APPLICATION_NAME
+                                           " is available: %s",
+                                           fetched.latest_version_name.c_str());
+                               ImGui::SameLine();
+                               if (ImGui::Button("Visit website"))
+                               {
+                                   SDL_OpenURL(MC_WEBSITE_URL);
+                               }
+                           }
+                       },
+                   },
+                   latest_version);
+
+        bool show_on_startup = m_config.get_show_welcome();
+        if (ImGui::Checkbox("Show this window on application startup", &show_on_startup))
+        {
+            m_config.set_show_welcome(show_on_startup);
+        }
+        if (ImGui::Button("New preset - empty"))
+        {
+            new_preset();
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("New preset - add all MIDI devices"))
+        {
+            new_preset(true);
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Browse preset"))
+        {
+            open_preset();
+            ImGui::CloseCurrentPopup();
+        }
+        const auto last_preset_opt = m_config.get_last_preset_path();
+        ImGui::BeginDisabled(!last_preset_opt);
+        ImGui::SameLine();
+        if (ImGui::Button("Open last preset"))
+        {
+            open_last_preset();
+            ImGui::CloseCurrentPopup();
+        }
+        if (last_preset_opt && ImGui::IsItemHovered())
+        {
+            ImGui::SetTooltip("%s", last_preset_opt.value().c_str());
+        }
+        ImGui::EndDisabled();
         if (ImGui::CollapsingHeader("Open source licenses"))
         {
             for (auto& license : g_licenses)
@@ -335,4 +395,4 @@ bool Application::query_save()
     return true;
 }
 
-} // namespace mc::display
+} // namespace mc

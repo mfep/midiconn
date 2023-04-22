@@ -18,7 +18,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(MessageTypeMask,
                                    m_sensing_enabled);
 }
 
-namespace mc::display
+namespace mc
 {
 
 void Preset::to_json(nlohmann::json& j) const
@@ -29,17 +29,20 @@ void Preset::to_json(nlohmann::json& j) const
 
 Preset Preset::from_json(const NodeFactory&     node_factory,
                          const PortNameDisplay& port_name_display,
+                         const ThemeControl&    theme_control,
                          const nlohmann::json&  j)
 {
-    return {NodeEditor::from_json(node_factory, port_name_display, j.at("editor")),
+    return {NodeEditor::from_json(node_factory, port_name_display, theme_control, j.at("editor")),
             j.at("enabled_message_types")};
 }
 
 PresetManager::PresetManager(const Preset&          preset,
                              const NodeFactory&     node_factory,
                              ConfigFile&            config,
-                             const PortNameDisplay& port_name_display)
-    : m_node_factory(&node_factory), m_config(&config), m_port_name_display(&port_name_display)
+                             const PortNameDisplay& port_name_display,
+                             const ThemeControl&    theme_control)
+    : m_node_factory(&node_factory), m_config(&config), m_port_name_display(&port_name_display),
+      m_theme_control(&theme_control)
 {
     preset.to_json(m_last_editor_state);
 }
@@ -61,7 +64,8 @@ Preset PresetManager::open_preset(const std::filesystem::path& open_path)
     }
     ifs >> m_last_editor_state;
     m_opened_path = open_path;
-    return Preset::from_json(*m_node_factory, *m_port_name_display, m_last_editor_state);
+    return Preset::from_json(
+        *m_node_factory, *m_port_name_display, *m_theme_control, m_last_editor_state);
 }
 
 void PresetManager::save_preset(const Preset& preset)
@@ -128,7 +132,7 @@ void PresetManager::save_preset(const Preset& preset, const bool save_as)
         nlohmann::json j;
         preset.to_json(j);
         m_last_editor_state = j;
-        j["version"]        = MC_FULL_VERSION;
+        j["version"]        = g_current_version_str;
         {
             std::ofstream ofs(save_path);
             ofs << j << std::endl;
@@ -137,4 +141,4 @@ void PresetManager::save_preset(const Preset& preset, const bool save_as)
     }
 }
 
-} // namespace mc::display
+} // namespace mc

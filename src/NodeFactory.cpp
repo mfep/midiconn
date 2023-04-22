@@ -19,13 +19,12 @@ NodeFactory::NodeFactory(midi::Engine&          midi_engine,
 {
 }
 
-std::shared_ptr<MidiInNode> NodeFactory::build_midi_in_node(const midi::InputInfo& input_info) const
+std::shared_ptr<MidiInNode> NodeFactory::build_midi_node(const midi::InputInfo& input_info) const
 {
     return std::make_shared<MidiInNode>(input_info, *m_midi_engine, *m_port_name_display);
 }
 
-std::shared_ptr<MidiOutNode> NodeFactory::build_midi_out_node(
-    const midi::OutputInfo& output_info) const
+std::shared_ptr<MidiOutNode> NodeFactory::build_midi_node(const midi::OutputInfo& output_info) const
 {
     return std::make_shared<MidiOutNode>(output_info, *m_midi_engine, *m_port_name_display);
 }
@@ -44,7 +43,7 @@ std::shared_ptr<DisconnectedMidiOutNode> NodeFactory::build_disconnected_midi_ou
 
 std::shared_ptr<MidiChannelNode> NodeFactory::build_midi_channel_node() const
 {
-    return std::make_shared<MidiChannelNode>([=]() {
+    return std::make_shared<MidiChannelNode>([this]() {
         return m_theme_control->get_scale_value();
     });
 }

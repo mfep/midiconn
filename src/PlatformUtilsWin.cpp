@@ -1,6 +1,8 @@
 #include "PlatformUtils.hpp"
 
 #include <array>
+#include <codecvt>
+#include <locale>
 #include <sstream>
 #include <stdexcept>
 #include <string>
@@ -14,6 +16,10 @@
 #include <shellscalingapi.h>
 #include <shlobj_core.h>
 #include <winuser.h>
+
+#include <winrt/base.h>
+#include <winrt/windows.foundation.h>
+#include <winrt/windows.web.http.h>
 
 #include "ApplicationName.hpp"
 
@@ -74,6 +80,26 @@ std::filesystem::path get_cli_path(PSTR arg)
         throw std::runtime_error(sstream.str());
     }
     return path;
+}
+
+std::string get_request(std::string_view url)
+{
+    using namespace winrt;
+    using namespace Windows::Foundation;
+    using namespace Windows::Web::Http;
+
+    HttpClient client;
+    Uri        uri(std::wstring(url.begin(), url.end()));
+    const auto response = client.GetAsync(uri).get();
+
+    if (!response.IsSuccessStatusCode())
+    {
+        throw std::runtime_error("Could not perform GET request");
+    }
+
+    const winrt::hstring response_text = response.Content().ReadAsStringAsync().get();
+    std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+    return converter.to_bytes(response_text.begin(), response_text.end());
 }
 
 } // namespace mc::platform

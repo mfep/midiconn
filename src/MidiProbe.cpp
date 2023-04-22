@@ -1,10 +1,13 @@
 #include "MidiProbe.hpp"
 
 #include <algorithm>
+#include <random>
 #include <regex>
 #include <sstream>
 
 #include "rtmidi/RtMidi.h"
+
+#include "ApplicationName.hpp"
 
 namespace mc
 {
@@ -22,7 +25,12 @@ std::vector<InfoT> get_connections()
     std::vector<InfoT> info_list;
     for (unsigned i = 0; i < port_count; i++)
     {
-        info_list.push_back({i, midi_conn.getPortName(i)});
+        std::string port_name = midi_conn.getPortName(i);
+        // Omit self
+        if (port_name.find(MidiProbe::get_midi_client_name()) == std::string::npos)
+        {
+            info_list.push_back({i, std::move(port_name)});
+        }
     }
     return info_list;
 }
@@ -40,7 +48,27 @@ std::optional<Info> get_valid_info(const std::string& name, const std::vector<In
     return std::nullopt;
 }
 
+std::string generate_random_client_name()
+{
+    std::stringstream sstream;
+    sstream << MIDI_APPLICATION_NAME_SNAKE << '_' << std::hex;
+    std::default_random_engine    prng(std::random_device{}());
+    std::uniform_int_distribution dist(0, 16);
+
+    for (std::size_t i = 0; i < 4; ++i)
+    {
+        sstream << dist(prng);
+    }
+    return sstream.str();
+}
+
 } // namespace
+
+std::string MidiProbe::get_midi_client_name()
+{
+    static std::string name = generate_random_client_name();
+    return name;
+}
 
 std::vector<InputInfo> MidiProbe::get_inputs()
 {

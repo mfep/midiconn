@@ -1,5 +1,6 @@
 #pragma once
 #include <optional>
+#include <string>
 #include <vector>
 
 #include "MidiInfo.hpp"
@@ -11,6 +12,8 @@ class MidiProbe final
 {
 public:
     MidiProbe() = delete;
+
+    static std::string get_midi_client_name();
 
     static std::vector<midi::InputInfo>  get_inputs();
     static std::vector<midi::OutputInfo> get_outputs();

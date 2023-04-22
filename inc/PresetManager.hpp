@@ -12,9 +12,7 @@ namespace mc
 class ConfigFile;
 class NodeFactory;
 class PortNameDisplay;
-
-namespace display
-{
+class ThemeControl;
 
 struct Preset
 {
@@ -24,6 +22,7 @@ struct Preset
     void          to_json(nlohmann::json& j) const;
     static Preset from_json(const NodeFactory&     node_factory,
                             const PortNameDisplay& port_name_display,
+                            const ThemeControl&    theme_control,
                             const nlohmann::json&  j);
 };
 
@@ -33,7 +32,8 @@ public:
     PresetManager(const Preset&          preset,
                   const NodeFactory&     node_factory,
                   ConfigFile&            config,
-                  const PortNameDisplay& port_name_display);
+                  const PortNameDisplay& port_name_display,
+                  const ThemeControl&    theme_control);
 
     bool                                        is_dirty(const Preset& preset) const;
     Preset                                      open_preset(const std::filesystem::path& path);
@@ -51,7 +51,7 @@ private:
     nlohmann::json                       m_last_editor_state;
     std::optional<std::filesystem::path> m_opened_path;
     const PortNameDisplay*               m_port_name_display;
+    const ThemeControl*                  m_theme_control;
 };
 
-} // namespace display
 } // namespace mc

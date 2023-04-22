@@ -14,7 +14,7 @@
 
 #include "Application.hpp"
 #include "ErrorHandler.hpp"
-#include "KeyboardShotcutAggregator.hpp"
+#include "KeyboardShortcutAggregator.hpp"
 #include "PlatformUtils.hpp"
 
 #if !SDL_VERSION_ATLEAST(2, 0, 17)
@@ -100,62 +100,65 @@ MC_MAIN
     // ImGui::GetIO().Fonts->AddFontFromFileTTF("DroidSans.ttf", 16);
 
     // Main loop
-    mc::display::Application app(window, file_to_open);
-    bool                     done = false;
-    size_t                   frame_idx{};
-    while (!done)
-    {
-        // Poll and handle events (inputs, window resize, etc.)
-        // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui
-        // wants to use your inputs.
-        // - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main
-        // application.
-        // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main
-        // application. Generally you may always pass all inputs to dear imgui, and hide them from
-        // your application based on those two flags.
-        mc::KeyboardShortcutAggregator shortcuts;
-        SDL_Event                      event;
-        while (SDL_PollEvent(&event))
+    { // scope to cleanup Application instance before cleaning up SDL and ImGui
+        mc::Application app(window, renderer, file_to_open);
+        bool            done = false;
+        size_t          frame_idx{};
+        while (!done)
         {
-            shortcuts.capture_event(event);
-            ImGui_ImplSDL2_ProcessEvent(&event);
-            if (event.type == SDL_QUIT)
+            // Poll and handle events (inputs, window resize, etc.)
+            // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear
+            // imgui wants to use your inputs.
+            // - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main
+            // application.
+            // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your
+            // main application. Generally you may always pass all inputs to dear imgui, and hide
+            // them from your application based on those two flags.
+            mc::KeyboardShortcutAggregator shortcuts;
+            SDL_Event                      event;
+            while (SDL_PollEvent(&event))
             {
-                done = true;
+                shortcuts.capture_event(event);
+                ImGui_ImplSDL2_ProcessEvent(&event);
+                if (event.type == SDL_QUIT)
+                {
+                    done = true;
+                }
+                if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE &&
+                    event.window.windowID == SDL_GetWindowID(window))
+                {
+                    done = true;
+                }
+                if (event.type == SDL_WINDOWEVENT &&
+                    event.window.event == SDL_WINDOWEVENT_RESIZED &&
+                    event.window.windowID == SDL_GetWindowID(window))
+                {
+                }
             }
-            if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE &&
-                event.window.windowID == SDL_GetWindowID(window))
+
+            app.update_outside_frame();
+
+            // Start the Dear ImGui frame
+            ImGui_ImplSDLRenderer_NewFrame();
+            ImGui_ImplSDL2_NewFrame();
+            ImGui::NewFrame();
+
+            shortcuts.process(app);
+            app.render();
+            app.handle_done(done);
+
+            // polling is required, imnodes cannot report if something changed
+            if (frame_idx++ % 30 == 0)
             {
-                done = true;
+                SDL_SetWindowTitle(window, app.get_window_title().c_str());
             }
-            if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_RESIZED &&
-                event.window.windowID == SDL_GetWindowID(window))
-            {
-            }
+
+            // Rendering
+            ImGui::Render();
+            SDL_RenderClear(renderer);
+            ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());
+            SDL_RenderPresent(renderer);
         }
-
-        app.update_outside_frame();
-
-        // Start the Dear ImGui frame
-        ImGui_ImplSDLRenderer_NewFrame();
-        ImGui_ImplSDL2_NewFrame();
-        ImGui::NewFrame();
-
-        app.handle_shortcuts(shortcuts);
-        app.render();
-        app.handle_done(done);
-
-        // polling is required, imnodes cannot report if something changed
-        if (frame_idx++ % 30 == 0)
-        {
-            SDL_SetWindowTitle(window, app.get_window_title().c_str());
-        }
-
-        // Rendering
-        ImGui::Render();
-        SDL_RenderClear(renderer);
-        ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());
-        SDL_RenderPresent(renderer);
     }
 
     ImGui_ImplSDLRenderer_Shutdown();

@@ -5,7 +5,7 @@
 #include <regex>
 #include <sstream>
 
-#include "rtmidi/RtMidi.h"
+#include "RtMidi.h"
 
 #include "ApplicationName.hpp"
 

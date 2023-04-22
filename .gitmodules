@@ -16,3 +16,6 @@
 [submodule "deps/libspng"]
 	path = deps/libspng
 	url = https://github.com/randy408/libspng.git
+[submodule "deps/rtmidi"]
+	path = deps/rtmidi
+	url = https://github.com/thestk/rtmidi

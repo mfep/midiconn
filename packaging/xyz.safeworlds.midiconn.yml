@@ -52,16 +52,6 @@ modules:
       - type: git
         url: https://github.com/gabime/spdlog
         tag: v1.10.0
-  - name: rtmidi
-    buildsystem: cmake-ninja
-    config-opts:
-      - -DRTMIDI_API_JACK=OFF
-      - -DRTMIDI_BUILD_STATIC_LIBS=ON
-      - -DCMAKE_BUILD_TYPE=Release
-    sources:
-      - type: git
-        url: https://github.com/thestk/rtmidi
-        commit: 806e18f575b68c23b26f9398e1b6866b335b5308
   - name: midiconn
     buildsystem: cmake-ninja
     config-opts:

@@ -11,7 +11,6 @@ option(MC_CHECK_FOR_UPDATES "Build ${PROJECT_NAME} to check for updates on start
 find_package(fmt REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(SDL2 REQUIRED)
-find_package(rtmidi REQUIRED)
 if(WIN32)
     find_package(freetype CONFIG REQUIRED)
 else()
@@ -35,6 +34,10 @@ add_subdirectory(deps/json)
 set(BUILD_EXAMPLES OFF)
 set(SPNG_SHARED OFF)
 add_subdirectory(deps/libspng)
+
+set(RTMIDI_API_JACK OFF)
+set(RTMIDI_BUILD_STATIC_LIBS ON)
+add_subdirectory(deps/rtmidi)
 
 set(sources
     ${g_font_cpp_path}
@@ -101,7 +104,7 @@ target_include_directories(midiconn PRIVATE
     "${FREETYPE_INCLUDE_DIRS}")
 target_link_libraries(midiconn PRIVATE
     nlohmann_json::nlohmann_json
-    RtMidi::rtmidi
+    rtmidi
     spdlog::spdlog
     spng_static
     SDL2::SDL2

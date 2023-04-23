@@ -156,7 +156,7 @@ else()
     if(MC_CHECK_FOR_UPDATES)
         set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, libcurl4")
     endif()
-    set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://gitlab.com/mfep/midiconn")
+    set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://github.com/mfep/midiconn")
     set(CPACK_DEBIAN_PACKAGE_SECTION sound)
 endif()
 

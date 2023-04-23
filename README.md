@@ -15,7 +15,7 @@
 ## Installing
 
 ### Windows
-Download and execute the [installer package of the latest release](https://gitlab.com/mfep/midiconn/-/releases/permalink/latest).
+Download and execute the [installer package of the latest release](https://github.com/mfep/midiconn/releases/latest).
 
 ### Linux
 The recommended way to install **midiconn** on a Linux system is via the Flathub Flatpak repository.
@@ -36,7 +36,7 @@ Alternatively, the build instructions can be found below.
 > .\vcpkg\bootstrap-vcpkg.bat
 > .\vcpkg\vcpkg.exe install spdlog:x64-windows sdl2:x64-windows freetype[core]:x64-windows rtmidi:x64-windows
 # Cloning and building midiconn
-> git clone --recursive https://gitlab.com/mfep/midiconn.git
+> git clone --recursive https://github.com/mfep/midiconn.git
 > cmake -S .\midiconn -B .\midiconn\build -D CMAKE_TOOLCHAIN_FILE=%cd%\vcpkg\scripts\buildsystems\vcpkg.cmake
 > cmake --build .\midiconn\build --config Release
 > cd .\midiconn\build
@@ -52,7 +52,7 @@ Make sure that the development packages of the dependencies are installed or use
 - libcurl4 (only if `MC_CHECK_FOR_UPDATES=ON`)
 
 ```
-$ git clone --recursive https://gitlab.com/mfep/midiconn.git
+$ git clone --recursive https://github.com/mfep/midiconn.git
 $ cmake -S ./midiconn -B ./midiconn/build -D CMAKE_BUILD_TYPE=Release
 $ cmake --build ./midiconn/build
 ```
@@ -65,7 +65,7 @@ $ cmake --build ./midiconn/build
 
 ### Linux Flatpak
 ```
-$ git clone --recursive https://gitlab.com/mfep/midiconn.git
+$ git clone --recursive https://github.com/mfep/midiconn.git
 $ flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 $ flatpak install -y flathub org.freedesktop.Sdk//22.08 org.freedesktop.Platform//22.08
 $ flatpak-builder ./midiconn/build/flatpak ./midiconn/packaging/midiconn.yml

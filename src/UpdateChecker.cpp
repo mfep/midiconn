@@ -28,9 +28,9 @@ void UpdateChecker::trigger_check()
         try
         {
             const auto response_text = platform::get_request(
-                "https://gitlab.com/api/v4/projects/32374118/repository/tags");
+                "https://api.github.com/repos/mfep/midiconn/releases/latest");
             const auto j           = nlohmann::json::parse(response_text);
-            const auto tag_name    = j.at(0).at("name").get<std::string>();
+            const auto tag_name    = j.at("name").get<std::string>();
             const auto tag_version = Version::parse(tag_name);
             const bool is_latest   = tag_version <= g_current_version;
             result                 = StatusFetched{is_latest, tag_name};

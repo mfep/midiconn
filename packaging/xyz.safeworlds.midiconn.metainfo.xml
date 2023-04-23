@@ -23,7 +23,7 @@
 
   <screenshots>
     <screenshot type="default">
-      <image width="1280" height="800">https://gitlab.com/mfep/midiconn/-/raw/master/graphics/screenshot_0.png</image>
+      <image width="1280" height="800">https://github.com/mfep/midiconn/raw/main/graphics/screenshot_0.png</image>
     </screenshot>
   </screenshots>
 
@@ -39,7 +39,7 @@
   </categories>
 
   <url type="homepage">https://mfeproject.itch.io/midiconn</url>
-  <url type="bugtracker">https://gitlab.com/mfep/midiconn/issues</url>
+  <url type="bugtracker">https://github.com/mfep/midiconn/issues</url>
  
   <launchable type="desktop-id">xyz.safeworlds.midiconn.desktop</launchable>
 

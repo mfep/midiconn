@@ -9,14 +9,12 @@
 
 namespace
 {
-#ifdef WIN32
 
 const auto unused = []() {
     mc::platform::set_process_dpi_aware();
     return 0;
 }();
 
-#endif
 } // namespace
 
 namespace mc

@@ -9,6 +9,7 @@
 
 #include "SDL2/SDL.h"
 #include "SDL2/SDL_syswm.h"
+#include "spdlog/spdlog.h"
 
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
@@ -54,7 +55,10 @@ void open_logfile_external()
 
 void set_process_dpi_aware()
 {
-    SetProcessDpiAwareness(PROCESS_SYSTEM_DPI_AWARE);
+    if (const auto result = SetProcessDpiAwareness(PROCESS_SYSTEM_DPI_AWARE); result != S_OK)
+    {
+        spdlog::warn("Could not set process DPI aware ({})", result);
+    }
 }
 
 unsigned get_window_dpi(SDL_Window* window)

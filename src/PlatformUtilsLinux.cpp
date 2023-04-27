@@ -73,7 +73,7 @@ std::string get_request(std::string_view url)
     std::string ret;
     CURL*       curl_handle = curl_easy_init();
     curl_easy_setopt(curl_handle, CURLOPT_URL, url.data());
-
+    curl_easy_setopt(curl_handle, CURLOPT_USERAGENT, "midiconn/" MC_FULL_VERSION);
     curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, write_fun);
     curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, &ret);
     if (curl_easy_perform(curl_handle) == CURLE_OK)

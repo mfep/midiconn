@@ -22,6 +22,7 @@ ConfigFile::ConfigFile()
         m_scale                = InterfaceScale::Auto;
         m_show_full_port_names = false;
         m_theme                = Theme::Default;
+        m_show_welcome         = true;
         save_config_file();
         return;
     }

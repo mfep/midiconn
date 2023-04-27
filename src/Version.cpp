@@ -8,7 +8,12 @@ namespace mc
 
 Version Version::parse(std::string_view str)
 {
-    const auto first_dot  = str.find('.');
+    std::size_t start = 0;
+    if (str[0] == 'v')
+    {
+        start = 1;
+    }
+    const auto first_dot  = str.find('.', start);
     const auto second_dot = str.find('.', first_dot + 1);
     const auto third_dot  = str.find('.', second_dot + 1);
 
@@ -19,7 +24,7 @@ Version Version::parse(std::string_view str)
 
     int                major, minor, patch;
     std::optional<int> build_num;
-    auto               result = std::from_chars(str.data(), str.data() + first_dot, major);
+    auto               result = std::from_chars(str.data() + start, str.data() + first_dot, major);
     if (result.ec != std::errc{})
     {
         throw std::runtime_error("Wrong version format");

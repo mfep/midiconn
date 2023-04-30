@@ -143,6 +143,7 @@ if(WIN32)
     target_link_options(midiconn PRIVATE "/SUBSYSTEM:WINDOWS")
 else()
     set(CPACK_PACKAGE_CONTACT "Lőrinc Serfőző <lorinc.serfozo@mailbox.org>")
+    set(CMAKE_PROJECT_HOMEPAGE_URL "https://github.com/mfep/midiconn")
     install(FILES "graphics/mc_logo.svg"
         DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/scalable/apps/"
         RENAME "xyz.safeworlds.midiconn.svg")
@@ -152,11 +153,12 @@ else()
         DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/metainfo/")
     install(FILES "packaging/xyz.safeworlds.midiconn.mime.xml"
         DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/mime/packages/")
+
+    # DEB specific
     set(CPACK_DEBIAN_PACKAGE_DEPENDS "libasound2, libfmt8, libfreetype6, libsdl2-2.0-0, libspdlog1")
     if(MC_CHECK_FOR_UPDATES)
         set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, libcurl4")
     endif()
-    set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://github.com/mfep/midiconn")
     set(CPACK_DEBIAN_PACKAGE_SECTION sound)
 endif()
 

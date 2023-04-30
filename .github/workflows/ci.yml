@@ -24,7 +24,6 @@ jobs:
         libfreetype-dev
         libsdl2-dev
         libspdlog-dev
-        xorg-dev
     - name: Configure CMake
       run: cmake
         -B ${{github.workspace}}/build
@@ -33,6 +32,7 @@ jobs:
         -D MC_COMMIT_SHA=${{github.sha}}
         -D MC_BUILD_NUMBER=${{github.run_number}}
         -D CPACK_GENERATOR=DEB
+        -D CPACK_SYSTEM_NAME=ubuntu-22.04
     - name: Build
       run: cmake --build ${{github.workspace}}/build --target midiconn -j `nproc`
     - name: Create DEB package

@@ -26,9 +26,9 @@ Alternatively, the build instructions can be found below.
 
 ## Building
 
-### Windows installer (x64)
+### Building the Windows installer (x64)
 - From the x64 Native Tools Command Prompt.
-- Assuming that CMake and WiX 3.11 are installed and on the path.
+- Assuming that [CMake](https://cmake.org) and [WiX 3.11](https://wixtoolset.org/) are installed and on the PATH.
 
 ```
 # Installing prerequisites with vcpkg
@@ -42,31 +42,53 @@ Alternatively, the build instructions can be found below.
 > cd .\midiconn\build
 > cpack -C Release
 ```
-### Linux binary
-Make sure that the development packages of the dependencies are installed or use an image built from the provided [Dockerfile](./Dockerfile). The list of library dependencies is the following:
-- libasound2
+### Building the Linux binary package
+Make sure that the development packages of the dependencies are installed. The list of library dependencies is the following:
+- ALSA
 - libfmt
 - libfreetype
 - libsdl2 (>= 2.0.17)
 - libspdlog
-- libcurl4 (only if `MC_CHECK_FOR_UPDATES=ON`)
+- libcurl4 (required only if `MC_CHECK_FOR_UPDATES=ON`)
 
+Additionally, [CMake](https://cmake.org) and a C++20 capable compiler is needed to build **midiconn**.
+
+On Ubuntu (version 22.04 or later), the following script installs these prerequisites:
+
+```shell
+$ sudo apt-get update
+$ sudo apt-get install -y git build-essential cmake libasound2-dev libfmt-dev libfreetype-dev libsdl2-dev libspdlog-dev
 ```
+
+On Fedora (version 36 or later), the following script installs these prerequisites:
+
+```shell
+$ sudo dnf install -y git gcc-c++ cmake alsa-lib-devel fmt-devel freetype-devel SDL2-devel spdlog-devel
+```
+
+Once the prerequisites are installed, **midiconn** can be built and packaged:
+
+```shell
 $ git clone --recursive https://github.com/mfep/midiconn.git
 $ cmake -S ./midiconn -B ./midiconn/build -D CMAKE_BUILD_TYPE=Release
-$ cmake --build ./midiconn/build
+$ cmake --build ./midiconn/build -j `nproc`
+$ cd ./midiconn/build && cpack -C Release
 ```
 
-#### CMake options
+### Building the Flatpak
+
+The following script builds and installs the **midiconn** flatpak locally.
+It requires the `flatpak-builder` package to be installed on the system.
+
+```shell
+$ git clone --recursive https://github.com/mfep/midiconn.git
+$ flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+$ flatpak install -y flathub org.freedesktop.Sdk//22.08 org.freedesktop.Platform//22.08
+$ flatpak-builder --install --user ./midiconn/build/flatpak ./midiconn/packaging/midiconn.yml
+```
+
+### CMake configuration options
 
 |Name                   |Description                                       |Default value  |
 |-----------------------|--------------------------------------------------|---------------|
 |`MC_CHECK_FOR_UPDATES` |Check for available updates on application start. |`OFF`          |
-
-### Linux Flatpak
-```
-$ git clone --recursive https://github.com/mfep/midiconn.git
-$ flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-$ flatpak install -y flathub org.freedesktop.Sdk//22.08 org.freedesktop.Platform//22.08
-$ flatpak-builder ./midiconn/build/flatpak ./midiconn/packaging/midiconn.yml
-```

@@ -84,7 +84,7 @@ It requires the `flatpak-builder` package to be installed on the system.
 $ git clone --recursive https://github.com/mfep/midiconn.git
 $ flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 $ flatpak install -y flathub org.freedesktop.Sdk//22.08 org.freedesktop.Platform//22.08
-$ flatpak-builder --install --user ./midiconn/build/flatpak ./midiconn/packaging/midiconn.yml
+$ flatpak-builder --install --user ./midiconn/build/flatpak ./midiconn/packaging/xyz.safeworlds.midiconn.yml
 ```
 
 ### CMake configuration options

@@ -6,6 +6,7 @@
 #include "spdlog/spdlog.h"
 
 #include "ApplicationName.hpp"
+#include "Utils.hpp"
 #include "Version.hpp"
 
 #if defined(MC_CHECK_FOR_UPDATES)
@@ -42,7 +43,7 @@ void set_process_dpi_aware()
 
 unsigned get_window_dpi(SDL_Window* /*window*/)
 {
-    spdlog::info("Queriying window DPI is not supported on the current platform.");
+    spdlog::info("Querying window DPI is not supported on the current platform.");
     return 96;
 }
 
@@ -74,17 +75,24 @@ namespace
 std::string get_request(std::string_view url)
 {
 #if defined(MC_CHECK_FOR_UPDATES)
-    std::string ret;
-    CURL*       curl_handle = curl_easy_init();
+    CURL* curl_handle = curl_easy_init();
+    if (curl_handle == nullptr)
+    {
+        return {};
+    }
+    utils::final_action cleanup([=] {
+        curl_easy_cleanup(curl_handle);
+    });
     curl_easy_setopt(curl_handle, CURLOPT_URL, url.data());
     curl_easy_setopt(curl_handle, CURLOPT_USERAGENT, "midiconn/" MC_FULL_VERSION);
     curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, write_fun);
+    std::string ret;
     curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, &ret);
-    if (curl_easy_perform(curl_handle) == CURLE_OK)
+    const auto result = curl_easy_perform(curl_handle);
+    if (result == CURLE_OK)
     {
         return ret;
     }
-    curl_easy_cleanup(curl_handle);
 #else
     (void)url;
 #endif

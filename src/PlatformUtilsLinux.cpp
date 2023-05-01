@@ -47,9 +47,13 @@ unsigned get_window_dpi(SDL_Window* /*window*/)
 }
 
 template <>
-std::filesystem::path get_cli_path(int /*argc*/, char** /*argv*/)
+std::filesystem::path get_cli_path(int argc, char** argv)
 {
-    return {};
+    if (argc < 2)
+    {
+        return {};
+    }
+    return argv[1];
 }
 
 namespace

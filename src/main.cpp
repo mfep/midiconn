@@ -34,6 +34,8 @@ MC_MAIN
     spdlog::set_default_logger(rotating_logger);
     spdlog::flush_every(3s);
 
+    mc::platform::set_process_dpi_aware();
+
     const auto file_to_open = mc::wrap_exception([&]() {
         return MC_GET_CLI_PATH;
     });

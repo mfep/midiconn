@@ -7,16 +7,6 @@
 #include "PlatformUtils.hpp"
 #include "ResourceLoader.hpp"
 
-namespace
-{
-
-const auto unused = []() {
-    mc::platform::set_process_dpi_aware();
-    return 0;
-}();
-
-} // namespace
-
 namespace mc
 {
 

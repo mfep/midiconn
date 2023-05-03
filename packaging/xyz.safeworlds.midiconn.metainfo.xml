@@ -12,7 +12,7 @@
     <p>midiconn is a virtual hub to connect MIDI hardware through the computer.</p>
     <p>Features:</p> 
     <ul>
-      <li>Intuitive, node-based user interface with predictable interactions - one does not have to be a power user or MIDI expert to start using it.</li>
+      <li>Intuitive, node-based user interface with predictable interactions - one does not have to be a power user or MIDI expert to use it.</li>
       <li>Detection of device disconnects and reconnects without program restart.</li>
       <li>Channel node to filter and remap MIDI message channels.</li>
       <li>Platform-independent preset files to port the MIDI device setup across various computers.</li>
@@ -44,6 +44,15 @@
   <launchable type="desktop-id">xyz.safeworlds.midiconn.desktop</launchable>
 
   <releases>
+      <release version="0.2.0" date="2023-05-03">
+      <description>
+        <p>Improvements and bug fixes in the current release:</p>
+        <ul>
+          <li>Created spash window that also checks for updates.</li>
+          <li>Added the option to automatically create nodes for all connected MIDI devices.</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.1.2" date="2023-01-24">
       <description>
         <p>Improvements and bug fixes in the current release:</p>

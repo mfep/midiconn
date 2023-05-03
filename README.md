@@ -1,11 +1,16 @@
 # midiconn
 
+[![CI badge](https://img.shields.io/github/actions/workflow/status/mfep/midiconn/ci.yml?branch=main)](https://github.com/mfep/midiconn/actions/workflows/ci.yml)
+[![Release badge](https://img.shields.io/github/v/release/mfep/midiconn)](https://github.com/mfep/midiconn/releases/latest)
+[![License badge](https://img.shields.io/github/license/mfep/midiconn)](./LICENSE.txt)
+[![Flathub badge](https://img.shields.io/flathub/downloads/xyz.safeworlds.midiconn?logo=flathub&logoColor=white)](https://flathub.org/apps/details/xyz.safeworlds.midiconn)
+
 **midiconn** is a virtual hub to connect MIDI hardware through the computer.
 
 <img src="./graphics/screenshot_0.png" alt="Screenshot of midiconn" width=600px />
 
 ## Features
-- An intuitive, node-based user interface with predictable interactions - one does not have to be a power user or MIDI expert to start using it.
+- An intuitive, node-based user interface with predictable interactions - one does not have to be a power user or MIDI expert to use it.
 - Detection of device disconnects and reconnects without program restart.
 - Channel node to filter and remap MIDI message channels.
 - Platform-independent preset files to port the MIDI device setup across various computers.
@@ -35,6 +40,7 @@ Alternatively, the build instructions can be found below.
 > git clone https://github.com/Microsoft/vcpkg.git
 > .\vcpkg\bootstrap-vcpkg.bat
 > .\vcpkg\vcpkg.exe install spdlog:x64-windows sdl2:x64-windows freetype[core]:x64-windows rtmidi:x64-windows
+
 # Cloning and building midiconn
 > git clone --recursive https://github.com/mfep/midiconn.git
 > cmake -S .\midiconn -B .\midiconn\build -D CMAKE_TOOLCHAIN_FILE=%cd%\vcpkg\scripts\buildsystems\vcpkg.cmake

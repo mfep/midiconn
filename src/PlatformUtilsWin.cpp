@@ -19,10 +19,13 @@
 #include <winuser.h>
 
 #include <winrt/base.h>
+#include <winrt/windows.foundation.collections.h>
 #include <winrt/windows.foundation.h>
 #include <winrt/windows.web.http.h>
+#include <winrt/windows.web.http.headers.h>
 
 #include "ApplicationName.hpp"
+#include "Version.hpp"
 
 namespace mc::platform
 {
@@ -90,14 +93,19 @@ std::string get_request(std::string_view url)
 {
     using namespace winrt;
     using namespace Windows::Foundation;
+    using namespace Windows::Foundation::Collections;
     using namespace Windows::Web::Http;
+    using namespace Windows::Web::Http::Headers;
 
-    HttpClient client;
-    Uri        uri(std::wstring(url.begin(), url.end()));
+    const HttpClient                 client;
+    const HttpProductInfoHeaderValue header(L"midiconn/" MC_FULL_VERSION);
+    client.DefaultRequestHeaders().UserAgent().Append(header);
+    const Uri  uri(std::wstring(url.begin(), url.end()));
     const auto response = client.GetAsync(uri).get();
 
     if (!response.IsSuccessStatusCode())
     {
+        spdlog::warn("Could not perform GET request to '{}'", url);
         throw std::runtime_error("Could not perform GET request");
     }
 

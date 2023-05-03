@@ -109,20 +109,3 @@ jobs:
           ${{github.workspace}}\build\Release\*.exe
           ${{github.workspace}}\build\Release\*.dll
           ${{github.workspace}}\build\*.msi
-  
-  publish-release:
-    runs-on: ubuntu-22.04
-    if: ${{github.ref_type == 'tag'}}
-    needs:
-      - build-linux
-      - build-windows
-    steps:
-    - name: Download artifacts
-      uses: actions/download-artifact@v2.1.1
-    - name: Publish release
-      uses: eloquent/github-release-action@v3
-      with:
-        prerelease: false
-        assets: |
-          - path: *.deb
-          - path: *.msi

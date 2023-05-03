@@ -4,6 +4,7 @@
 [![Release badge](https://img.shields.io/github/v/release/mfep/midiconn)](https://github.com/mfep/midiconn/releases/latest)
 [![License badge](https://img.shields.io/github/license/mfep/midiconn)](./LICENSE.txt)
 [![Flathub badge](https://img.shields.io/flathub/downloads/xyz.safeworlds.midiconn?logo=flathub&logoColor=white)](https://flathub.org/apps/details/xyz.safeworlds.midiconn)
+![Platforms badge](https://img.shields.io/badge/platform-windows%20%7C%20linux-informational)
 
 **midiconn** is a virtual hub to connect MIDI hardware through the computer.
 

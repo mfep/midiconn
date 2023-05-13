@@ -41,7 +41,7 @@ Application::Application(SDL_Window*                  window,
     catch (std::runtime_error& error)
     {
         spdlog::warn("Could not open preset provided on the command line: {}",
-                     path_to_preset.string());
+                     utils::path_to_utf8str(path_to_preset));
     }
 }
 
@@ -101,7 +101,8 @@ void Application::handle_done(bool& done)
 std::string Application::get_window_title() const
 {
     auto prefix = m_preset_manager.is_dirty(m_preset) ? "* " : "";
-    return prefix + m_preset_manager.get_opened_path().value_or("Untitled").string() +
+    return prefix +
+           utils::path_to_utf8str(m_preset_manager.get_opened_path().value_or("Untitled")) +
            " - " MIDI_APPLICATION_NAME;
 }
 
@@ -130,7 +131,7 @@ void Application::open_preset()
             .result();
     if (open_path.size() == 1 && !open_path.front().empty())
     {
-        m_preset = m_preset_manager.open_preset(open_path.front());
+        m_preset = m_preset_manager.open_preset(std::filesystem::u8path(open_path.front()));
     }
 }
 

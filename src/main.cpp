@@ -16,6 +16,7 @@
 #include "ErrorHandler.hpp"
 #include "KeyboardShortcutAggregator.hpp"
 #include "PlatformUtils.hpp"
+#include "Utils.hpp"
 
 #if !SDL_VERSION_ATLEAST(2, 0, 17)
 #error This backend requires SDL 2.0.17+ because of SDL_RenderGeometry() function
@@ -27,8 +28,11 @@ MC_MAIN
     // Setup spdlog
     static constexpr size_t max_logfile_size = 5 * 1024 * 1024; // 5 MiB
     static constexpr size_t num_logfiles     = 2;
-    auto                    rotating_logger  = spdlog::rotating_logger_mt(
-        "default", mc::platform::get_logfile_path().string(), max_logfile_size, num_logfiles);
+    auto                    rotating_logger =
+        spdlog::rotating_logger_mt("default",
+                                   mc::utils::path_to_utf8str(mc::platform::get_logfile_path()),
+                                   max_logfile_size,
+                                   num_logfiles);
     rotating_logger->sinks().push_back(std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
     rotating_logger->flush_on(spdlog::level::err);
     spdlog::set_default_logger(rotating_logger);

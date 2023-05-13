@@ -25,6 +25,7 @@
 #include <winrt/windows.web.http.headers.h>
 
 #include "ApplicationName.hpp"
+#include "Utils.hpp"
 #include "Version.hpp"
 
 namespace mc::platform
@@ -47,7 +48,7 @@ void open_logfile_external()
 {
     if (reinterpret_cast<INT_PTR>(ShellExecute(nullptr,
                                                "open",
-                                               get_logfile_path().string().c_str(),
+                                               utils::path_to_utf8str(get_logfile_path()).c_str(),
                                                nullptr,
                                                nullptr,
                                                SW_SHOWNORMAL)) <= 32)

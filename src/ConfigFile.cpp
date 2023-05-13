@@ -1,11 +1,13 @@
 #include "ConfigFile.hpp"
 
 #include <fstream>
+#include <locale>
 
 #include "nlohmann/json.hpp"
 #include "spdlog/spdlog.h"
 
 #include "PlatformUtils.hpp"
+#include "Utils.hpp"
 #include "Version.hpp"
 
 namespace mc
@@ -16,7 +18,8 @@ ConfigFile::ConfigFile()
     m_config_json_path = platform::get_config_dir() / "config.json";
     if (!std::filesystem::exists(m_config_json_path))
     {
-        spdlog::info("Config file does not exist at \"{}\"", m_config_json_path.string());
+        spdlog::info("Config file does not exist at \"{}\"",
+                     utils::path_to_utf8str(m_config_json_path));
 
         // default values
         m_scale                = InterfaceScale::Auto;
@@ -28,7 +31,7 @@ ConfigFile::ConfigFile()
     }
     try
     {
-        spdlog::info("Loading config file from \"{}\"", m_config_json_path.string());
+        spdlog::info("Loading config file from \"{}\"", utils::path_to_utf8str(m_config_json_path));
         nlohmann::json j;
         {
             std::ifstream ifs(m_config_json_path);
@@ -53,7 +56,7 @@ ConfigFile::ConfigFile()
         try_load_item(m_show_welcome, true, "show_welcome");
         if (j.contains("last_preset_path"))
         {
-            m_last_preset_path = j["last_preset_path"].get<std::string>();
+            m_last_preset_path = std::filesystem::u8path(j["last_preset_path"].get<std::string>());
         }
         if (save_defaults)
         {
@@ -99,7 +102,7 @@ void ConfigFile::set_show_welcome(const bool value)
 
 void ConfigFile::save_config_file() const
 {
-    spdlog::info("Saving config file to: \"{}\"", m_config_json_path.string());
+    spdlog::info("Saving config file to: \"{}\"", utils::path_to_utf8str(m_config_json_path));
     nlohmann::json j;
     j["version"]              = g_current_version_str;
     j["scale"]                = m_scale;
@@ -108,16 +111,18 @@ void ConfigFile::save_config_file() const
     j["show_welcome"]         = m_show_welcome;
     if (m_last_preset_path)
     {
-        j["last_preset_path"] = m_last_preset_path->string();
+        j["last_preset_path"] = utils::path_to_utf8str(*m_last_preset_path);
     }
     std::ofstream ofs(m_config_json_path);
+    ofs.imbue(std::locale("en_US.UTF-8"));
     if (ofs.good())
     {
         ofs << j;
     }
     else
     {
-        spdlog::warn("Could not save config file to \"{}\"", m_config_json_path.string());
+        spdlog::warn("Could not save config file to \"{}\"",
+                     utils::path_to_utf8str(m_config_json_path));
     }
 }
 

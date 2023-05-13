@@ -31,7 +31,7 @@ std::filesystem::path get_config_dir()
 
 void open_logfile_external()
 {
-    const std::string command = "xdg-open " + get_logfile_path().string();
+    const std::string command = "xdg-open " + utils::utils::path_to_utf8str(get_logfile_path);
     const auto        result  = std::system(command.c_str());
     (void)result;
 }

@@ -8,6 +8,7 @@
 
 #include "ConfigFile.hpp"
 #include "NodeEditor.hpp"
+#include "Utils.hpp"
 #include "Version.hpp"
 
 namespace mc::midi
@@ -56,11 +57,12 @@ bool PresetManager::is_dirty(const Preset& preset) const
 
 Preset PresetManager::open_preset(const std::filesystem::path& open_path)
 {
-    spdlog::info("Opening preset from path \"{}\"", open_path.string());
+    spdlog::info("Opening preset from path \"{}\"", utils::path_to_utf8str(open_path));
     std::ifstream ifs(open_path);
     if (!ifs.good())
     {
-        throw std::runtime_error("Cannot open preset file at \"" + open_path.string() + "\"");
+        throw std::runtime_error("Cannot open preset file at \"" +
+                                 utils::path_to_utf8str(open_path) + "\"");
     }
     ifs >> m_last_editor_state;
     m_opened_path = open_path;
@@ -87,12 +89,12 @@ std::optional<Preset> PresetManager::try_loading_last_preset()
     }
     try
     {
-        return open_preset(last_preset_path.value().string());
+        return open_preset(last_preset_path.value());
     }
     catch (std::exception& ex)
     {
         spdlog::info("Could not load previous preset at \"{}\". Reason: \"{}\"",
-                     last_preset_path.value().string(),
+                     utils::path_to_utf8str(last_preset_path.value()),
                      ex.what());
         return std::nullopt;
     }
@@ -117,14 +119,16 @@ void PresetManager::save_preset(const Preset& preset, const bool save_as)
     else
     {
         const auto filename =
-            std::filesystem::path(m_opened_path.value_or("preset.mcpreset")).filename().string();
+            std::filesystem::path(m_opened_path.value_or("preset.mcpreset")).filename();
         save_path =
-            pfd::save_file("Save preset", filename, {"midiconn presets (*.mcpreset)", "*.mcpreset"})
-                .result();
+            std::filesystem::u8path(pfd::save_file("Save preset",
+                                                   utils::path_to_utf8str(filename),
+                                                   {"midiconn presets (*.mcpreset)", "*.mcpreset"})
+                                        .result());
     }
     if (!save_path.empty())
     {
-        spdlog::info("Saving preset file to \"{}\"", save_path.string());
+        spdlog::info("Saving preset file to \"{}\"", utils::path_to_utf8str(save_path));
         if (save_path.extension() != ".mcpreset")
         {
             save_path += ".mcpreset";

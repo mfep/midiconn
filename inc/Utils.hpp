@@ -1,5 +1,8 @@
 #pragma once
 
+#include <filesystem>
+#include <string>
+
 namespace mc::utils
 {
 
@@ -41,5 +44,11 @@ private:
     F    f;
     bool invoke = true;
 };
+
+inline std::string path_to_utf8str(const std::filesystem::path& path)
+{
+    const std::u8string u8str = path.generic_u8string();
+    return {u8str.begin(), u8str.end()};
+}
 
 } // namespace mc::utils

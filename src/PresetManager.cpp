@@ -96,7 +96,7 @@ std::optional<Preset> PresetManager::try_loading_last_preset()
         spdlog::info("Could not load previous preset at \"{}\". Reason: \"{}\"",
                      utils::path_to_utf8str(last_preset_path.value()),
                      ex.what());
-        return std::nullopt;
+        throw;
     }
 }
 

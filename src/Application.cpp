@@ -132,10 +132,12 @@ void Application::open_preset()
 void Application::open_last_preset()
 {
     spdlog::info("Executing open_last_preset");
-    if (auto preset = m_preset_manager.try_loading_last_preset(); preset.has_value())
-    {
-        m_preset = std::move(*preset);
-    }
+    wrap_exception([&] {
+        if (auto preset = m_preset_manager.try_loading_last_preset(); preset.has_value())
+        {
+            m_preset = std::move(*preset);
+        }
+    });
 }
 
 void Application::save_preset()

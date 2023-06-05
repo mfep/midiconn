@@ -26,22 +26,16 @@ Application::Application(SDL_Window*                  window,
       m_preset{NodeEditor(m_node_factory, m_port_name_display, m_theme_control), {}},
       m_preset_manager(m_preset, m_node_factory, m_config, m_port_name_display, m_theme_control),
       m_port_name_display(m_config.get_show_full_port_names()),
-      m_welcome_enabled(m_config.get_show_welcome()),
+      m_welcome_enabled(m_config.get_show_welcome() && path_to_preset.empty()),
       m_logo_texture(ResourceLoader::load_texture(renderer, "graphics/mc_logo.png"))
 {
     spdlog::info("Starting " MIDI_APPLICATION_NAME " version {}", g_current_version);
 
-    try
+    if (!path_to_preset.empty())
     {
-        if (!path_to_preset.empty())
-        {
+        wrap_exception([&] {
             m_preset = m_preset_manager.open_preset(path_to_preset);
-        }
-    }
-    catch (std::runtime_error& error)
-    {
-        spdlog::warn("Could not open preset provided on the command line: {}",
-                     utils::path_to_utf8str(path_to_preset));
+        });
     }
 }
 

@@ -362,7 +362,8 @@ void Application::render_welcome_window()
         }
         if (last_preset_opt && ImGui::IsItemHovered())
         {
-            ImGui::SetTooltip("%s", last_preset_opt.value().c_str());
+            const auto preset_str = utils::path_to_utf8str(*last_preset_opt);
+            ImGui::SetTooltip("%s", preset_str.c_str());
         }
         ImGui::EndDisabled();
         if (ImGui::CollapsingHeader("Open source licenses"))

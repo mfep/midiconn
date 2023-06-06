@@ -5,7 +5,7 @@ include(FetchContent)
 include(deps/CMakeRC.cmake)
 set(CMAKE_CXX_STANDARD 20)
 
-project(midiconn VERSION 0.2.0 LANGUAGES CXX)
+project(midiconn VERSION 0.2.1 LANGUAGES CXX)
 
 option(MC_CHECK_FOR_UPDATES "Build ${PROJECT_NAME} to check for updates on start" OFF)
 

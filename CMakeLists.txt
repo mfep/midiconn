@@ -119,7 +119,6 @@ target_compile_definitions(midiconn PRIVATE
     SPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_DEBUG
     IMGUI_ENABLE_FREETYPE
 )
-add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 
 set(CPACK_PACKAGE_NAME "midiconn")
 set(CPACK_PACKAGE_VENDOR "safeworlds")
@@ -138,6 +137,7 @@ if(WIN32)
         WINVER=0x0A00
         NTDDI_VERSION=0x0A000000
     )
+    target_compile_options(midiconn PRIVATE "/utf-8")
     target_link_libraries(midiconn PRIVATE
         Shcore.lib
     )

@@ -31,14 +31,14 @@ configure_file(
 
 set(JSON_BuildTests OFF CACHE INTERNAL "")
 set(JSON_MultipleHeaders ON CACHE INTERNAL "")
-add_subdirectory(deps/json)
+add_subdirectory(deps/json EXCLUDE_FROM_ALL)
 set(BUILD_EXAMPLES OFF)
 set(SPNG_SHARED OFF)
-add_subdirectory(deps/libspng)
+add_subdirectory(deps/libspng EXCLUDE_FROM_ALL)
 
 set(RTMIDI_API_JACK OFF)
 set(RTMIDI_BUILD_STATIC_LIBS ON)
-add_subdirectory(deps/rtmidi)
+add_subdirectory(deps/rtmidi EXCLUDE_FROM_ALL)
 
 set(sources
     ${g_font_cpp_path}

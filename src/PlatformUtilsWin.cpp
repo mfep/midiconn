@@ -78,15 +78,18 @@ unsigned get_window_dpi(SDL_Window* window)
 }
 
 template <>
-std::filesystem::path get_cli_path(PSTR arg)
+std::filesystem::path get_cli_path(PWSTR arg)
 {
-    std::filesystem::path path(arg);
-    if (!path.empty() && !std::filesystem::is_regular_file(path))
+    if (std::wstring(arg).empty())
     {
-        std::stringstream sstream;
-        sstream << "Path \"" << arg << "\" is not a file.";
-        throw std::runtime_error(sstream.str());
+        return {};
     }
+    // if arg is empty, CommandLineToArgvW returns a path to the executable
+    // otherwise it returns the arguments passed
+    int                         argc{};
+    const auto                  argv = CommandLineToArgvW(arg, &argc);
+    const std::filesystem::path path{argv[0]};
+    LocalFree(argv);
     return path;
 }
 

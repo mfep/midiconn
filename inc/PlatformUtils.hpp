@@ -7,7 +7,7 @@
 #ifdef _WIN32
 
 #define MC_MAIN                                                                                    \
-    int WinMain(HINSTANCE /*hInstance*/, HINSTANCE /*hPrevInstance*/, PSTR argv, INT /*nCmdShow*/)
+    int wWinMain(HINSTANCE /*hInstance*/, HINSTANCE /*hPrevInstance*/, PWSTR argv, INT /*nCmdShow*/)
 #define MC_GET_CLI_PATH ::mc::platform::get_cli_path(argv)
 
 #else

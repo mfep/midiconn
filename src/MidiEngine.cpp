@@ -92,7 +92,7 @@ void Engine::MidiInput::error_callback(RtMidiError::Type  error_code,
                                        const std::string& message,
                                        void* /*user_data*/)
 {
-    spdlog::error("Error {} occured in MIDI input: \"{}\"", error_code, message);
+    spdlog::error("Error {} occured in MIDI input: \"{}\"", static_cast<int>(error_code), message);
 }
 
 Engine::MidiOutput::MidiOutput(const OutputInfo& info)
@@ -112,7 +112,7 @@ void Engine::MidiOutput::error_callback(RtMidiError::Type  error_code,
                                         const std::string& message,
                                         void* /*user_data*/)
 {
-    spdlog::error("Error {} occured in MIDI output: \"{}\"", error_code, message);
+    spdlog::error("Error {} occured in MIDI output: \"{}\"", static_cast<int>(error_code), message);
 }
 
 void Engine::create(const InputInfo& input_info, InputObserver* observer)

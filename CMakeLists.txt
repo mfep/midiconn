@@ -3,7 +3,6 @@ set(CMAKE_POLICY_DEFAULT_CMP0077 NEW) # option() honors normal variables
 
 include(FetchContent)
 include(external/CMakeRC.cmake)
-set(CMAKE_CXX_STANDARD 20)
 
 project(midiconn VERSION 0.2.1 LANGUAGES CXX)
 
@@ -119,6 +118,7 @@ target_compile_definitions(midiconn PRIVATE
     SPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_DEBUG
     IMGUI_ENABLE_FREETYPE
 )
+target_compile_features(midiconn PRIVATE cxx_std_20)
 
 set(CPACK_PACKAGE_NAME "midiconn")
 set(CPACK_PACKAGE_VENDOR "safeworlds")

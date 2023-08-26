@@ -1,21 +1,21 @@
 [submodule "deps/imgui"]
-	path = deps/imgui
+	path = external/imgui
 	url = https://github.com/ocornut/imgui.git
 [submodule "deps/imnodes"]
-	path = deps/imnodes
+	path = external/imnodes
 	url = https://github.com/Nelarius/imnodes.git
 [submodule "deps/json"]
-	path = deps/json
+	path = external/json
 	url = https://github.com/nlohmann/json.git
 [submodule "deps/portable-file-dialogs"]
-	path = deps/portable-file-dialogs
+	path = external/portable-file-dialogs
 	url = https://github.com/samhocevar/portable-file-dialogs.git
 [submodule "deps/IconFontCppHeaders"]
-	path = deps/IconFontCppHeaders
+	path = external/IconFontCppHeaders
 	url = https://github.com/juliettef/IconFontCppHeaders.git
 [submodule "deps/libspng"]
-	path = deps/libspng
+	path = external/libspng
 	url = https://github.com/randy408/libspng.git
 [submodule "deps/rtmidi"]
-	path = deps/rtmidi
+	path = external/rtmidi
 	url = https://github.com/thestk/rtmidi

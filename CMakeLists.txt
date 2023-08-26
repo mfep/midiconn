@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.22)
 set(CMAKE_POLICY_DEFAULT_CMP0077 NEW) # option() honors normal variables
 
 include(FetchContent)
-include(deps/CMakeRC.cmake)
+include(external/CMakeRC.cmake)
 set(CMAKE_CXX_STANDARD 20)
 
 project(midiconn VERSION 0.2.1 LANGUAGES CXX)
@@ -31,26 +31,26 @@ configure_file(
 
 set(JSON_BuildTests OFF CACHE INTERNAL "")
 set(JSON_MultipleHeaders ON CACHE INTERNAL "")
-add_subdirectory(deps/json EXCLUDE_FROM_ALL)
+add_subdirectory(external/json EXCLUDE_FROM_ALL)
 set(BUILD_EXAMPLES OFF)
 set(SPNG_SHARED OFF)
-add_subdirectory(deps/libspng EXCLUDE_FROM_ALL)
+add_subdirectory(external/libspng EXCLUDE_FROM_ALL)
 
 set(RTMIDI_API_JACK OFF)
 set(RTMIDI_BUILD_STATIC_LIBS ON)
-add_subdirectory(deps/rtmidi EXCLUDE_FROM_ALL)
+add_subdirectory(external/rtmidi EXCLUDE_FROM_ALL)
 
 set(sources
     ${g_font_cpp_path}
-    deps/imgui/imgui.cpp
-    deps/imgui/imgui_demo.cpp
-    deps/imgui/imgui_draw.cpp
-    deps/imgui/imgui_tables.cpp
-    deps/imgui/imgui_widgets.cpp
-    deps/imgui/backends/imgui_impl_sdl2.cpp
-    deps/imgui/backends/imgui_impl_sdlrenderer.cpp
-    deps/imgui/misc/freetype/imgui_freetype.cpp
-    deps/imnodes/imnodes.cpp
+    external/imgui/imgui.cpp
+    external/imgui/imgui_demo.cpp
+    external/imgui/imgui_draw.cpp
+    external/imgui/imgui_tables.cpp
+    external/imgui/imgui_widgets.cpp
+    external/imgui/backends/imgui_impl_sdl2.cpp
+    external/imgui/backends/imgui_impl_sdlrenderer.cpp
+    external/imgui/misc/freetype/imgui_freetype.cpp
+    external/imnodes/imnodes.cpp
     src/Application.cpp
     src/ConfigFile.cpp
     src/DisconnectedMidiInNode.cpp
@@ -98,10 +98,10 @@ add_executable(midiconn "${sources}")
 
 target_include_directories(midiconn PRIVATE
     inc
-    deps/imgui
-    deps/imnodes
-    deps/portable-file-dialogs
-    deps/IconFontCppHeaders
+    external/imgui
+    external/imnodes
+    external/portable-file-dialogs
+    external/IconFontCppHeaders
     "${FREETYPE_INCLUDE_DIRS}")
 target_link_libraries(midiconn PRIVATE
     nlohmann_json::nlohmann_json

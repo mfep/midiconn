@@ -24,8 +24,8 @@ set(JSON_BuildTests OFF CACHE INTERNAL "")
 set(JSON_MultipleHeaders ON CACHE INTERNAL "")
 
 configure_file(
-    inc/Version.hpp.in
-    ${CMAKE_CURRENT_SOURCE_DIR}/inc/Version.hpp
+    src/Version.hpp.in
+    ${CMAKE_CURRENT_BINARY_DIR}/src/Version.hpp
 )
 
 set(JSON_BuildTests OFF CACHE INTERNAL "")
@@ -96,7 +96,7 @@ cmrc_add_resource_library(midiconn_resources "${FONTS}" "${CMAKE_CURRENT_SOURCE_
 add_executable(midiconn "${sources}")
 
 target_include_directories(midiconn PRIVATE
-    inc
+    ${CMAKE_CURRENT_BINARY_DIR}/src
     external/imgui
     external/imnodes
     external/portable-file-dialogs

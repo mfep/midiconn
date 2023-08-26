@@ -8,7 +8,7 @@
 
 **midiconn** is a virtual hub to connect MIDI hardware through the computer.
 
-<img src="./graphics/screenshot_0.png" alt="Screenshot of midiconn" width=600px />
+<img src="./data/graphics/screenshot_0.png" alt="Screenshot of midiconn" width=600px />
 
 ## Features
 - An intuitive, node-based user interface with predictable interactions - one does not have to be a power user or MIDI expert to use it.
@@ -91,7 +91,7 @@ It requires the `flatpak-builder` package to be installed on the system.
 $ git clone --recursive https://github.com/mfep/midiconn.git
 $ flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 $ flatpak install -y flathub org.freedesktop.Sdk//22.08 org.freedesktop.Platform//22.08
-$ flatpak-builder --install --user ./midiconn/build/flatpak ./midiconn/packaging/xyz.safeworlds.midiconn.yml
+$ flatpak-builder --install --user ./midiconn/build/flatpak ./midiconn/data/packaging/xyz.safeworlds.midiconn.yml
 ```
 
 ### CMake configuration options

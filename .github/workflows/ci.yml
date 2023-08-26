@@ -57,12 +57,12 @@ jobs:
         flatpak-builder
     - name: Validate metainfo
       run: appstream-util validate
-        ${{github.workspace}}/packaging/xyz.safeworlds.midiconn.metainfo.xml
+        ${{github.workspace}}/data/packaging/xyz.safeworlds.midiconn.metainfo.xml
     - name: Install flatpak prerequisites
       run: sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo &&
         sudo flatpak install -y flathub org.freedesktop.Sdk//22.08 org.freedesktop.Platform//22.08
     - name: Build flatpak
-      run: flatpak-builder build/flatpak ${{github.workspace}}/packaging/xyz.safeworlds.midiconn.yml
+      run: flatpak-builder build/flatpak ${{github.workspace}}/data/packaging/xyz.safeworlds.midiconn.yml
 
   build-windows:
     runs-on: windows-2022

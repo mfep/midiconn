@@ -80,7 +80,7 @@ set(sources
 if(WIN32)
     list(APPEND sources
         src/PlatformUtilsWin.cpp
-        graphics/appicon.rc)
+        data/graphics/appicon.rc)
 else()
     list(APPEND sources src/PlatformUtilsLinux.cpp)
 endif()
@@ -90,8 +90,8 @@ else()
     list(APPEND sources src/UpdateCheckerStub.cpp)
 endif()
 
-file(GLOB FONTS RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/fonts/*")
-cmrc_add_resource_library(midiconn_resources "${FONTS}" "${CMAKE_CURRENT_SOURCE_DIR}/graphics/mc_logo.png" ALIAS resources)
+file(GLOB FONTS RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/data/fonts/*")
+cmrc_add_resource_library(midiconn_resources "${FONTS}" "${CMAKE_CURRENT_SOURCE_DIR}/data/graphics/mc_logo.png" ALIAS resources WHENCE data)
 
 add_executable(midiconn "${sources}")
 
@@ -126,10 +126,10 @@ if(WIN32)
     set(CMAKE_INSTALL_BINDIR ".")
     set(CPACK_PACKAGE_INSTALL_DIRECTORY "midiconn")
     set(CPACK_PACKAGE_EXECUTABLES midiconn "midiconn")
-    set(CPACK_WIX_PRODUCT_ICON "${CMAKE_CURRENT_SOURCE_DIR}/graphics/appicon.ico")
+    set(CPACK_WIX_PRODUCT_ICON "${CMAKE_CURRENT_SOURCE_DIR}/data/graphics/appicon.ico")
     set(CPACK_GENERATOR "WIX")
     set(CPACK_WIX_UPGRADE_GUID "96D23EBE-7D9E-4C53-8CD7-6E5CC32A5CE1")
-    set(CPACK_WIX_PATCH_FILE "${CMAKE_CURRENT_SOURCE_DIR}/packaging/wix_patch.xml")
+    set(CPACK_WIX_PATCH_FILE "${CMAKE_CURRENT_SOURCE_DIR}/data/packaging/wix_patch.xml")
     set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.txt")
     install(IMPORTED_RUNTIME_ARTIFACTS spdlog::spdlog fmt::fmt SDL2::SDL2 freetype
         RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
@@ -145,14 +145,14 @@ if(WIN32)
 else()
     set(CPACK_PACKAGE_CONTACT "Lőrinc Serfőző <lorinc.serfozo@mailbox.org>")
     set(CMAKE_PROJECT_HOMEPAGE_URL "https://github.com/mfep/midiconn")
-    install(FILES "graphics/mc_logo.svg"
+    install(FILES "data/graphics/mc_logo.svg"
         DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/scalable/apps/"
         RENAME "xyz.safeworlds.midiconn.svg")
-    install(FILES "packaging/xyz.safeworlds.midiconn.desktop"
+    install(FILES "data/packaging/xyz.safeworlds.midiconn.desktop"
         DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/applications/")
-    install(FILES "packaging/xyz.safeworlds.midiconn.metainfo.xml"
+    install(FILES "data/packaging/xyz.safeworlds.midiconn.metainfo.xml"
         DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/metainfo/")
-    install(FILES "packaging/xyz.safeworlds.midiconn.mime.xml"
+    install(FILES "data/packaging/xyz.safeworlds.midiconn.mime.xml"
         DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/mime/packages/")
 
     # DEB specific

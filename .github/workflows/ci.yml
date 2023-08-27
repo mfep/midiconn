@@ -114,10 +114,10 @@ jobs:
       uses: actions/download-artifact@v3
     - name: Create GitHub release
       uses: softprops/action-gh-release@v1
-        with:
-          files: |
-            ${{github.workspace}}/build/*.deb
-            ${{github.workspace}}/build/*.msi
+      with:
+        files: |
+          ${{github.workspace}}/build/*.deb
+          ${{github.workspace}}/build/*.msi
     - name: Push artifacts to itch.io
       shell: bash
       run: |

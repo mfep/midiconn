@@ -4,7 +4,7 @@ set(CMAKE_POLICY_DEFAULT_CMP0077 NEW) # option() honors normal variables
 include(FetchContent)
 include(external/CMakeRC.cmake)
 
-project(midiconn VERSION 0.2.1 LANGUAGES CXX)
+project(midiconn VERSION 0.2.2 LANGUAGES CXX)
 
 option(MC_CHECK_FOR_UPDATES "Build ${PROJECT_NAME} to check for updates on start" OFF)
 

@@ -1,4 +1,4 @@
-name: CI
+name: CI/CD
 
 on: [push, pull_request]
 
@@ -102,3 +102,26 @@ jobs:
           ${{github.workspace}}\build\Release\*.exe
           ${{github.workspace}}\build\Release\*.dll
           ${{github.workspace}}\build\*.msi
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-22.04
+    needs:
+    - build-linux
+    - build-windows
+    steps:
+    - name: Download artifacts
+      uses: actions/download-artifact@v3
+    - name: Create GitHub release
+      uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            ${{github.workspace}}/build/*.deb
+            ${{github.workspace}}/build/*.msi
+    - name: Push artifacts to itch.io
+      shell: bash
+      run: |
+        wget https://broth.itch.ovh/butler/linux-amd64/LATEST/archive/default -O butler.zip
+        unzip butler.zip
+        ./butler push ${{github.workspace}}/build/Release/*.msi mfeproject/midiconn:windows-msi --userversion $GITHUB_REF_NAME
+        ./butler push ${{github.workspace}}/build/*.deb mfeproject/midiconn:ubuntu2204-deb --userversion $GITHUB_REF_NAME

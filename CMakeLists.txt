@@ -11,6 +11,7 @@ option(MC_CHECK_FOR_UPDATES "Build ${PROJECT_NAME} to check for updates on start
 find_package(fmt REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(SDL2 REQUIRED)
+find_package(nlohmann_json REQUIRED)
 if(WIN32)
     find_package(freetype CONFIG REQUIRED)
 else()
@@ -20,17 +21,11 @@ if(NOT WIN32 AND MC_CHECK_FOR_UPDATES)
     find_package(CURL REQUIRED)
 endif()
 
-set(JSON_BuildTests OFF CACHE INTERNAL "")
-set(JSON_MultipleHeaders ON CACHE INTERNAL "")
-
 configure_file(
     src/Version.hpp.in
     ${CMAKE_CURRENT_BINARY_DIR}/src/Version.hpp
 )
 
-set(JSON_BuildTests OFF CACHE INTERNAL "")
-set(JSON_MultipleHeaders ON CACHE INTERNAL "")
-add_subdirectory(external/json EXCLUDE_FROM_ALL)
 set(BUILD_EXAMPLES OFF)
 set(SPNG_SHARED OFF)
 add_subdirectory(external/libspng EXCLUDE_FROM_ALL)

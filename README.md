@@ -64,13 +64,13 @@ On Ubuntu (version 22.04 or later), the following script installs these prerequi
 
 ```shell
 $ sudo apt-get update
-$ sudo apt-get install -y git build-essential cmake libasound2-dev libfmt-dev libfreetype-dev libsdl2-dev libspdlog-dev
+$ sudo apt-get install -y git build-essential cmake libasound2-dev libfmt-dev libfreetype-dev libsdl2-dev libspdlog-dev nlohmann-json3-dev
 ```
 
 On Fedora (version 36 or later), the following script installs these prerequisites:
 
 ```shell
-$ sudo dnf install -y git gcc-c++ cmake alsa-lib-devel fmt-devel freetype-devel SDL2-devel spdlog-devel
+$ sudo dnf install -y git gcc-c++ cmake alsa-lib-devel fmt-devel freetype-devel json-devel SDL2-devel spdlog-devel
 ```
 
 Once the prerequisites are installed, **midiconn** can be built and packaged:

@@ -52,6 +52,7 @@ Alternatively, the build instructions can be found below.
 ### Building the Linux binary package
 Make sure that the development packages of the dependencies are installed. The list of library dependencies is the following:
 - ALSA
+- JSON for Modern C++ ([nlohmann/json](https://github.com/nlohmann/json))
 - libfmt
 - libfreetype
 - libsdl2 (>= 2.0.17)

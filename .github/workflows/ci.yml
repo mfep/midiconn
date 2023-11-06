@@ -54,7 +54,7 @@ jobs:
         ${{github.workspace}}/data/packaging/xyz.safeworlds.midiconn.metainfo.xml
     - name: Install flatpak prerequisites
       run: sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo &&
-        sudo flatpak install -y flathub org.freedesktop.Sdk//22.08 org.freedesktop.Platform//22.08
+        sudo flatpak install -y flathub org.freedesktop.Sdk//23.08 org.freedesktop.Platform//23.08
     - name: Build flatpak
       run: flatpak-builder build/flatpak ${{github.workspace}}/data/packaging/xyz.safeworlds.midiconn.yml
 
@@ -124,5 +124,6 @@ jobs:
       run: |
         wget https://broth.itch.ovh/butler/linux-amd64/LATEST/archive/default -O butler.zip
         unzip butler.zip
+        export BUTLER_API_KEY=${{ secrets.BUTLER_API_KEY }}
         ./butler push ${{github.workspace}}/build/Release/*.msi mfeproject/midiconn:windows-msi --userversion $GITHUB_REF_NAME
         ./butler push ${{github.workspace}}/build/*.deb mfeproject/midiconn:ubuntu2204-deb --userversion $GITHUB_REF_NAME

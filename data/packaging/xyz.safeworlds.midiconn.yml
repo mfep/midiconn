@@ -1,7 +1,7 @@
 id: xyz.safeworlds.midiconn
 command: midiconn
 runtime: org.freedesktop.Platform
-runtime-version: '22.08'
+runtime-version: '23.08'
 sdk: org.freedesktop.Sdk
 cleanup:
   - /bin/sdl2-config
@@ -21,20 +21,6 @@ finish-args:
   - --device=dri
   - --share=ipc
 modules:
-  # libdecor provides client window decorations under Wayland
-  - name: libdecor
-    buildsystem: meson
-    sources:
-      - type: git
-        url: https://gitlab.freedesktop.org/libdecor/libdecor
-        tag: 0.1.1
-  # SDL 2.26.x is needed to utilize libdecor
-  - name: SDL2
-    buildsystem: autotools
-    sources:
-      - type: git
-        url: https://github.com/libsdl-org/SDL
-        tag: release-2.26.2
   - name: fmt
     buildsystem: cmake-ninja
     config-opts:

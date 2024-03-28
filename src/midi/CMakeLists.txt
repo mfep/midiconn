@@ -4,6 +4,7 @@ add_library(midi STATIC
     MidiEngine.cpp
     MidiGraph.cpp
     MidiProbe.cpp
+    OutputNode.cpp
     OutputObserver.cpp
 )
 

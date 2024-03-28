@@ -1,6 +1,6 @@
 #pragma once
 #include "InputObserver.hpp"
-#include "MidiEngine.hpp"
+#include "MessageTypeMask.hpp"
 #include "MidiGraph.hpp"
 #include "MidiInfo.hpp"
 

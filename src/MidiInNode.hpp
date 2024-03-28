@@ -1,10 +1,10 @@
 #pragma once
 #include <chrono>
 
-#include "InputObserver.hpp"
-#include "MidiEngine.hpp"
-#include "MidiInfo.hpp"
 #include "Node.hpp"
+#include "midi/InputObserver.hpp"
+#include "midi/MidiEngine.hpp"
+#include "midi/MidiInfo.hpp"
 
 namespace mc
 {

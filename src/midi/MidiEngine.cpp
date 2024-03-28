@@ -37,7 +37,7 @@ namespace
 
 void check_input_port(unsigned id, const InputInfo& input_info)
 {
-    const auto valid_port_name = MidiProbe::get_valid_input_port_name(id);
+    const auto valid_port_name = midi::MidiProbe::get_valid_input_port_name(id);
     if (!valid_port_name.has_value())
     {
         throw std::logic_error("Input port does not exist.");
@@ -50,7 +50,7 @@ void check_input_port(unsigned id, const InputInfo& input_info)
 
 void check_output_port(unsigned id, const OutputInfo& output_info)
 {
-    const auto valid_port_name = MidiProbe::get_valid_output_port_name(id);
+    const auto valid_port_name = midi::MidiProbe::get_valid_output_port_name(id);
     if (!valid_port_name.has_value())
     {
         throw std::logic_error("Output port does not exist.");
@@ -64,7 +64,7 @@ void check_output_port(unsigned id, const OutputInfo& output_info)
 } // namespace
 
 Engine::MidiInput::MidiInput(const InputInfo& info)
-    : m_info(info), m_midi_in(RtMidi::UNSPECIFIED, MidiProbe::get_midi_client_name())
+    : m_info(info), m_midi_in(RtMidi::UNSPECIFIED, midi::MidiProbe::get_midi_client_name())
 {
 }
 
@@ -96,7 +96,7 @@ void Engine::MidiInput::error_callback(RtMidiError::Type  error_code,
 }
 
 Engine::MidiOutput::MidiOutput(const OutputInfo& info)
-    : m_info(info), m_midi_out(RtMidi::UNSPECIFIED, MidiProbe::get_midi_client_name())
+    : m_info(info), m_midi_out(RtMidi::UNSPECIFIED, midi::MidiProbe::get_midi_client_name())
 {
     m_midi_out.setErrorCallback(error_callback, nullptr);
     m_midi_out.openPort(info.m_id);

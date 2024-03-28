@@ -3,9 +3,9 @@
 #include "imgui.h"
 #include "imnodes.h"
 
-#include "MidiEngine.hpp"
 #include "NodeSerializer.hpp"
 #include "PortNameDisplay.hpp"
+#include "midi/MidiEngine.hpp"
 
 namespace mc
 {

@@ -7,7 +7,6 @@
 #include "ApplicationName.hpp"
 #include "Commands.hpp"
 #include "ConfigFile.hpp"
-#include "MidiEngine.hpp"
 #include "NodeEditor.hpp"
 #include "NodeFactory.hpp"
 #include "PortNameDisplay.hpp"
@@ -15,6 +14,7 @@
 #include "ResourceLoader.hpp"
 #include "Theme.hpp"
 #include "UpdateChecker.hpp"
+#include "midi/MidiEngine.hpp"
 
 namespace mc
 {

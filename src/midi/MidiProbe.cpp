@@ -7,7 +7,7 @@
 
 #include "RtMidi.h"
 
-#include "ApplicationName.hpp"
+#include "../ApplicationName.hpp"
 
 namespace mc
 {

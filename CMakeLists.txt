@@ -49,27 +49,27 @@ set(sources
     src/ConfigFile.cpp
     src/DisconnectedMidiInNode.cpp
     src/DisconnectedMidiOutNode.cpp
-    src/InputObserver.cpp
     src/KeyboardShortcutAggregator.cpp
     src/Licenses.cpp
     src/MidiChannelNode.cpp
-    src/MidiEngine.cpp
     src/MidiInNode.cpp
     src/MidiOutNode.cpp
     src/MidiPortWatchdog.cpp
-    src/MidiProbe.cpp
     src/Node.cpp
     src/NodeEditor.cpp
     src/NodeFactory.cpp
     src/NodeSerializer.cpp
     src/main.cpp
-    src/OutputObserver.cpp
     src/PlatformUtils.cpp
     src/PresetManager.cpp
     src/PortNameDisplay.cpp
     src/ResourceLoader.cpp
     src/Theme.cpp
     src/Version.cpp
+    src/midi/InputObserver.cpp
+    src/midi/MidiEngine.cpp
+    src/midi/MidiProbe.cpp
+    src/midi/OutputObserver.cpp
 )
 
 if(WIN32)

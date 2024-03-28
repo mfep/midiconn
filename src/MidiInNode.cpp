@@ -5,9 +5,9 @@
 #include "imgui.h"
 #include "imnodes.h"
 
-#include "MidiProbe.hpp"
 #include "NodeSerializer.hpp"
 #include "PortNameDisplay.hpp"
+#include "midi/MidiProbe.hpp"
 
 namespace mc
 {

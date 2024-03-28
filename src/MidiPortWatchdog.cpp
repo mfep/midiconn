@@ -6,8 +6,8 @@
 #include "DisconnectedMidiOutNode.hpp"
 #include "MidiInNode.hpp"
 #include "MidiOutNode.hpp"
-#include "MidiProbe.hpp"
 #include "NodeFactory.hpp"
+#include "midi/MidiProbe.hpp"
 
 namespace mc
 {
@@ -148,10 +148,10 @@ void MidiPortWatchdog::check_nodes(std::vector<std::shared_ptr<Node>>& nodes,
     for (auto& node_ptr : nodes)
     {
         const auto get_valid_input = [](const auto& name) {
-            return MidiProbe::get_valid_input(name);
+            return midi::MidiProbe::get_valid_input(name);
         };
         const auto get_valid_output = [](const auto& name) {
-            return MidiProbe::get_valid_output(name);
+            return midi::MidiProbe::get_valid_output(name);
         };
 
         if (update_node<MidiInNode, DisconnectedMidiInNode>(

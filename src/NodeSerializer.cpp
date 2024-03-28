@@ -9,10 +9,10 @@
 #include "DisconnectedMidiOutNode.hpp"
 #include "MidiChannelNode.hpp"
 #include "MidiInNode.hpp"
-#include "MidiInfo.hpp"
 #include "MidiOutNode.hpp"
-#include "MidiProbe.hpp"
 #include "NodeFactory.hpp"
+#include "midi/MidiInfo.hpp"
+#include "midi/MidiProbe.hpp"
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ImVec2, x, y);
 
@@ -86,7 +86,7 @@ std::shared_ptr<Node> NodeSerializer::deserialize_node(const json& j) const
     if (node_type == "midi_in")
     {
         const auto input_name     = j.at("input_name").get<std::string>();
-        const auto input_info_opt = MidiProbe::get_valid_input(input_name);
+        const auto input_info_opt = midi::MidiProbe::get_valid_input(input_name);
         if (input_info_opt.has_value())
         {
             node = m_node_factory->build_midi_node(input_info_opt.value());
@@ -99,7 +99,7 @@ std::shared_ptr<Node> NodeSerializer::deserialize_node(const json& j) const
     else if (node_type == "midi_out")
     {
         const auto output_name     = j.at("output_name").get<std::string>();
-        const auto output_info_opt = MidiProbe::get_valid_output(output_name);
+        const auto output_info_opt = midi::MidiProbe::get_valid_output(output_name);
         if (output_info_opt.has_value())
         {
             node = m_node_factory->build_midi_node(output_info_opt.value());

@@ -10,11 +10,11 @@
 #include "MidiInNode.hpp"
 #include "MidiOutNode.hpp"
 #include "MidiPortWatchdog.hpp"
-#include "MidiProbe.hpp"
 #include "NodeFactory.hpp"
 #include "NodeSerializer.hpp"
 #include "PortNameDisplay.hpp"
 #include "Theme.hpp"
+#include "midi/MidiProbe.hpp"
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ImVec2, x, y);
 
@@ -161,8 +161,8 @@ std::shared_ptr<Node> NodeEditor::renderContextMenu(bool show_outputting_nodes,
     {
         if (ImGui::IsWindowAppearing())
         {
-            m_input_infos  = MidiProbe::get_inputs();
-            m_output_infos = MidiProbe::get_outputs();
+            m_input_infos  = midi::MidiProbe::get_inputs();
+            m_output_infos = midi::MidiProbe::get_outputs();
         }
         if (show_outputting_nodes || show_inputting_nodes)
         {
@@ -326,10 +326,10 @@ void NodeEditor::instantiate_available_inputs_and_outputs()
         }
     };
 
-    instantiate_nodes(MidiProbe::get_inputs());
+    instantiate_nodes(midi::MidiProbe::get_inputs());
     node_pos.x += 300 * scale;
     node_pos.y = y_start;
-    instantiate_nodes(MidiProbe::get_outputs());
+    instantiate_nodes(midi::MidiProbe::get_outputs());
 }
 
 } // namespace mc

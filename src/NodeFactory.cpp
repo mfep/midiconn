@@ -3,10 +3,10 @@
 #include "DisconnectedMidiInNode.hpp"
 #include "DisconnectedMidiOutNode.hpp"
 #include "MidiChannelNode.hpp"
-#include "MidiEngine.hpp"
 #include "MidiInNode.hpp"
 #include "MidiOutNode.hpp"
 #include "Theme.hpp"
+#include "midi/MidiEngine.hpp"
 
 namespace mc
 {

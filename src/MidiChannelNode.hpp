@@ -2,8 +2,8 @@
 
 #include <functional>
 
-#include "MidiInfo.hpp"
 #include "Node.hpp"
+#include "midi/MidiInfo.hpp"
 
 namespace mc
 {

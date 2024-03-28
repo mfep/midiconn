@@ -4,7 +4,7 @@
 
 #include "nlohmann/json_fwd.hpp"
 
-#include "MidiInfo.hpp"
+#include "midi/MidiInfo.hpp"
 
 namespace mc
 {

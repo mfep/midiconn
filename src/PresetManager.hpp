@@ -4,8 +4,8 @@
 
 #include "nlohmann/json.hpp"
 
-#include "MidiEngine.hpp"
 #include "NodeEditor.hpp"
+#include "midi/MidiEngine.hpp"
 
 namespace mc
 {

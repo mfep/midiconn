@@ -5,7 +5,7 @@
 
 #include "MidiInfo.hpp"
 
-namespace mc
+namespace mc::midi
 {
 
 class MidiProbe final
@@ -25,4 +25,4 @@ public:
     static std::optional<std::string> get_valid_output_port_name(unsigned id);
 };
 
-} // namespace mc
+} // namespace mc::midi

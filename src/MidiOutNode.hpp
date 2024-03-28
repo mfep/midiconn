@@ -2,7 +2,7 @@
 #include <chrono>
 
 #include "Node.hpp"
-#include "OutputObserver.hpp"
+#include "midi/OutputObserver.hpp"
 
 namespace mc
 {

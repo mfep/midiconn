@@ -1,4 +1,5 @@
-add_library(midi 
+add_library(midi STATIC
+    InputNode.cpp
     InputObserver.cpp
     MidiEngine.cpp
     MidiGraph.cpp

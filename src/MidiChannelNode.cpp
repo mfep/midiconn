@@ -14,6 +14,12 @@ const char* mc::MidiChannelNode::sm_combo_items[] = {
 
 mc::MidiChannelNode::MidiChannelNode(std::function<float()> get_scale) : m_get_scale(get_scale)
 {
+    m_midi_channel_map_node.add_observer(this);
+}
+
+mc::MidiChannelNode::~MidiChannelNode()
+{
+    m_midi_channel_map_node.remove_observer(this);
 }
 
 void mc::MidiChannelNode::accept_serializer(nlohmann::json&       j,
@@ -33,11 +39,15 @@ void mc::MidiChannelNode::render_internal()
     ImGui::TextUnformatted("Channel map");
     ImNodes::EndNodeTitleBar();
     ImNodes::BeginInputAttribute(in_id());
+    m_input_indicator.render();
+    ImGui::SameLine();
     ImGui::TextUnformatted("MIDI in");
     ImNodes::EndInputAttribute();
     ImGui::SameLine(100 * m_get_scale());
     ImNodes::BeginOutputAttribute(out_id());
     ImGui::TextUnformatted("MIDI out");
+    ImGui::SameLine();
+    m_output_indicator.render();
     ImNodes::EndOutputAttribute();
 
     std::array<int, midi::ChannelMap::num_channels> channels;
@@ -111,6 +121,16 @@ void mc::MidiChannelNode::render_internal()
             ++idx;
         }
     }
+}
+
+void mc::MidiChannelNode::message_processed(std::span<const unsigned char> /*message_bytes*/)
+{
+    m_output_indicator.trigger();
+}
+
+void mc::MidiChannelNode::message_received(std::span<const unsigned char> /*message_bytes*/)
+{
+    m_input_indicator.trigger();
 }
 
 const char* mc::MidiChannelNode::get_label(size_t index)

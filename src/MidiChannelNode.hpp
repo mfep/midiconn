@@ -2,16 +2,18 @@
 
 #include <functional>
 
+#include "ActivityIndicator.hpp"
 #include "Node.hpp"
 #include "midi/ChannelMapNode.hpp"
 
 namespace mc
 {
 
-class MidiChannelNode final : public Node
+class MidiChannelNode final : public Node, private midi::GraphObserver
 {
 public:
-    MidiChannelNode(std::function<float()> get_scale);
+    explicit MidiChannelNode(std::function<float()> get_scale);
+    ~MidiChannelNode();
 
     void accept_serializer(nlohmann::json& j, const NodeSerializer& serializer) const override;
 
@@ -20,6 +22,8 @@ protected:
 
 private:
     void render_internal() override;
+    void message_processed(std::span<const unsigned char> message_bytes) override;
+    void message_received(std::span<const unsigned char> message_bytes) override;
 
     static const char* get_label(size_t index);
     static const char* get_hidden_label(size_t index);
@@ -29,6 +33,9 @@ private:
 
     std::function<float()> m_get_scale;
     midi::ChannelMapNode   m_midi_channel_map_node;
+
+    ActivityIndicator m_input_indicator;
+    ActivityIndicator m_output_indicator;
 
     friend class NodeSerializer;
 };

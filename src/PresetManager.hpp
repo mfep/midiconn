@@ -5,7 +5,7 @@
 #include "nlohmann/json.hpp"
 
 #include "NodeEditor.hpp"
-#include "midi/MidiEngine.hpp"
+#include "midi/MessageTypeMask.hpp"
 
 namespace mc
 {
@@ -20,7 +20,7 @@ struct Preset
     midi::MessageTypeMask m_message_type_mask;
 
     void          to_json(nlohmann::json& j) const;
-    static Preset from_json(const NodeFactory&     node_factory,
+    static Preset from_json(NodeFactory&           node_factory,
                             const PortNameDisplay& port_name_display,
                             const ThemeControl&    theme_control,
                             const nlohmann::json&  j);
@@ -30,7 +30,7 @@ class PresetManager final
 {
 public:
     PresetManager(const Preset&          preset,
-                  const NodeFactory&     node_factory,
+                  NodeFactory&           node_factory,
                   ConfigFile&            config,
                   const PortNameDisplay& port_name_display,
                   const ThemeControl&    theme_control);
@@ -46,7 +46,7 @@ public:
 private:
     void save_preset(const Preset& preset, const bool save_as);
 
-    const NodeFactory*                   m_node_factory;
+    NodeFactory*                         m_node_factory;
     ConfigFile*                          m_config;
     nlohmann::json                       m_last_editor_state;
     std::optional<std::filesystem::path> m_opened_path;

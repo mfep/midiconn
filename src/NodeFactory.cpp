@@ -6,42 +6,65 @@
 #include "MidiInNode.hpp"
 #include "MidiOutNode.hpp"
 #include "Theme.hpp"
-#include "midi/MidiEngine.hpp"
+#include "midi/InputNode.hpp"
+#include "midi/OutputNode.hpp"
 
 namespace mc
 {
+namespace
+{
 
-NodeFactory::NodeFactory(midi::Engine&          midi_engine,
-                         const ThemeControl&    theme_control,
+template <class MidiNode, class MidiInfo>
+std::shared_ptr<MidiNode> get_cached_midi_node(
+    std::map<std::size_t, std::weak_ptr<MidiNode>>& node_map, const MidiInfo& info)
+{
+    std::shared_ptr<MidiNode> midi_node_ptr;
+    auto                      found_it = node_map.find(info.m_id);
+    if (found_it == node_map.end() || (found_it->second.expired()))
+    {
+        midi_node_ptr = std::make_shared<MidiNode>(info);
+        node_map.emplace(std::make_pair(info.m_id, midi_node_ptr));
+    }
+    else
+    {
+        midi_node_ptr = found_it->second.lock();
+    }
+    return midi_node_ptr;
+}
+
+} // namespace
+
+NodeFactory::NodeFactory(const ThemeControl&    theme_control,
                          const PortNameDisplay& port_name_display)
-    : m_midi_engine(&midi_engine), m_theme_control(&theme_control),
-      m_port_name_display(&port_name_display)
+    : m_theme_control(&theme_control), m_port_name_display(&port_name_display)
 {
 }
 
-std::shared_ptr<MidiInNode> NodeFactory::build_midi_node(const midi::InputInfo& input_info) const
+std::shared_ptr<MidiInNode> NodeFactory::build_midi_node(const midi::InputInfo& input_info)
 {
-    return std::make_shared<MidiInNode>(input_info, *m_midi_engine, *m_port_name_display);
+    return std::make_shared<MidiInNode>(
+        input_info, get_cached_midi_node(m_input_nodes, input_info), *m_port_name_display);
 }
 
-std::shared_ptr<MidiOutNode> NodeFactory::build_midi_node(const midi::OutputInfo& output_info) const
+std::shared_ptr<MidiOutNode> NodeFactory::build_midi_node(const midi::OutputInfo& output_info)
 {
-    return std::make_shared<MidiOutNode>(output_info, *m_midi_engine, *m_port_name_display);
+    return std::make_shared<MidiOutNode>(
+        output_info, get_cached_midi_node(m_output_nodes, output_info), *m_port_name_display);
 }
 
 std::shared_ptr<DisconnectedMidiInNode> NodeFactory::build_disconnected_midi_in_node(
-    const std::string& input_name) const
+    const std::string& input_name)
 {
     return std::make_shared<DisconnectedMidiInNode>(input_name, *m_port_name_display);
 }
 
 std::shared_ptr<DisconnectedMidiOutNode> NodeFactory::build_disconnected_midi_out_node(
-    const std::string& output_name) const
+    const std::string& output_name)
 {
     return std::make_shared<DisconnectedMidiOutNode>(output_name, *m_port_name_display);
 }
 
-std::shared_ptr<MidiChannelNode> NodeFactory::build_midi_channel_node() const
+std::shared_ptr<MidiChannelNode> NodeFactory::build_midi_channel_node()
 {
     return std::make_shared<MidiChannelNode>([this]() {
         return m_theme_control->get_scale_value();

@@ -33,6 +33,7 @@ add_subdirectory(external/libspng EXCLUDE_FROM_ALL)
 set(RTMIDI_API_JACK OFF)
 set(RTMIDI_BUILD_STATIC_LIBS ON)
 add_subdirectory(external/rtmidi EXCLUDE_FROM_ALL)
+add_subdirectory(src/midi)
 
 set(sources
     ${g_font_cpp_path}
@@ -45,6 +46,7 @@ set(sources
     external/imgui/backends/imgui_impl_sdlrenderer.cpp
     external/imgui/misc/freetype/imgui_freetype.cpp
     external/imnodes/imnodes.cpp
+    src/ActivityIndicator.cpp
     src/Application.cpp
     src/ConfigFile.cpp
     src/DisconnectedMidiInNode.cpp
@@ -66,10 +68,6 @@ set(sources
     src/ResourceLoader.cpp
     src/Theme.cpp
     src/Version.cpp
-    src/midi/InputObserver.cpp
-    src/midi/MidiEngine.cpp
-    src/midi/MidiProbe.cpp
-    src/midi/OutputObserver.cpp
 )
 
 if(WIN32)
@@ -105,7 +103,8 @@ target_link_libraries(midiconn PRIVATE
     SDL2::SDL2
     fmt::fmt
     freetype
-    resources)
+    resources
+    midi)
 if(NOT WIN32 AND MC_CHECK_FOR_UPDATES)
     target_link_libraries(midiconn PRIVATE curl)
 endif()
@@ -113,7 +112,6 @@ target_compile_definitions(midiconn PRIVATE
     SPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_DEBUG
     IMGUI_ENABLE_FREETYPE
 )
-target_compile_features(midiconn PRIVATE cxx_std_20)
 
 set(CPACK_PACKAGE_NAME "midiconn")
 set(CPACK_PACKAGE_VENDOR "safeworlds")

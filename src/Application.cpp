@@ -21,8 +21,7 @@ namespace mc
 Application::Application(SDL_Window*                  window,
                          SDL_Renderer*                renderer,
                          const std::filesystem::path& path_to_preset)
-    : m_theme_control(m_config, window),
-      m_node_factory(m_midi_engine, m_theme_control, m_port_name_display),
+    : m_theme_control(m_config, window), m_node_factory(m_theme_control, m_port_name_display),
       m_preset{NodeEditor(m_node_factory, m_port_name_display, m_theme_control), {}},
       m_preset_manager(m_preset, m_node_factory, m_config, m_port_name_display, m_theme_control),
       m_port_name_display(m_config.get_show_full_port_names()),
@@ -194,7 +193,7 @@ void Application::render_main_menu()
                           changed;
                 if (changed)
                 {
-                    m_midi_engine.enable_message_types(m_preset.m_message_type_mask);
+                    // TODO
                 }
                 ImGui::EndMenu();
             }

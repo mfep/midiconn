@@ -21,7 +21,7 @@ namespace mc
 
 using nlohmann::json;
 
-NodeSerializer::NodeSerializer(const NodeFactory& node_factory) : m_node_factory(&node_factory)
+NodeSerializer::NodeSerializer(NodeFactory& node_factory) : m_node_factory(&node_factory)
 {
 }
 
@@ -74,8 +74,8 @@ void NodeSerializer::serialize_node(json& j, const DisconnectedMidiOutNode& node
 void NodeSerializer::serialize_node(json& j, const MidiChannelNode& node) const
 {
     j = json{
-        {"type",     "midi_channel" },
-        {"channels", node.m_channels}
+        {"type",     "midi_channel"                           },
+        {"channels", node.m_midi_channel_map_node.map().data()}
     };
 }
 
@@ -112,7 +112,8 @@ std::shared_ptr<Node> NodeSerializer::deserialize_node(const json& j) const
     else if (node_type == "midi_channel")
     {
         auto channel_node = m_node_factory->build_midi_channel_node();
-        j.at("channels").get_to(channel_node->m_channels);
+        channel_node->m_midi_channel_map_node.map().data() =
+            j.at("channels").get<midi::ChannelMap::data_t>();
         node = channel_node;
     }
     else

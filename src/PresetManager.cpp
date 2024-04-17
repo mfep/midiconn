@@ -28,7 +28,7 @@ void Preset::to_json(nlohmann::json& j) const
     j["enabled_message_types"] = m_message_type_mask;
 }
 
-Preset Preset::from_json(const NodeFactory&     node_factory,
+Preset Preset::from_json(NodeFactory&           node_factory,
                          const PortNameDisplay& port_name_display,
                          const ThemeControl&    theme_control,
                          const nlohmann::json&  j)
@@ -38,7 +38,7 @@ Preset Preset::from_json(const NodeFactory&     node_factory,
 }
 
 PresetManager::PresetManager(const Preset&          preset,
-                             const NodeFactory&     node_factory,
+                             NodeFactory&           node_factory,
                              ConfigFile&            config,
                              const PortNameDisplay& port_name_display,
                              const ThemeControl&    theme_control)

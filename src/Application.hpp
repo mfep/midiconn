@@ -14,7 +14,6 @@
 #include "ResourceLoader.hpp"
 #include "Theme.hpp"
 #include "UpdateChecker.hpp"
-#include "midi/MidiEngine.hpp"
 
 namespace mc
 {
@@ -46,7 +45,6 @@ private:
     bool            m_is_done{};
     ConfigFile      m_config;
     ThemeControl    m_theme_control;
-    midi::Engine    m_midi_engine;
     NodeFactory     m_node_factory;
     Preset          m_preset;
     PresetManager   m_preset_manager;

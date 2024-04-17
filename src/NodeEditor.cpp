@@ -26,7 +26,7 @@ constexpr std::string_view contex_popup_name = "NodeEditorContextMenu";
 namespace mc
 {
 
-NodeEditor::NodeEditor(const NodeFactory&     node_factory,
+NodeEditor::NodeEditor(NodeFactory&           node_factory,
                        const PortNameDisplay& port_name_display,
                        const ThemeControl&    theme_control,
                        bool                   create_nodes)
@@ -81,7 +81,7 @@ void NodeEditor::to_json(nlohmann::json& j) const
     };
 }
 
-NodeEditor NodeEditor::from_json(const NodeFactory&     node_factory,
+NodeEditor NodeEditor::from_json(NodeFactory&           node_factory,
                                  const PortNameDisplay& port_name_display,
                                  const ThemeControl&    theme_control,
                                  const nlohmann::json&  j)

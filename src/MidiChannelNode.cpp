@@ -9,23 +9,25 @@
 
 #include "NodeSerializer.hpp"
 
-namespace mc
-{
-
-const char* MidiChannelNode::sm_combo_items[] = {
+const char* mc::MidiChannelNode::sm_combo_items[] = {
     "None", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16"};
 
-MidiChannelNode::MidiChannelNode(std::function<float()> get_scale) : m_get_scale(get_scale)
+mc::MidiChannelNode::MidiChannelNode(std::function<float()> get_scale) : m_get_scale(get_scale)
 {
-    std::iota(m_channels.begin(), m_channels.end(), 1);
 }
 
-void MidiChannelNode::accept_serializer(nlohmann::json& j, const NodeSerializer& serializer) const
+void mc::MidiChannelNode::accept_serializer(nlohmann::json&       j,
+                                            const NodeSerializer& serializer) const
 {
     serializer.serialize_node(j, *this);
 }
 
-void MidiChannelNode::render_internal()
+mc::midi::Node* mc::MidiChannelNode::get_midi_node()
+{
+    return &m_midi_channel_map_node;
+}
+
+void mc::MidiChannelNode::render_internal()
 {
     ImNodes::BeginNodeTitleBar();
     ImGui::TextUnformatted("Channel map");
@@ -38,9 +40,26 @@ void MidiChannelNode::render_internal()
     ImGui::TextUnformatted("MIDI out");
     ImNodes::EndOutputAttribute();
 
-    const auto previous_channels = m_channels;
+    std::array<int, midi::ChannelMap::num_channels> channels;
+    {
+        std::size_t idx = 0;
+        for (auto& channel_item : channels)
+        {
+            const auto channel = m_midi_channel_map_node.map().get(idx++);
+            if (channel == midi::ChannelMap::no_channel)
+            {
+                channel_item = 0;
+            }
+            else
+            {
+                channel_item = channel + 1;
+            }
+        }
+    }
+    auto updated_channels = channels;
 
-    if (ImGui::BeginTable("MIDI Channel table", 4, ImGuiTableFlags_SizingStretchProp, {160 * m_get_scale(), 0}))
+    if (ImGui::BeginTable(
+            "MIDI Channel table", 4, ImGuiTableFlags_SizingStretchProp, {160 * m_get_scale(), 0}))
     {
         for (size_t i = 0; i < 8; i++)
         {
@@ -50,7 +69,7 @@ void MidiChannelNode::render_internal()
             ImGui::TableNextColumn();
             ImGui::SetNextItemWidth(50 * m_get_scale());
             ImGui::Combo(get_hidden_label(i * 2),
-                         m_channels.data() + i * 2,
+                         updated_channels.data() + i * 2,
                          sm_combo_items,
                          sm_num_combo_items);
 
@@ -59,7 +78,7 @@ void MidiChannelNode::render_internal()
             ImGui::TableNextColumn();
             ImGui::SetNextItemWidth(50 * m_get_scale());
             ImGui::Combo(get_hidden_label(i * 2 + 1),
-                         m_channels.data() + i * 2 + 1,
+                         updated_channels.data() + i * 2 + 1,
                          sm_combo_items,
                          sm_num_combo_items);
         }
@@ -67,38 +86,34 @@ void MidiChannelNode::render_internal()
     }
     if (ImGui::Button("Default"))
     {
-        std::iota(m_channels.begin(), m_channels.end(), 1);
+        std::iota(updated_channels.begin(), updated_channels.end(), 1);
     }
     ImGui::SameLine();
     if (ImGui::Button("Disable all"))
     {
-        std::fill(m_channels.begin(), m_channels.end(), 0);
+        std::fill(updated_channels.begin(), updated_channels.end(), 0);
     }
-    if (m_channels != previous_channels)
-    {
-        update_outputs_with_sources();
-    }
-}
 
-midi::channel_map MidiChannelNode::transform_channel_map(const midi::channel_map& in_map)
-{
-    midi::channel_map out_map;
-    for (size_t channel_input_index = 0; channel_input_index < in_map.size(); channel_input_index++)
+    if (channels != updated_channels)
     {
-        const auto channel_output_value = m_channels[channel_input_index];
-        const auto channel_output_index = static_cast<char>(channel_output_value - 1);
-        for (size_t i = 0; i < in_map.size(); i++)
+        midi::ChannelMap new_map;
+        std::size_t      idx = 0;
+        for (const auto& channel_item : updated_channels)
         {
-            if (in_map[i] == static_cast<char>(channel_input_index))
+            if (channel_item == 0)
             {
-                out_map[i] = channel_output_index;
+                m_midi_channel_map_node.map().set(idx, midi::ChannelMap::no_channel);
             }
+            else
+            {
+                m_midi_channel_map_node.map().set(idx, channel_item - 1);
+            }
+            ++idx;
         }
     }
-    return out_map;
 }
 
-const char* MidiChannelNode::get_label(size_t index)
+const char* mc::MidiChannelNode::get_label(size_t index)
 {
     static std::vector<std::string> labels;
     if (labels.empty())
@@ -113,7 +128,7 @@ const char* MidiChannelNode::get_label(size_t index)
     return labels.at(index).c_str();
 }
 
-const char* MidiChannelNode::get_hidden_label(size_t index)
+const char* mc::MidiChannelNode::get_hidden_label(size_t index)
 {
     static std::vector<std::string> labels;
     if (labels.empty())
@@ -125,5 +140,3 @@ const char* MidiChannelNode::get_hidden_label(size_t index)
     }
     return labels.at(index).c_str();
 }
-
-} // namespace mc

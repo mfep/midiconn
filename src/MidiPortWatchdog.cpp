@@ -44,7 +44,7 @@ struct MidiNodeTraits<DisconnectedMidiOutNode>
 template <class NodeType>
 struct NodeBuilder
 {
-    const NodeFactory* m_node_factory{};
+    NodeFactory* m_node_factory{};
 };
 
 std::shared_ptr<Node> build_node(const NodeBuilder<MidiInNode>& builder,
@@ -142,7 +142,7 @@ bool update_node(std::shared_ptr<Node>&                node_ptr,
 } // namespace
 
 void MidiPortWatchdog::check_nodes(std::vector<std::shared_ptr<Node>>& nodes,
-                                   const NodeFactory&                  node_factory)
+                                   NodeFactory&                        node_factory)
 {
 
     for (auto& node_ptr : nodes)

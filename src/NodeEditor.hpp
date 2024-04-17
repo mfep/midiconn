@@ -16,14 +16,14 @@ class ThemeControl;
 class NodeEditor final
 {
 public:
-    NodeEditor(const NodeFactory&     node_factory,
+    NodeEditor(NodeFactory&           node_factory,
                const PortNameDisplay& port_name_display,
                const ThemeControl&    theme_control,
                bool                   create_nodes = false);
 
     void              render();
     void              to_json(nlohmann::json& j) const;
-    static NodeEditor from_json(const NodeFactory&     node_factory,
+    static NodeEditor from_json(NodeFactory&           node_factory,
                                 const PortNameDisplay& port_name_display,
                                 const ThemeControl&    theme_control,
                                 const nlohmann::json&  j);
@@ -41,7 +41,7 @@ private:
     std::vector<midi::InputInfo>       m_input_infos;
     std::vector<midi::OutputInfo>      m_output_infos;
     std::vector<std::shared_ptr<Node>> m_nodes;
-    const NodeFactory*                 m_node_factory;
+    NodeFactory*                       m_node_factory;
     int                                m_dropped_link_id{-1};
     const PortNameDisplay*             m_port_name_display;
     const ThemeControl*                m_theme_control;

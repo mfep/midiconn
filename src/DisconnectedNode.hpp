@@ -30,6 +30,9 @@ public:
         ImNodes::PopColorStyle();
         ImNodes::PopColorStyle();
     }
+
+protected:
+    midi::Node* get_midi_node() override { return nullptr; }
 };
 
 } // namespace mc

@@ -13,7 +13,7 @@ class MidiPortWatchdog final
 public:
     MidiPortWatchdog() = delete;
 
-    static void check_nodes(std::vector<std::shared_ptr<Node>>& nodes, const NodeFactory& node_factory);
+    static void check_nodes(std::vector<std::shared_ptr<Node>>& nodes, NodeFactory& node_factory);
 };
 
 } // namespace mc

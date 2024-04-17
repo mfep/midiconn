@@ -1,39 +1,41 @@
 #pragma once
-#include <chrono>
 
+#include "ActivityIndicator.hpp"
 #include "Node.hpp"
-#include "midi/OutputObserver.hpp"
+#include "midi/GraphObserver.hpp"
 
 namespace mc
 {
 namespace midi
 {
-class Engine;
+class OutputNode;
 }
 
 class PortNameDisplay;
 
-class MidiOutNode final : public Node, private midi::OutputObserver
+class MidiOutNode final : public Node, private midi::GraphObserver
 {
 public:
-    MidiOutNode(const midi::OutputInfo& output_info,
-                midi::Engine&           midi_engine,
-                const PortNameDisplay&  port_name_display);
+    MidiOutNode(const midi::OutputInfo&           output_info,
+                std::shared_ptr<midi::OutputNode> midi_output_node,
+                const PortNameDisplay&            port_name_display);
+
     ~MidiOutNode();
 
     void accept_serializer(nlohmann::json& j, const NodeSerializer& serializer) const override;
     const midi::OutputInfo& get_info() const { return m_output_info; }
 
+protected:
+    midi::Node* get_midi_node() override;
+
 private:
     void render_internal() override;
-    void update_outputs_with_sources() override;
-    void message_sent(size_t id, const std::vector<unsigned char>& message_bytes) override;
+    void message_received(std::span<const unsigned char> message_bytes) override;
 
-    midi::OutputInfo                                   m_output_info;
-    midi::Engine*                                      m_midi_engine;
-    Node::midi_sources                                 m_previous_sources;
-    std::chrono::time_point<std::chrono::system_clock> m_last_message_sent;
-    const PortNameDisplay*                             m_port_name_display;
+    midi::OutputInfo                  m_output_info;
+    std::shared_ptr<midi::OutputNode> m_midi_output_node;
+    ActivityIndicator                 m_midi_activity;
+    const PortNameDisplay*            m_port_name_display;
 
     friend class NodeSerializer;
 };

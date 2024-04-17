@@ -1,6 +1,6 @@
 #pragma once
 #include <cassert>
-#include <vector>
+#include <span>
 
 namespace mc::midi
 {
@@ -8,18 +8,18 @@ namespace mc::midi
 class MessageView final
 {
 public:
-    MessageView(std::vector<unsigned char>& message_data) : m_message_data(message_data)
+    explicit MessageView(std::span<unsigned char> message_data) : m_message_data(message_data)
     {
         assert(!m_message_data.empty());
     }
 
-    inline bool is_system() const
+    bool is_system() const
     {
         // system messages start with 0b1111xxxx
         return (m_message_data[0] & 0xf0) == 0xf0;
     }
 
-    inline char get_channel() const
+    char get_channel() const
     {
         // channel is cccc in 0bxxxxcccc of the first byte
         // if not a system message
@@ -27,7 +27,7 @@ public:
         return m_message_data[0] & 0x0f;
     }
 
-    inline void set_channel(char ch)
+    void set_channel(unsigned char ch)
     {
         // channel is cccc in 0bxxxxcccc of the first byte
         // if not a system message
@@ -36,7 +36,7 @@ public:
     }
 
 private:
-    std::vector<unsigned char>& m_message_data;
+    std::span<unsigned char> m_message_data;
 };
 
 } // namespace mc::midi

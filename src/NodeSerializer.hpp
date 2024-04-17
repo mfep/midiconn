@@ -17,7 +17,7 @@ class NodeFactory;
 class NodeSerializer final
 {
 public:
-    NodeSerializer(const NodeFactory& node_factory);
+    NodeSerializer(NodeFactory& node_factory);
 
     void serialize_node(nlohmann::json& j, const Node& node) const;
 
@@ -30,7 +30,7 @@ public:
     std::shared_ptr<Node> deserialize_node(const nlohmann::json& j) const;
 
 private:
-    const NodeFactory* m_node_factory;
+    NodeFactory* m_node_factory;
 };
 
 } // namespace mc

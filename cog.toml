@@ -3,13 +3,17 @@ ignore_merge_commits = false
 disable_changelog = false
 disable_bump_commit = false
 generate_mono_repository_global_tag = true
-branch_whitelist = []
+branch_whitelist = ["main"]
 skip_ci = "[skip ci]"
 skip_untracked = false
-pre_bump_hooks = []
+pre_bump_hooks = [
+    "grep version=\\\"{{latest}}\\\" data/packaging/xyz.safeworlds.midiconn.metainfo.xml",
+    "sed -i \"s|project(midiconn VERSION [0-9]\\+.[0-9]\\+.[0-9]\\+|project(midiconn VERSION {{version}}|\" CMakeLists.txt"
+]
 post_bump_hooks = []
 pre_package_bump_hooks = []
 post_package_bump_hooks = []
+tag_prefix = "v"
 
 [git_hooks]
 
@@ -17,7 +21,13 @@ post_package_bump_hooks = []
 
 [changelog]
 path = "CHANGELOG.md"
-authors = []
+remote = "github.com"
+repository = "midiconn"
+owner = "mfep"
+template = "remote"
+authors = [
+    { signature = "Lőrinc Serfőző", username = "mfep" }
+]
 
 [bump_profiles]
 

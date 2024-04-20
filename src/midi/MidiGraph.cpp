@@ -11,11 +11,13 @@ Node::~Node()
 {
     for (auto& conn : m_sender_connections)
     {
-        assert(conn->m_receiver->remove_receiver_connection(conn));
+        [[maybe_unused]] const bool removed = conn->m_receiver->remove_receiver_connection(conn);
+        assert(removed);
     }
     for (auto& conn : m_receiver_connections)
     {
-        assert(conn->m_sender->remove_sender_connection(conn));
+        [[maybe_unused]] const bool removed = conn->m_sender->remove_sender_connection(conn);
+        assert(removed);
     }
     m_sender_connections.clear();
     m_receiver_connections.clear();

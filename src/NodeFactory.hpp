@@ -36,6 +36,9 @@ public:
         const std::string& output_name);
     std::shared_ptr<MidiChannelNode> build_midi_channel_node();
 
+    bool is_node_instantiated(const midi::InputInfo& input_info);
+    bool is_node_instantiated(const midi::OutputInfo& output_info);
+
 private:
     const ThemeControl*    m_theme_control;
     const PortNameDisplay* m_port_name_display;

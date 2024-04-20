@@ -1,5 +1,6 @@
 #include "NodeEditor.hpp"
 
+#include <algorithm>
 #include <string_view>
 
 #include "imgui.h"
@@ -25,6 +26,24 @@ constexpr std::string_view contex_popup_name = "NodeEditorContextMenu";
 
 namespace mc
 {
+namespace
+{
+
+template <class MidiInfo>
+std::vector<MidiInfo> filter_to_non_instantiated_midi_infos(
+    NodeFactory& factory, const std::vector<MidiInfo>& unfiltered_infos)
+{
+    std::vector<MidiInfo> ret;
+    std::copy_if(unfiltered_infos.begin(),
+                 unfiltered_infos.end(),
+                 std::back_inserter(ret),
+                 [&](const auto& info) {
+                     return !factory.is_node_instantiated(info);
+                 });
+    return ret;
+}
+
+} // namespace
 
 NodeEditor::NodeEditor(NodeFactory&           node_factory,
                        const PortNameDisplay& port_name_display,
@@ -133,16 +152,7 @@ std::shared_ptr<Node> NodeEditor::renderContextMenu(bool show_outputting_nodes,
             ImGui::TreeNodeEx(port_name.c_str(), leaf_flags);
             if (ImGui::IsItemClicked())
             {
-                std::shared_ptr<Node> node;
-                if constexpr (std::is_same_v<midi::InputInfo, std::decay_t<decltype(info)>>)
-                {
-                    node = m_node_factory->build_midi_node(info);
-                }
-                else
-                {
-                    node = m_node_factory->build_midi_node(info);
-                }
-
+                std::shared_ptr<Node> node = m_node_factory->build_midi_node(info);
                 m_nodes.push_back(node);
 
                 ImNodes::SetNodeScreenSpacePos(node->id(),
@@ -161,8 +171,10 @@ std::shared_ptr<Node> NodeEditor::renderContextMenu(bool show_outputting_nodes,
     {
         if (ImGui::IsWindowAppearing())
         {
-            m_input_infos  = midi::MidiProbe::get_inputs();
-            m_output_infos = midi::MidiProbe::get_outputs();
+            m_input_infos  = filter_to_non_instantiated_midi_infos(*m_node_factory,
+                                                                  midi::MidiProbe::get_inputs());
+            m_output_infos = filter_to_non_instantiated_midi_infos(*m_node_factory,
+                                                                   midi::MidiProbe::get_outputs());
         }
         if (show_outputting_nodes || show_inputting_nodes)
         {

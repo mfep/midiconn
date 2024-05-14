@@ -3,6 +3,7 @@
 #include "ActivityIndicator.hpp"
 #include "Node.hpp"
 #include "midi/GraphObserver.hpp"
+#include "midi/MessageTypeMask.hpp"
 #include "midi/MidiInfo.hpp"
 
 namespace mc
@@ -33,10 +34,13 @@ private:
     void render_internal() override;
     void message_processed(std::span<const unsigned char> message_bytes) override;
 
+    void set_message_type_mask(midi::MessageTypeMask new_value);
+
     midi::InputInfo                  m_input_info;
     std::shared_ptr<midi::InputNode> m_midi_input_node;
     ActivityIndicator                m_midi_activity;
     const PortNameDisplay*           m_port_name_display;
+    midi::MessageTypeMask            m_message_type_mask;
 
     friend class NodeSerializer;
 };

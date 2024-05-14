@@ -12,10 +12,19 @@
 #include "MidiInNode.hpp"
 #include "MidiOutNode.hpp"
 #include "NodeFactory.hpp"
+#include "midi/MessageTypeMask.hpp"
 #include "midi/MidiInfo.hpp"
 #include "midi/MidiProbe.hpp"
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ImVec2, x, y);
+
+namespace mc::midi
+{
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(MessageTypeMask,
+                                   m_sysex_enabled,
+                                   m_time_enabled,
+                                   m_sensing_enabled);
+}
 
 namespace mc
 {
@@ -43,8 +52,9 @@ void NodeSerializer::serialize_node(json& j, const Node& node) const
 void NodeSerializer::serialize_node(json& j, const MidiInNode& node) const
 {
     j = json{
-        {"type",       "midi_in"               },
-        {"input_name", node.m_input_info.m_name}
+        {"type",              "midi_in"               },
+        {"input_name",        node.m_input_info.m_name},
+        {"message_type_mask", node.m_message_type_mask},
     };
 }
 
@@ -98,7 +108,13 @@ std::shared_ptr<Node> NodeSerializer::deserialize_node(const json& j) const
         const auto input_info_opt = midi::MidiProbe::get_valid_input(input_name);
         if (input_info_opt.has_value())
         {
-            node = m_node_factory->build_midi_node(input_info_opt.value());
+            auto midi_in_node = m_node_factory->build_midi_node(input_info_opt.value());
+            if (j.contains("message_type_mask"))
+            {
+                midi_in_node->set_message_type_mask(
+                    j.at("message_type_mask").get<midi::MessageTypeMask>());
+            }
+            node = midi_in_node;
         }
         else
         {

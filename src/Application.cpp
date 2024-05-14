@@ -22,7 +22,7 @@ Application::Application(SDL_Window*                  window,
                          SDL_Renderer*                renderer,
                          const std::filesystem::path& path_to_preset)
     : m_theme_control(m_config, window), m_node_factory(m_theme_control, m_port_name_display),
-      m_preset{NodeEditor(m_node_factory, m_port_name_display, m_theme_control), {}},
+      m_preset{NodeEditor(m_node_factory, m_port_name_display, m_theme_control)},
       m_preset_manager(m_preset, m_node_factory, m_config, m_port_name_display, m_theme_control),
       m_port_name_display(m_config.get_show_full_port_names()),
       m_welcome_enabled(m_config.get_show_welcome() && path_to_preset.empty()),
@@ -109,8 +109,7 @@ void Application::new_preset(bool create_nodes)
     }
     if (new_preset)
     {
-        m_preset = {NodeEditor(m_node_factory, m_port_name_display, m_theme_control, create_nodes),
-                    {}};
+        m_preset = {NodeEditor(m_node_factory, m_port_name_display, m_theme_control, create_nodes)};
         m_preset_manager =
             PresetManager(m_preset, m_node_factory, m_config, m_port_name_display, m_theme_control);
     }
@@ -178,24 +177,6 @@ void Application::render_main_menu()
             if (ImGui::MenuItem(ICON_FK_FLOPPY_O "  Save preset as", "Ctrl+Shift+S"))
             {
                 save_preset_as();
-            }
-            ImGui::Separator();
-            if (ImGui::BeginMenu("MIDI message filter"))
-            {
-                bool changed = ImGui::MenuItem(
-                    "SysEx", nullptr, &m_preset.m_message_type_mask.m_sysex_enabled);
-                changed = ImGui::MenuItem(
-                              "Clock", nullptr, &m_preset.m_message_type_mask.m_time_enabled) ||
-                          changed;
-                changed = ImGui::MenuItem("Active Sensing",
-                                          nullptr,
-                                          &m_preset.m_message_type_mask.m_sensing_enabled) ||
-                          changed;
-                if (changed)
-                {
-                    // TODO
-                }
-                ImGui::EndMenu();
             }
             ImGui::Separator();
             if (ImGui::MenuItem(" " ICON_FK_TIMES "  Exit", "Alt+F4"))

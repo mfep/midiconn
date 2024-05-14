@@ -2,7 +2,6 @@
 
 #include "GraphObserver.hpp"
 
-#include <algorithm>
 #include <memory>
 #include <set>
 #include <span>

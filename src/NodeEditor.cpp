@@ -11,7 +11,6 @@
 #include "MidiChannelNode.hpp"
 #include "MidiInNode.hpp"
 #include "MidiOutNode.hpp"
-#include "MidiPortWatchdog.hpp"
 #include "NodeFactory.hpp"
 #include "NodeSerializer.hpp"
 #include "PortNameDisplay.hpp"
@@ -167,7 +166,7 @@ std::shared_ptr<Node> NodeEditor::renderContextMenu(bool show_outputting_nodes,
     auto render_midi_inout_list = [this, render_add_node](auto& infos) -> std::shared_ptr<Node> {
         for (const auto& info : infos)
         {
-            const std::string port_name = m_port_name_display->get_port_name(info);
+            const std::string port_name = m_port_name_display->get_port_name(info.m_name);
             if (auto node = render_add_node(
                     [this, &info] {
                         return m_node_factory->build_midi_node(info);
@@ -235,7 +234,6 @@ std::shared_ptr<Node> NodeEditor::renderContextMenu(bool show_outputting_nodes,
 
 void NodeEditor::renderNodes()
 {
-    MidiPortWatchdog::check_nodes(m_nodes, *m_node_factory);
     for (const auto& node : m_nodes)
     {
         node->render();

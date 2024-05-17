@@ -6,8 +6,6 @@
 namespace mc
 {
 
-class DisconnectedMidiInNode;
-class DisconnectedMidiOutNode;
 class LogNode;
 class MidiChannelNode;
 class MidiInNode;
@@ -22,8 +20,6 @@ public:
 
     void serialize_node(nlohmann::json& j, const Node& node) const;
 
-    void serialize_node(nlohmann::json& j, const DisconnectedMidiInNode& node) const;
-    void serialize_node(nlohmann::json& j, const DisconnectedMidiOutNode& node) const;
     void serialize_node(nlohmann::json& j, const LogNode& node) const;
     void serialize_node(nlohmann::json& j, const MidiChannelNode& node) const;
     void serialize_node(nlohmann::json& j, const MidiInNode& node) const;

@@ -8,6 +8,8 @@ struct MessageTypeMask
     bool m_sysex_enabled{true};
     bool m_time_enabled{true};
     bool m_sensing_enabled{true};
+
+    constexpr bool operator==(const MessageTypeMask&) const = default;
 };
 
 

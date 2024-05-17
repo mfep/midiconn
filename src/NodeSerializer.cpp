@@ -5,16 +5,12 @@
 #include "imnodes.h"
 #include "nlohmann/json.hpp"
 
-#include "DisconnectedMidiInNode.hpp"
-#include "DisconnectedMidiOutNode.hpp"
 #include "LogNode.hpp"
 #include "MidiChannelNode.hpp"
 #include "MidiInNode.hpp"
 #include "MidiOutNode.hpp"
 #include "NodeFactory.hpp"
 #include "midi/MessageTypeMask.hpp"
-#include "midi/MidiInfo.hpp"
-#include "midi/MidiProbe.hpp"
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ImVec2, x, y);
 
@@ -53,28 +49,12 @@ void NodeSerializer::serialize_node(json& j, const MidiInNode& node) const
 {
     j = json{
         {"type",              "midi_in"               },
-        {"input_name",        node.m_input_info.m_name},
+        {"input_name",        node.m_input_name       },
         {"message_type_mask", node.m_message_type_mask},
     };
 }
 
-void NodeSerializer::serialize_node(json& j, const DisconnectedMidiInNode& node) const
-{
-    j = json{
-        {"type",       "midi_in"        },
-        {"input_name", node.m_input_name}
-    };
-}
-
 void NodeSerializer::serialize_node(json& j, const MidiOutNode& node) const
-{
-    j = json{
-        {"type",        "midi_out"               },
-        {"output_name", node.m_output_info.m_name}
-    };
-}
-
-void NodeSerializer::serialize_node(json& j, const DisconnectedMidiOutNode& node) const
 {
     j = json{
         {"type",        "midi_out"        },
@@ -104,35 +84,19 @@ std::shared_ptr<Node> NodeSerializer::deserialize_node(const json& j) const
     std::shared_ptr<Node> node;
     if (node_type == "midi_in")
     {
-        const auto input_name     = j.at("input_name").get<std::string>();
-        const auto input_info_opt = midi::MidiProbe::get_valid_input(input_name);
-        if (input_info_opt.has_value())
+        const auto input_name   = j.at("input_name").get<std::string>();
+        auto       midi_in_node = m_node_factory->build_midi_in_node(input_name);
+        if (j.contains("message_type_mask"))
         {
-            auto midi_in_node = m_node_factory->build_midi_node(input_info_opt.value());
-            if (j.contains("message_type_mask"))
-            {
-                midi_in_node->set_message_type_mask(
-                    j.at("message_type_mask").get<midi::MessageTypeMask>());
-            }
-            node = midi_in_node;
+            midi_in_node->set_message_type_mask(
+                j.at("message_type_mask").get<midi::MessageTypeMask>());
         }
-        else
-        {
-            node = m_node_factory->build_disconnected_midi_in_node(input_name);
-        }
+        node = midi_in_node;
     }
     else if (node_type == "midi_out")
     {
-        const auto output_name     = j.at("output_name").get<std::string>();
-        const auto output_info_opt = midi::MidiProbe::get_valid_output(output_name);
-        if (output_info_opt.has_value())
-        {
-            node = m_node_factory->build_midi_node(output_info_opt.value());
-        }
-        else
-        {
-            node = m_node_factory->build_disconnected_midi_out_node(output_name);
-        }
+        const auto output_name = j.at("output_name").get<std::string>();
+        node                   = m_node_factory->build_midi_out_node(output_name);
     }
     else if (node_type == "midi_channel")
     {

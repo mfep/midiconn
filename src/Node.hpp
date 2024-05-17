@@ -39,8 +39,9 @@ public:
     static bool is_in_id(int id) { return id % 2 == 0; }
     static bool is_out_id(int id) { return !is_in_id(id); }
 
-protected:
     virtual midi::Node* get_midi_node()   = 0;
+
+protected:
     virtual void        render_internal() = 0;
     virtual void        push_style() const {}
     virtual void        pop_style() const {}

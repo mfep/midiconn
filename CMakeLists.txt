@@ -49,15 +49,12 @@ set(sources
     src/ActivityIndicator.cpp
     src/Application.cpp
     src/ConfigFile.cpp
-    src/DisconnectedMidiInNode.cpp
-    src/DisconnectedMidiOutNode.cpp
     src/KeyboardShortcutAggregator.cpp
     src/Licenses.cpp
     src/LogNode.cpp
     src/MidiChannelNode.cpp
     src/MidiInNode.cpp
     src/MidiOutNode.cpp
-    src/MidiPortWatchdog.cpp
     src/Node.cpp
     src/NodeEditor.cpp
     src/NodeFactory.cpp

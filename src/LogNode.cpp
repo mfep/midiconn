@@ -15,7 +15,7 @@ std::string_view mc::LogNode::LogMidiNode::name()
     return "Log Node";
 }
 
-mc::LogNode::LogNode()
+mc::LogNode::LogNode(const ScaleProvider& scale_provider) : m_scale_provider(&scale_provider)
 {
     m_log_midi_node.add_observer(this);
 }
@@ -47,7 +47,7 @@ void mc::LogNode::render_internal()
     ImNodes::EndInputAttribute();
 
     int new_buffer_size = static_cast<int>(m_max_buffer_size);
-    ImGui::SetNextItemWidth(150.0F); // ToDo scale
+    ImGui::SetNextItemWidth(100.0F * m_scale_provider->get_scale_value());
     if (ImGui::InputInt("Buffer Size", &new_buffer_size))
     {
         if (new_buffer_size > 0 && new_buffer_size < 100000)
@@ -63,13 +63,19 @@ void mc::LogNode::render_internal()
     }
     lock.unlock();
 
-    if (ImGui::BeginTable(
-            "Log", 5, ImGuiTableFlags_ScrollY | ImGuiTableFlags_Resizable, ImVec2{800.F, 300.F}))
-    { // ToDo scale
+    if (ImGui::BeginTable("Log",
+                          5,
+                          ImGuiTableFlags_ScrollY | ImGuiTableFlags_Resizable,
+                          ImVec2{530.F * m_scale_provider->get_scale_value(),
+                                 200.F * m_scale_provider->get_scale_value()}))
+    {
 
-        ImGui::TableSetupColumn("Time", ImGuiTableColumnFlags_WidthFixed, 140.F);
+        ImGui::TableSetupColumn(
+            "Time", ImGuiTableColumnFlags_WidthFixed, 100.F * m_scale_provider->get_scale_value());
         ImGui::TableSetupColumn("Type");
-        ImGui::TableSetupColumn("Channel", ImGuiTableColumnFlags_WidthFixed, 70.F);
+        ImGui::TableSetupColumn("Channel",
+                                ImGuiTableColumnFlags_WidthFixed,
+                                50.F * m_scale_provider->get_scale_value());
         ImGui::TableSetupColumn("Data #0");
         ImGui::TableSetupColumn("Data #1");
         ImGui::TableHeadersRow();

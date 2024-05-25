@@ -105,14 +105,12 @@ std::shared_ptr<MidiOutNode> NodeFactory::build_midi_out_node(std::string_view o
 
 std::shared_ptr<MidiChannelNode> NodeFactory::build_midi_channel_node()
 {
-    return std::make_shared<MidiChannelNode>([this]() {
-        return m_theme_control->get_scale_value();
-    });
+    return std::make_shared<MidiChannelNode>(*m_theme_control);
 }
 
 std::shared_ptr<LogNode> NodeFactory::build_log_node()
 {
-    return std::make_shared<LogNode>();
+    return std::make_shared<LogNode>(*m_theme_control);
 }
 
 bool NodeFactory::is_node_instantiated(const midi::InputInfo& input_info)

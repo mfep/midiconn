@@ -27,7 +27,6 @@ jobs:
         nlohmann-json3-dev
     - name: Configure CMake
       run: cmake
-        -G Ninja
         -S ${{github.workspace}}
         -B ${{github.workspace}}/build
         -D CMAKE_BUILD_TYPE=Release
@@ -36,7 +35,7 @@ jobs:
         -D CPACK_GENERATOR=DEB
         -D CPACK_SYSTEM_NAME=$(lsb_release --codename --short)
     - name: Build
-      run: cmake --build ${{github.workspace}}/build --target midiconn
+      run: cmake --build ${{github.workspace}}/build --target midiconn -j $(nproc)
     - name: Create DEB package
       run: cd ${{github.workspace}}/build && cpack -C Release
     - name: Upload Artifacts
@@ -49,23 +48,22 @@ jobs:
 
   build-flatpak:
     runs-on: ubuntu-latest
+    container:
+      image: bilelmoussaoui/flatpak-github-actions:freedesktop-23.08
+      options: --privileged
     steps:
     - uses: actions/checkout@v4
       with:
         submodules: true
         lfs: true
-    - name: Install prerequisites
-      run: sudo apt-get update -y && sudo apt-get install -y
-        appstream-util
-        flatpak-builder
     - name: Validate metainfo
       run: appstream-util validate
-        ${{github.workspace}}/data/packaging/xyz.safeworlds.midiconn.metainfo.xml
-    - name: Install flatpak prerequisites
-      run: sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo &&
-        sudo flatpak install -y flathub org.freedesktop.Sdk//23.08 org.freedesktop.Platform//23.08
+        data/packaging/xyz.safeworlds.midiconn.metainfo.xml
     - name: Build flatpak
-      run: flatpak-builder build/flatpak ${{github.workspace}}/data/packaging/xyz.safeworlds.midiconn.yml
+      uses: flatpak/flatpak-github-actions/flatpak-builder@v6
+      with:
+        manifest-path: ${{github.workspace}}/data/packaging/xyz.safeworlds.midiconn.yml
+        cache-key: flatpak-builder-${{ github.sha }}
 
   build-windows:
     runs-on: windows-latest

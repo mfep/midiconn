@@ -8,7 +8,7 @@
 #include "imgui.h"
 #include "imnodes.h"
 
-#include <format>
+#include "fmt/format.h"
 
 std::string_view mc::LogNode::LogMidiNode::name()
 {
@@ -86,15 +86,16 @@ void mc::LogNode::render_internal()
             ImGui::TableNextRow();
 
             ImGui::TableSetColumnIndex(0);
-            const auto local = std::chrono::zoned_time(std::chrono::current_zone(), item.m_arrived)
-                                   .get_local_time();
-            const auto seconds =
-                std::chrono::floor<std::chrono::seconds>(local.time_since_epoch()).count() % 60;
-            const auto milliseconds =
-                std::chrono::floor<std::chrono::milliseconds>(local.time_since_epoch()).count() %
-                1000;
-            ImGui::TextUnformatted(
-                std::format("{:%H:%M}:{:02}.{:03}", local, seconds, milliseconds).c_str());
+            const auto           arrived = std::chrono::system_clock::to_time_t(item.m_arrived);
+            const auto*          local   = std::localtime(&arrived);
+            std::array<char, 20> time_str{};
+            std::strftime(time_str.data(), time_str.size(), "%T", local);
+            ImGui::Text("%s.%03ld",
+                        time_str.data(),
+                        std::chrono::duration_cast<std::chrono::milliseconds>(
+                            item.m_arrived.time_since_epoch())
+                                .count() %
+                            1000);
 
             ImGui::TableNextColumn();
             ImGui::TextUnformatted(item.m_name.c_str());
@@ -133,20 +134,20 @@ void mc::LogNode::message_received(std::span<const unsigned char> message_bytes)
         [](midi::NoteOnMessageViewTag, auto note_on) -> BufferElement {
             return BufferElement{"Note On"s,
                                  note_on.get_channel_human(),
-                                 std::format("{}", midi::Note(note_on.get_note())),
-                                 std::format("Velocity: {}", note_on.get_velocity())};
+                                 fmt::format("{}", midi::Note(note_on.get_note())),
+                                 fmt::format("Velocity: {}", note_on.get_velocity())};
         },
         [](midi::NoteOffMessageViewTag, auto note_off) -> BufferElement {
             return BufferElement{"Note Off"s,
                                  note_off.get_channel_human(),
-                                 std::format("{}", midi::Note(note_off.get_note())),
-                                 std::format("Velocity: {}", note_off.get_velocity())};
+                                 fmt::format("{}", midi::Note(note_off.get_note())),
+                                 fmt::format("Velocity: {}", note_off.get_velocity())};
         },
         [](midi::PolyKeyPressureMessageViewTag, auto poly_key_pressure) -> BufferElement {
             return BufferElement{"Poly Aftertouch"s,
                                  poly_key_pressure.get_channel_human(),
-                                 std::format("{}", midi::Note(poly_key_pressure.get_note())),
-                                 std::format("Pressure: {}", poly_key_pressure.get_pressure())};
+                                 fmt::format("{}", midi::Note(poly_key_pressure.get_note())),
+                                 fmt::format("Pressure: {}", poly_key_pressure.get_pressure())};
         },
         [](midi::AllSoundOffMessageViewTag, auto all_sound_off) -> BufferElement {
             return BufferElement{"All Sound Off"s, all_sound_off.get_channel_human(), ""s, ""s};
@@ -173,7 +174,7 @@ void mc::LogNode::message_received(std::span<const unsigned char> message_bytes)
         [](midi::MonoModeOnMessageViewTag, auto mono_mode) -> BufferElement {
             return BufferElement{"Mono Mode On"s,
                                  mono_mode.get_channel_human(),
-                                 std::format("Channels: {}", mono_mode.get_num_channels()),
+                                 fmt::format("Channels: {}", mono_mode.get_num_channels()),
                                  ""s};
         },
         [](midi::PolyModeOnMessageViewTag, auto poly_mode) -> BufferElement {
@@ -182,27 +183,27 @@ void mc::LogNode::message_received(std::span<const unsigned char> message_bytes)
         [](midi::ControlChangeMessageViewTag, auto control_change) -> BufferElement {
             return BufferElement{"Control Change"s,
                                  control_change.get_channel_human(),
-                                 std::format("CC {} ({})",
+                                 fmt::format("CC {} ({})",
                                              control_change.get_controller(),
                                              control_change.get_function_name()),
-                                 std::format("Value: {}", control_change.get_value())};
+                                 fmt::format("Value: {}", control_change.get_value())};
         },
         [](midi::ProgramChangeMessageViewTag, auto program_change) -> BufferElement {
             return BufferElement{"Program Change"s,
                                  program_change.get_channel_human(),
-                                 std::format("Program: {}", program_change.get_program_number()),
+                                 fmt::format("Program: {}", program_change.get_program_number()),
                                  ""s};
         },
         [](midi::ChannelPressureMessageViewTag, auto channel_pressure) -> BufferElement {
             return BufferElement{"Channel Aftertouch"s,
                                  channel_pressure.get_channel_human(),
-                                 std::format("Pressure: {}", channel_pressure.get_pressure()),
+                                 fmt::format("Pressure: {}", channel_pressure.get_pressure()),
                                  ""s};
         },
         [](midi::PitchBendMessageViewTag, auto pitch_bend) -> BufferElement {
             return BufferElement{"Pitch bend"s,
                                  pitch_bend.get_channel_human(),
-                                 std::format("Value: {}", pitch_bend.get_value_human()),
+                                 fmt::format("Value: {}", pitch_bend.get_value_human()),
                                  ""s};
         },
         [](auto, auto) -> BufferElement {

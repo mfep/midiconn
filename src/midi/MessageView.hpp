@@ -130,7 +130,7 @@ class ChannelMessageView : public MessageView<Mutable>
 {
 public:
     using tag_t = ChannelMessageViewTag;
-    explicit ChannelMessageView(MessageView<Mutable>::span_t message_data)
+    explicit ChannelMessageView(typename MessageView<Mutable>::span_t message_data)
         : MessageView<Mutable>(message_data)
     {
     }
@@ -216,7 +216,7 @@ class NoteMessageView : public ChannelMessageView<Mutable>
 public:
     using tag_t = NoteMessageViewTag;
 
-    explicit NoteMessageView(MessageView<Mutable>::span_t message_data)
+    explicit NoteMessageView(typename MessageView<Mutable>::span_t message_data)
         : ChannelMessageView<Mutable>(message_data)
     {
         assert(message_data.size() == 3);
@@ -250,7 +250,7 @@ class NoteOffMessageView : public NoteMessageView<Mutable>
 {
 public:
     using tag_t = NoteOffMessageViewTag;
-    explicit NoteOffMessageView(MessageView<Mutable>::span_t message_data)
+    explicit NoteOffMessageView(typename MessageView<Mutable>::span_t message_data)
         : NoteMessageView<Mutable>(message_data)
     {
     }
@@ -265,7 +265,7 @@ class NoteOnMessageView : public NoteMessageView<Mutable>
 {
 public:
     using tag_t = NoteOnMessageViewTag;
-    explicit NoteOnMessageView(MessageView<Mutable>::span_t message_data)
+    explicit NoteOnMessageView(typename MessageView<Mutable>::span_t message_data)
         : NoteMessageView<Mutable>(message_data)
     {
     }
@@ -280,7 +280,7 @@ class PolyKeyPressureMessageView : public ChannelMessageView<Mutable>
 {
 public:
     using tag_t = PolyKeyPressureMessageViewTag;
-    explicit PolyKeyPressureMessageView(MessageView<Mutable>::span_t message_data)
+    explicit PolyKeyPressureMessageView(typename MessageView<Mutable>::span_t message_data)
         : ChannelMessageView<Mutable>(message_data)
     {
         assert(message_data.size() == 3);
@@ -314,7 +314,7 @@ class ControlChangeMessageView : public ChannelMessageView<Mutable>
 {
 public:
     using tag_t = ControlChangeMessageViewTag;
-    explicit ControlChangeMessageView(MessageView<Mutable>::span_t message_data)
+    explicit ControlChangeMessageView(typename MessageView<Mutable>::span_t message_data)
         : ChannelMessageView<Mutable>(message_data)
     {
     }
@@ -487,7 +487,7 @@ class ChannelModeMessageView : public ChannelMessageView<Mutable>
 {
 public:
     using tag_t = ChannelModeMessageViewTag;
-    explicit ChannelModeMessageView(MessageView<Mutable>::span_t message_data)
+    explicit ChannelModeMessageView(typename MessageView<Mutable>::span_t message_data)
         : ChannelMessageView<Mutable>(message_data)
     {
     }
@@ -567,7 +567,7 @@ class LocalControlMessageView : public ChannelModeMessageView<Mutable>
 public:
     using tag_t = LocalControlMessageViewTag;
 
-    explicit LocalControlMessageView(MessageView<Mutable>::span_t message_data)
+    explicit LocalControlMessageView(typename MessageView<Mutable>::span_t message_data)
         : ChannelModeMessageView<Mutable>(message_data)
     {
     }
@@ -636,7 +636,7 @@ class MonoModeOnMessageView : public ChannelModeMessageView<Mutable>
 public:
     using tag_t = MonoModeOnMessageViewTag;
 
-    explicit MonoModeOnMessageView(MessageView<Mutable>::span_t message_data)
+    explicit MonoModeOnMessageView(typename MessageView<Mutable>::span_t message_data)
         : ChannelModeMessageView<Mutable>(message_data)
     {
     }
@@ -674,7 +674,7 @@ class ProgramChangeMessageView : public ChannelMessageView<Mutable>
 {
 public:
     using tag_t = ProgramChangeMessageViewTag;
-    explicit ProgramChangeMessageView(MessageView<Mutable>::span_t message_data)
+    explicit ProgramChangeMessageView(typename MessageView<Mutable>::span_t message_data)
         : ChannelMessageView<Mutable>(message_data)
     {
     }
@@ -698,7 +698,7 @@ class ChannelPressureMessageView : public ChannelMessageView<Mutable>
 {
 public:
     using tag_t = ChannelPressureMessageViewTag;
-    explicit ChannelPressureMessageView(MessageView<Mutable>::span_t message_data)
+    explicit ChannelPressureMessageView(typename MessageView<Mutable>::span_t message_data)
         : ChannelMessageView<Mutable>(message_data)
     {
         assert(message_data.size() == 2);
@@ -723,7 +723,7 @@ class PitchBendMessageView : public ChannelMessageView<Mutable>
 {
 public:
     using tag_t = PitchBendMessageViewTag;
-    explicit PitchBendMessageView(MessageView<Mutable>::span_t message_data)
+    explicit PitchBendMessageView(typename MessageView<Mutable>::span_t message_data)
         : ChannelMessageView<Mutable>(message_data)
     {
         assert(message_data.size() == 3);

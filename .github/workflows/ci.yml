@@ -4,10 +4,14 @@ on: [push, pull_request]
 
 jobs:
   build-linux:
-    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        RUNNER:
+        - ubuntu-22.04
+        - ubuntu-24.04
+    runs-on: ${{matrix.RUNNER}}
     env:
-      CC: gcc-13
-      CXX: g++-13
+      CXXFLAGS: -Wall -Wextra -Wno-deprecated-declarations -Werror -Wno-stringop-overflow
     steps:
     - uses: actions/checkout@v4
       with:
@@ -23,15 +27,16 @@ jobs:
         nlohmann-json3-dev
     - name: Configure CMake
       run: cmake
+        -G Ninja
+        -S ${{github.workspace}}
         -B ${{github.workspace}}/build
-        -D CMAKE_CXX_FLAGS="-Wall -Wextra"
         -D CMAKE_BUILD_TYPE=Release
         -D MC_COMMIT_SHA=${{github.sha}}
         -D MC_BUILD_NUMBER=${{github.run_number}}
         -D CPACK_GENERATOR=DEB
         -D CPACK_SYSTEM_NAME=$(lsb_release --codename --short)
     - name: Build
-      run: cmake --build ${{github.workspace}}/build --target midiconn -j `nproc`
+      run: cmake --build ${{github.workspace}}/build --target midiconn
     - name: Create DEB package
       run: cd ${{github.workspace}}/build && cpack -C Release
     - name: Upload Artifacts

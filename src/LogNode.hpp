@@ -10,6 +10,7 @@
 #include <cstdint>
 #include <deque>
 #include <mutex>
+#include <optional>
 #include <span>
 #include <string_view>
 

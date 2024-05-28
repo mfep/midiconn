@@ -19,7 +19,6 @@ UpdateChecker::UpdateChecker()
 
 void UpdateChecker::trigger_check()
 {
-    m_update_check_finished  = false;
     m_latest_version_written = false;
     std::thread([this] {
         using namespace std::chrono_literals;

@@ -3,6 +3,7 @@
 #include "../Utils.hpp"
 
 #include <cassert>
+#include <optional>
 #include <span>
 #include <string_view>
 #include <type_traits>
@@ -63,6 +64,26 @@ class OmniModeOnMessageView;
 template <bool Mutable>
 class MonoModeOnMessageView;
 class PolyModeOnMessageView;
+template <bool Mutable>
+class SystemMessageView;
+template <bool Mutable>
+class SystemCommonMessageView;
+template <bool Mutable>
+class SystemExclusiveMessageView;
+template <bool Mutable>
+class TimeCodeQuarterFrameMessageView;
+template <bool Mutable>
+class SongPositionPointerMessageView;
+template <bool Mutable>
+class SongSelectMessageView;
+class TuneRequestMessageView;
+class SystemRealTimeMessageView;
+class TimingClockMessageView;
+class StartSequenceMessageView;
+class ContinueSequenceMessageView;
+class StopSequenceMessageView;
+class ActiveSensingMessageView;
+class ResetMessageView;
 
 template <bool Mutable = true>
 class MessageView
@@ -104,12 +125,30 @@ public:
                  MonoModeOnMessageView<Mutable>,
                  PolyModeOnMessageView,
                  ChannelMessageView<Mutable>,
+                 SystemMessageView<Mutable>,
+                 SystemCommonMessageView<Mutable>,
+                 SystemExclusiveMessageView<Mutable>,
+                 TimeCodeQuarterFrameMessageView<Mutable>,
+                 SongPositionPointerMessageView<Mutable>,
+                 SongSelectMessageView<Mutable>,
+                 TuneRequestMessageView,
+                 SystemRealTimeMessageView,
+                 TimingClockMessageView,
+                 StartSequenceMessageView,
+                 ContinueSequenceMessageView,
+                 StopSequenceMessageView,
+                 ActiveSensingMessageView,
+                 ResetMessageView,
                  MessageView<Mutable>>
     parse() const
     {
         if (is_channel())
         {
             return utils::variant_cast(ChannelMessageView<Mutable>(m_message_data).parse());
+        }
+        else if (is_system())
+        {
+            return utils::variant_cast(SystemMessageView<Mutable>(m_message_data).parse());
         }
         return *this;
     }
@@ -121,7 +160,7 @@ protected:
 MessageView(std::span<unsigned char>) -> MessageView<true>;
 MessageView(std::span<const unsigned char>) -> MessageView<false>;
 
-struct ChannelMessageViewTag
+struct ChannelMessageViewTag : public MessageViewTag
 {
 };
 
@@ -206,7 +245,7 @@ public:
     }
 };
 
-struct NoteMessageViewTag
+struct NoteMessageViewTag : public ChannelMessageViewTag
 {
 };
 
@@ -744,5 +783,353 @@ public:
         this->m_message_data[2] = static_cast<unsigned char>(val / 127);
     }
 };
+
+struct SystemMessageViewTag : public MessageViewTag
+{
+};
+
+template <bool Mutable>
+class SystemMessageView : public MessageView<Mutable>
+{
+public:
+    using tag_t = SystemMessageViewTag;
+
+    explicit SystemMessageView(typename MessageView<Mutable>::span_t message_data)
+        : MessageView<Mutable>(message_data)
+    {
+    }
+
+    bool is_common() const { return this->m_message_data[0] < 0xf8; }
+
+    bool is_realtime() const { return !is_common(); }
+
+    std::variant<SystemCommonMessageView<Mutable>,
+                 SystemExclusiveMessageView<Mutable>,
+                 TimeCodeQuarterFrameMessageView<Mutable>,
+                 SongPositionPointerMessageView<Mutable>,
+                 SongSelectMessageView<Mutable>,
+                 TuneRequestMessageView,
+                 SystemRealTimeMessageView,
+                 TimingClockMessageView,
+                 StartSequenceMessageView,
+                 ContinueSequenceMessageView,
+                 StopSequenceMessageView,
+                 ActiveSensingMessageView,
+                 ResetMessageView,
+                 SystemMessageView<Mutable>>
+    parse() const;
+};
+
+struct SystemCommonMessageViewTag : public SystemMessageViewTag
+{
+};
+
+template <bool Mutable>
+class SystemCommonMessageView : public SystemMessageView<Mutable>
+{
+public:
+    using tag_t = SystemCommonMessageViewTag;
+
+    explicit SystemCommonMessageView(typename MessageView<Mutable>::span_t message_data)
+        : SystemMessageView<Mutable>(message_data)
+    {
+    }
+
+    std::variant<SystemExclusiveMessageView<Mutable>,
+                 TimeCodeQuarterFrameMessageView<Mutable>,
+                 SongPositionPointerMessageView<Mutable>,
+                 SongSelectMessageView<Mutable>,
+                 TuneRequestMessageView,
+                 SystemCommonMessageView<Mutable>>
+    parse() const
+    {
+        switch (this->m_message_data[0])
+        {
+        case 0xf0:
+            return SystemExclusiveMessageView<Mutable>(this->m_message_data);
+        case 0xf1:
+            return TimeCodeQuarterFrameMessageView<Mutable>(this->m_message_data);
+        case 0xf2:
+            return SongPositionPointerMessageView<Mutable>(this->m_message_data);
+        case 0xf3:
+            return SongSelectMessageView<Mutable>(this->m_message_data);
+        case 0xf6:
+            return TuneRequestMessageView(this->m_message_data);
+        default:
+            return *this;
+        }
+    }
+};
+
+struct SystemExclusiveMessageViewTag : public SystemCommonMessageViewTag
+{
+};
+
+template <bool Mutable>
+class SystemExclusiveMessageView : public SystemCommonMessageView<Mutable>
+{
+public:
+    using tag_t                                            = SystemExclusiveMessageViewTag;
+    constexpr inline static unsigned char end_of_exclusive = 0xf7;
+
+    explicit SystemExclusiveMessageView(typename MessageView<Mutable>::span_t message_data)
+        : SystemCommonMessageView<Mutable>(message_data)
+    {
+    }
+
+    unsigned char get_manufacturer_id() const { return this->m_message_data[1]; }
+
+    std::size_t get_length() const
+    {
+        assert(this->m_message_data.size() > 1);
+        return this->m_message_data.size() - 1;
+    }
+};
+
+struct TimeCodeQuarterFrameMessageViewTag : public SystemCommonMessageViewTag
+{
+};
+
+template <bool Mutable>
+class TimeCodeQuarterFrameMessageView : public SystemCommonMessageView<Mutable>
+{
+public:
+    using tag_t = TimeCodeQuarterFrameMessageViewTag;
+
+    explicit TimeCodeQuarterFrameMessageView(typename MessageView<Mutable>::span_t message_data)
+        : SystemCommonMessageView<Mutable>(message_data)
+    {
+    }
+
+    unsigned char get_type() const { return (this->m_message_data[1] & 0x70) >> 4; }
+
+    unsigned char get_values() const { return this->m_message_data[1] & 0x0F; }
+};
+
+struct SongPositionPointerMessageViewTag : public SystemCommonMessageViewTag
+{
+};
+
+template <bool Mutable>
+class SongPositionPointerMessageView : public SystemCommonMessageView<Mutable>
+{
+public:
+    using tag_t = SongPositionPointerMessageViewTag;
+
+    explicit SongPositionPointerMessageView(typename MessageView<Mutable>::span_t message_data)
+        : SystemCommonMessageView<Mutable>(message_data)
+    {
+    }
+
+    unsigned short get_position() const
+    {
+        const unsigned char lsb = this->m_message_data[1] & 0x7f;
+        const unsigned char msb = this->m_message_data[2] & 0x7f;
+        return static_cast<unsigned short>(127) * msb + lsb;
+    }
+};
+
+struct SongSelectMessageViewTag : public SystemCommonMessageViewTag
+{
+};
+
+template <bool Mutable>
+class SongSelectMessageView : public SystemCommonMessageView<Mutable>
+{
+public:
+    using tag_t = SongSelectMessageViewTag;
+
+    explicit SongSelectMessageView(typename MessageView<Mutable>::span_t message_data)
+        : SystemCommonMessageView<Mutable>(message_data)
+    {
+    }
+
+    unsigned char get_song() const { return this->m_message_data[1] & 0x7f; }
+};
+
+struct TuneRequestMessageViewTag : public SystemCommonMessageViewTag
+{
+};
+
+class TuneRequestMessageView : public SystemCommonMessageView<false>
+{
+public:
+    using tag_t = TuneRequestMessageViewTag;
+
+    explicit TuneRequestMessageView(typename MessageView<false>::span_t message_data)
+        : SystemCommonMessageView<false>(message_data)
+    {
+    }
+};
+
+struct SystemRealTimeMessageViewTag : public SystemMessageViewTag
+{
+};
+
+class SystemRealTimeMessageView : public SystemMessageView<false>
+{
+public:
+    using tag_t = SystemRealTimeMessageViewTag;
+
+    explicit SystemRealTimeMessageView(typename MessageView<false>::span_t message_data)
+        : SystemMessageView<false>(message_data)
+    {
+    }
+
+    std::variant<TimingClockMessageView,
+                 StartSequenceMessageView,
+                 ContinueSequenceMessageView,
+                 StopSequenceMessageView,
+                 ActiveSensingMessageView,
+                 ResetMessageView,
+                 SystemRealTimeMessageView>
+    parse() const;
+};
+
+struct TimingClockMessageViewTag : public SystemRealTimeMessageViewTag
+{
+};
+
+class TimingClockMessageView : public SystemRealTimeMessageView
+{
+public:
+    using tag_t = TimingClockMessageViewTag;
+
+    explicit TimingClockMessageView(typename MessageView<false>::span_t message_data)
+        : SystemRealTimeMessageView(message_data)
+    {
+    }
+};
+
+struct StartSequenceMessageViewTag : public SystemRealTimeMessageViewTag
+{
+};
+
+class StartSequenceMessageView : public SystemRealTimeMessageView
+{
+public:
+    using tag_t = StartSequenceMessageViewTag;
+
+    explicit StartSequenceMessageView(typename MessageView<false>::span_t message_data)
+        : SystemRealTimeMessageView(message_data)
+    {
+    }
+};
+
+struct ContinueSequenceMessageViewTag : public SystemRealTimeMessageViewTag
+{
+};
+
+class ContinueSequenceMessageView : public SystemRealTimeMessageView
+{
+public:
+    using tag_t = ContinueSequenceMessageViewTag;
+
+    explicit ContinueSequenceMessageView(typename MessageView<false>::span_t message_data)
+        : SystemRealTimeMessageView(message_data)
+    {
+    }
+};
+
+struct StopSequenceMessageViewTag : public SystemRealTimeMessageViewTag
+{
+};
+
+class StopSequenceMessageView : public SystemRealTimeMessageView
+{
+public:
+    using tag_t = StopSequenceMessageViewTag;
+
+    explicit StopSequenceMessageView(typename MessageView<false>::span_t message_data)
+        : SystemRealTimeMessageView(message_data)
+    {
+    }
+};
+
+struct ActiveSensingMessageViewTag : public SystemRealTimeMessageViewTag
+{
+};
+
+class ActiveSensingMessageView : public SystemRealTimeMessageView
+{
+public:
+    using tag_t = ActiveSensingMessageViewTag;
+
+    explicit ActiveSensingMessageView(typename MessageView<false>::span_t message_data)
+        : SystemRealTimeMessageView(message_data)
+    {
+    }
+};
+
+struct ResetMessageViewTag : public SystemRealTimeMessageViewTag
+{
+};
+
+class ResetMessageView : public SystemRealTimeMessageView
+{
+public:
+    using tag_t = ResetMessageViewTag;
+
+    explicit ResetMessageView(typename MessageView<false>::span_t message_data)
+        : SystemRealTimeMessageView(message_data)
+    {
+    }
+};
+
+template <bool Mutable>
+std::variant<SystemCommonMessageView<Mutable>,
+             SystemExclusiveMessageView<Mutable>,
+             TimeCodeQuarterFrameMessageView<Mutable>,
+             SongPositionPointerMessageView<Mutable>,
+             SongSelectMessageView<Mutable>,
+             TuneRequestMessageView,
+             SystemRealTimeMessageView,
+             TimingClockMessageView,
+             StartSequenceMessageView,
+             ContinueSequenceMessageView,
+             StopSequenceMessageView,
+             ActiveSensingMessageView,
+             ResetMessageView,
+             SystemMessageView<Mutable>>
+SystemMessageView<Mutable>::parse() const
+{
+    if (is_common())
+    {
+        return utils::variant_cast(SystemCommonMessageView<Mutable>(this->m_message_data).parse());
+    }
+    else if (is_realtime())
+    {
+        return utils::variant_cast(SystemRealTimeMessageView(this->m_message_data).parse());
+    }
+    return *this;
+}
+
+inline std::variant<TimingClockMessageView,
+                    StartSequenceMessageView,
+                    ContinueSequenceMessageView,
+                    StopSequenceMessageView,
+                    ActiveSensingMessageView,
+                    ResetMessageView,
+                    SystemRealTimeMessageView>
+SystemRealTimeMessageView::parse() const
+{
+    switch (this->m_message_data[0])
+    {
+    case 0xf8:
+        return TimingClockMessageView(this->m_message_data);
+    case 0xfa:
+        return StartSequenceMessageView(this->m_message_data);
+    case 0xfb:
+        return ContinueSequenceMessageView(this->m_message_data);
+    case 0xfc:
+        return StopSequenceMessageView(this->m_message_data);
+    case 0xfe:
+        return ActiveSensingMessageView(this->m_message_data);
+    case 0xff:
+        return ResetMessageView(this->m_message_data);
+    default:
+        return *this;
+    }
+}
 
 } // namespace mc::midi

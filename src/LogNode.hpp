@@ -16,6 +16,13 @@
 
 namespace mc
 {
+namespace midi
+{
+template <bool>
+class ChannelMessageView;
+template <bool>
+class SystemMessageView;
+} // namespace midi
 
 class LogNode final : public Node, private midi::GraphObserver
 {
@@ -43,13 +50,19 @@ private:
 
     struct BufferElement
     {
-        BufferElement(std::string&&        name,
-                      std::optional<int>&& channel,
-                      std::string&&        data_0,
-                      std::string&&        data_1)
+        explicit BufferElement(std::string&&        name,
+                               std::optional<int>&& channel = {},
+                               std::string&&        data_0  = {},
+                               std::string&&        data_1  = {})
             : m_arrived(std::chrono::system_clock::now()), m_name(std::move(name)),
               m_channel(std::move(channel)), m_data_0(std::move(data_0)),
               m_data_1(std::move(data_1))
+        {
+        }
+
+        BufferElement(std::string&& name, std::string&& data_0, std::string&& data_1 = {})
+            : m_arrived(std::chrono::system_clock::now()), m_name(std::move(name)),
+              m_data_0(std::move(data_0)), m_data_1(std::move(data_1))
         {
         }
 
@@ -59,6 +72,9 @@ private:
         std::string                                        m_data_0;
         std::string                                        m_data_1;
     };
+
+    static BufferElement parse_channel_message(midi::ChannelMessageView<false> message_view);
+    static BufferElement parse_system_message(midi::SystemMessageView<false> message_view);
 
     std::mutex                m_buffer_mutex;
     std::deque<BufferElement> m_message_buffer;

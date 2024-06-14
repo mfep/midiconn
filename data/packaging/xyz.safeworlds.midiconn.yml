@@ -1,8 +1,9 @@
-id: xyz.safeworlds.midiconn
+id: xyz.safeworlds.midiconn.Devel
 command: midiconn
 runtime: org.freedesktop.Platform
 runtime-version: '23.08'
 sdk: org.freedesktop.Sdk
+separate-locales: false
 cleanup:
   - /bin/sdl2-config
   - /include

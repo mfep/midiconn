@@ -17,6 +17,7 @@
 #include "KeyboardShortcutAggregator.hpp"
 #include "PlatformUtils.hpp"
 #include "Utils.hpp"
+#include "Version.hpp"
 
 #if !SDL_VERSION_ATLEAST(2, 0, 17)
 #error This backend requires SDL 2.0.17+ because of SDL_RenderGeometry() function
@@ -37,6 +38,22 @@ MC_MAIN
     rotating_logger->flush_on(spdlog::level::err);
     spdlog::set_default_logger(rotating_logger);
     spdlog::flush_every(3s);
+
+    if (setlocale(LC_ALL, "") == nullptr)
+    {
+        spdlog::error("Cannot set locale");
+        return -1;
+    }
+    if (bindtextdomain(MIDI_APPLICATION_NAME_SNAKE, MC_LOCALE_DIR) == nullptr)
+    {
+        spdlog::error("Cannot bind text domain");
+        return -1;
+    }
+    if (textdomain(MIDI_APPLICATION_NAME_SNAKE) == nullptr)
+    {
+        spdlog::error("Cannot set text domain");
+        return -1;
+    }
 
     mc::platform::set_process_dpi_aware();
 

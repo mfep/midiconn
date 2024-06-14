@@ -3,6 +3,7 @@ set(CMAKE_POLICY_DEFAULT_CMP0077 NEW) # option() honors normal variables
 
 include(FetchContent)
 include(external/CMakeRC.cmake)
+include(GNUInstallDirs)
 
 project(midiconn VERSION 0.2.2 LANGUAGES CXX)
 
@@ -20,7 +21,9 @@ endif()
 if(NOT WIN32 AND MC_CHECK_FOR_UPDATES)
     find_package(CURL REQUIRED)
 endif()
+find_package(Intl REQUIRED)
 
+set(MC_LOCALE_DIR "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LOCALEDIR}")
 configure_file(
     src/Version.hpp.in
     ${CMAKE_CURRENT_BINARY_DIR}/src/Version.hpp
@@ -92,7 +95,8 @@ target_include_directories(midiconn PRIVATE
     external/imnodes
     external/portable-file-dialogs
     external/IconFontCppHeaders
-    "${FREETYPE_INCLUDE_DIRS}")
+    "${FREETYPE_INCLUDE_DIRS}"
+    "${Intl_INCLUDE_DIRS}")
 target_link_libraries(midiconn PRIVATE
     nlohmann_json::nlohmann_json
     rtmidi
@@ -102,7 +106,8 @@ target_link_libraries(midiconn PRIVATE
     fmt::fmt
     freetype
     resources
-    midi)
+    midi
+    "${Intl_LIBRARIES}")
 if(NOT WIN32 AND MC_CHECK_FOR_UPDATES)
     target_link_libraries(midiconn PRIVATE curl)
 endif()
@@ -157,3 +162,45 @@ endif()
 install(TARGETS midiconn
     RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
 include(CPack)
+
+find_program(XGETTEXT xgettext)
+find_package(Gettext)
+if (XGETTEXT AND ${GETTEXT_FOUND})
+    set(POT_FILE "${PROJECT_SOURCE_DIR}/po/midiconn.pot")
+    add_custom_command(
+        OUTPUT "${POT_FILE}"
+        COMMAND "${XGETTEXT}" "--join-existing" "--add-comments" "--output=${POT_FILE}" "--output-dir=${PROJECT_SOURCE_DIR}/po" ${sources}
+        WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
+        DEPENDS ${sources}
+    )
+
+    file(GLOB PO_FILES "${PROJECT_SOURCE_DIR}/po/*.po")
+    if(PO_FILES)
+        foreach(PO_FILE ${PO_FILES})
+            add_custom_command(
+                OUTPUT "${PO_FILE}"
+                COMMAND "${GETTEXT_MSGMERGE_EXECUTABLE}" "--update" "--backup=off" "${PO_FILE}" "${POT_FILE}"
+                WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
+                DEPENDS "${POT_FILE}"
+            )
+        endforeach()
+
+        add_custom_target(update-po DEPENDS ${PO_FILES})
+
+        foreach(PO_FILE ${PO_FILES})
+            cmake_path(GET PO_FILE STEM LANG)
+            set(MO_FILE "${CMAKE_BINARY_DIR}/${LANG}/midiconn.mo")
+            add_custom_command(
+                OUTPUT "${MO_FILE}"
+                COMMAND "${GETTEXT_MSGFMT_EXECUTABLE}" "--output-file=${MO_FILE}" "${PO_FILE}"
+                WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
+                DEPENDS "${PO_FILE}"
+            )
+            add_custom_target(generate-mo-${LANG} ALL DEPENDS ${MO_FILE})
+            install(
+                FILES "${MO_FILE}"
+                DESTINATION "${MC_LOCALE_DIR}/${LANG}/LC_MESSAGES"
+            )
+        endforeach()
+    endif()
+endif()

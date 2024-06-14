@@ -3,6 +3,8 @@
 #include <array>
 #include <string_view>
 
+#include "libintl.h"
+
 namespace mc
 {
 
@@ -18,8 +20,19 @@ enum class InterfaceScale
     Undefined
 };
 
-constexpr inline std::array<std::string_view, static_cast<size_t>(InterfaceScale::Size)>
-    interface_scale_labels{"1.0", "1.25", "1.5", "1.75", "2.0", "Auto"};
+inline std::array<std::string_view, static_cast<size_t>(InterfaceScale::Size)>
+get_interface_scale_labels()
+{
+    using namespace std::string_view_literals;
+    return std::array<std::string_view, static_cast<size_t>(InterfaceScale::Size)>{
+        "1.0"sv,
+        "1.25"sv,
+        "1.5"sv,
+        "1.75"sv,
+        "2.0"sv,
+        // Translators: Automatic scaling of the interface
+        gettext("Auto")};
+}
 
 class ScaleProvider
 {

@@ -15,6 +15,8 @@
 #include "Utils.hpp"
 #include "Version.hpp"
 
+#include "libintl.h"
+
 namespace mc
 {
 
@@ -95,7 +97,9 @@ std::string Application::get_window_title() const
 {
     auto prefix = m_preset_manager.is_dirty(m_preset) ? "* " : "";
     return prefix +
-           utils::path_to_utf8str(m_preset_manager.get_opened_path().value_or("Untitled")) +
+           utils::path_to_utf8str(
+               // Translators: The name of the default preset
+               m_preset_manager.get_opened_path().value_or(gettext("Untitled"))) +
            " - " MIDI_APPLICATION_NAME;
 }
 
@@ -119,7 +123,8 @@ void Application::open_preset()
 {
     spdlog::info("Executing open_preset");
     const auto open_path =
-        pfd::open_file("Open preset", ".", {"midiconn presets (*.mcpreset)", "*.mcpreset"})
+        // Translators: the title of the open preset file browser dialog
+        pfd::open_file(gettext("Open preset"), ".", {"midiconn presets (*.mcpreset)", "*.mcpreset"})
             .result();
     if (open_path.size() == 1 && !open_path.front().empty())
     {
@@ -160,56 +165,93 @@ void Application::render_main_menu()
 {
     if (ImGui::BeginMenuBar())
     {
-        if (ImGui::BeginMenu(ICON_FK_FILE_O " File"))
+        // Translators: File menu label
+        static auto begin_menu_label = fmt::format("{} {}", ICON_FK_FILE_O, gettext("File"));
+        if (ImGui::BeginMenu(begin_menu_label.c_str()))
         {
-            if (ImGui::MenuItem(ICON_FK_FILE_O "  New preset", "Ctrl+N"))
+            static auto new_preset_label =
+                // Translators: Menu entry to initialize an empty preset
+                fmt::format("{} {}", ICON_FK_FILE_O, gettext("New preset"));
+            if (ImGui::MenuItem(new_preset_label.c_str(), "Ctrl+N"))
             {
                 new_preset();
             }
-            if (ImGui::MenuItem(ICON_FK_FOLDER_OPEN_O " Open preset", "Ctrl+O"))
+            static auto open_preset_label =
+                // Translators: Menu entry to open a preset file
+                fmt::format("{} {}", ICON_FK_FOLDER_OPEN_O, gettext("Open preset"));
+            if (ImGui::MenuItem(open_preset_label.c_str(), "Ctrl+O"))
             {
                 open_preset();
             }
-            if (ImGui::MenuItem(ICON_FK_FLOPPY_O "  Save preset", "Ctrl+S"))
+            static auto save_preset_label =
+                // Translators: Menu entry to save the current preset to file where it was already
+                // saved
+                fmt::format("{} {}", ICON_FK_FLOPPY_O, gettext("Save preset"));
+            if (ImGui::MenuItem(save_preset_label.c_str(), "Ctrl+S"))
             {
                 save_preset();
             }
-            if (ImGui::MenuItem(ICON_FK_FLOPPY_O "  Save preset as", "Ctrl+Shift+S"))
+            static auto save_preset_as_label =
+                // Translators: Menu entry to save the current preset to file (query location)
+                fmt::format("{} {}", ICON_FK_FLOPPY_O, gettext("Save preset as"));
+            if (ImGui::MenuItem(save_preset_as_label.c_str(), "Ctrl+Shift+S"))
             {
                 save_preset_as();
             }
             ImGui::Separator();
-            if (ImGui::MenuItem(" " ICON_FK_TIMES "  Exit", "Alt+F4"))
+            static auto exit_label =
+                // Translators: Menu entry to exit the program
+                fmt::format("{} {}", ICON_FK_TIMES, gettext("Exit"));
+            if (ImGui::MenuItem(exit_label.c_str(), "Alt+F4"))
             {
                 exit();
             }
             ImGui::EndMenu();
         }
-        if (ImGui::BeginMenu(ICON_FK_COG " Settings"))
+        static auto settings_label =
+            // Translators: Settings menu label
+            fmt::format("{} {}", ICON_FK_COG, gettext("Settings"));
+        if (ImGui::BeginMenu(settings_label.c_str()))
         {
-            if (ImGui::BeginMenu(ICON_FK_PAINT_BRUSH " Theme"))
+            static auto theme_label =
+                // Translators: Theme menu label
+                fmt::format("{} {}", ICON_FK_PAINT_BRUSH, gettext("Theme"));
+            if (ImGui::BeginMenu(theme_label.c_str()))
             {
-                const auto current_theme = m_theme_control.get_theme();
+                const auto  current_theme = m_theme_control.get_theme();
+                static auto dark_theme_label =
+                    // Translators: Menu entry for selecting the dark theme
+                    fmt::format("{} {}", ICON_FK_MOON_O, gettext("Dark theme"));
                 if (ImGui::MenuItem(
-                        ICON_FK_MOON_O " Dark theme", nullptr, current_theme == Theme::Dark))
+                        dark_theme_label.c_str(), nullptr, current_theme == Theme::Dark))
                 {
                     m_theme_control.set_theme(Theme::Dark);
                 }
+                static auto light_theme_label =
+                    // Translators: Menu entry for selecting the light theme
+                    fmt::format("{} {}", ICON_FK_SUN_O, gettext("Light theme"));
                 if (ImGui::MenuItem(
-                        ICON_FK_SUN_O " Light theme", nullptr, current_theme == Theme::Light))
+                        light_theme_label.c_str(), nullptr, current_theme == Theme::Light))
                 {
                     m_theme_control.set_theme(Theme::Light);
                 }
+                static auto classic_theme_label =
+                    // Translators: Menu entry for selecting the classic theme
+                    fmt::format("{} {}", ICON_FK_STAR_O, gettext("Classic theme"));
                 if (ImGui::MenuItem(
-                        ICON_FK_STAR_O " Classic theme", nullptr, current_theme == Theme::Classic))
+                        classic_theme_label.c_str(), nullptr, current_theme == Theme::Classic))
                 {
                     m_theme_control.set_theme(Theme::Classic);
                 }
                 ImGui::EndMenu();
             }
-            if (ImGui::BeginMenu(ICON_FK_EYE " Interface Scale"))
+            static auto interface_scale_label =
+                // Translators: Menu entry for selecting the interface scale
+                fmt::format("{} {}", ICON_FK_EYE, gettext("Interface Scale"));
+            if (ImGui::BeginMenu(interface_scale_label.c_str()))
             {
-                const auto current_scale = m_theme_control.get_scale();
+                const auto current_scale          = m_theme_control.get_scale();
+                const auto interface_scale_labels = get_interface_scale_labels();
                 for (size_t i = 0; i < interface_scale_labels.size(); ++i)
                 {
                     if (ImGui::MenuItem(interface_scale_labels[i].data(),
@@ -222,29 +264,46 @@ void Application::render_main_menu()
                 ImGui::EndMenu();
             }
             bool show_full_port_names = m_port_name_display.get_show_full_port_names();
-            if (ImGui::MenuItem("Show full port names", nullptr, &show_full_port_names))
+            // Translators: Menu entry that controls whether the full or abbreviated MIDI port names
+            // are displayed
+            if (ImGui::MenuItem(gettext("Show full port names"), nullptr, &show_full_port_names))
             {
                 m_port_name_display.set_show_full_port_names(show_full_port_names);
                 m_config.set_show_port_full_names(show_full_port_names);
             }
             ImGui::EndMenu();
         }
-        if (ImGui::BeginMenu(ICON_FK_QUESTION " Help"))
+        static auto help_label =
+            // Translators: Menu entry for the help submenu
+            fmt::format("{} {}", ICON_FK_QUESTION, gettext("Help"));
+        if (ImGui::BeginMenu(help_label.c_str()))
         {
-            if (ImGui::MenuItem(ICON_FK_PENCIL " Enable debug log", nullptr, &m_debug_log_enabled))
+            static auto debug_log_label =
+                // Translators: Menu entry to enable and disable debug logging
+                fmt::format("{} {}", ICON_FK_PENCIL, gettext("Enable debug log"));
+            if (ImGui::MenuItem(debug_log_label.c_str(), nullptr, &m_debug_log_enabled))
             {
                 spdlog::set_level(m_debug_log_enabled ? spdlog::level::debug : spdlog::level::info);
                 spdlog::info("Debug log enabled: {}", m_debug_log_enabled);
             }
-            if (ImGui::MenuItem(ICON_FK_PENCIL_SQUARE " Open logfile"))
+            static auto open_logfile_label =
+                // Translators: Menu entry to open the log file with the default application
+                fmt::format("{} {}", ICON_FK_PENCIL_SQUARE, gettext("Open logfile"));
+            if (ImGui::MenuItem(open_logfile_label.c_str()))
             {
                 platform::open_logfile_external();
             }
-            if (ImGui::MenuItem(ICON_FK_GLOBE " Visit website"))
+            static auto visit_website_label =
+                // Translators: Menu entry to open the project's website with the browser
+                fmt::format("{} {}", ICON_FK_GLOBE, gettext("Visit website"));
+            if (ImGui::MenuItem(visit_website_label.c_str()))
             {
                 SDL_OpenURL(MC_WEBSITE_URL);
             }
-            if (ImGui::MenuItem(ICON_FK_QUESTION "  About"))
+            static auto about_label =
+                // Translators: Menu entry to open the about window
+                fmt::format("{} {}", ICON_FK_QUESTION, gettext("About"));
+            if (ImGui::MenuItem(about_label.c_str()))
             {
                 m_welcome_enabled = true;
             }
@@ -270,7 +329,8 @@ void Application::render_welcome_window()
         ImGui::Image(m_logo_texture.m_texture, ImVec2{96 * scale, 96 * scale});
         ImGui::SameLine();
         ImGui::BeginGroup();
-        ImGui::TextUnformatted("Welcome to " MIDI_APPLICATION_NAME);
+        // Translators: Welcome message in the welcome window
+        ImGui::Text(gettext("Welcome to %s"), MIDI_APPLICATION_NAME);
         ImGui::TextUnformatted(g_current_version_str.c_str());
         ImGui::TextUnformatted(MC_COMMIT_SHA);
         ImGui::TextUnformatted(MC_BUILD_OS);
@@ -280,28 +340,37 @@ void Application::render_welcome_window()
         std::visit(utils::overloads{
                        [](const UpdateChecker::StatusNotSupported&) {},
                        [](const UpdateChecker::StatusFetching&) {
-                           ImGui::TextUnformatted("Fetching latest " MIDI_APPLICATION_NAME
-                                                  " version number...");
+                           // Translators: Message in the welcome window while downloading the
+                           // latest version number
+                           ImGui::Text(gettext("Fetching latest %s version number..."),
+                                       MIDI_APPLICATION_NAME);
                        },
                        [](const UpdateChecker::StatusError& error) {
-                           ImGui::TextUnformatted("Error fetching latest " MIDI_APPLICATION_NAME
-                                                  " version number");
+                           // Translators: Message in the welcome window, when an error occurred
+                           // while fetching the version number from the web
+                           ImGui::Text(gettext("Error fetching latest %s version number"),
+                                       MIDI_APPLICATION_NAME);
                            if (!error.message.empty() && ImGui::IsItemHovered())
                                ImGui::SetTooltip("%s", error.message.c_str());
                        },
                        [](const UpdateChecker::StatusFetched& fetched) {
                            if (fetched.is_latest_version)
                            {
-                               ImGui::TextUnformatted("Congratulations! You are using the latest "
-                                                      "version of " MIDI_APPLICATION_NAME);
+                               // Translators: Message in the welcome window, when the downloaded
+                               // latest version is the same as the current application's version
+                               ImGui::Text(gettext("Congratulations! You are using the latest "
+                                                   "version of %s"),
+                                           MIDI_APPLICATION_NAME);
                            }
                            else
                            {
-                               ImGui::Text("A new version of " MIDI_APPLICATION_NAME
-                                           " is available: %s",
+                               // Translators: Message in the welcome window, when the downloaded
+                               // latest version is newer than the current application's version
+                               ImGui::Text(gettext("A new version of %s is available: %s"),
+                                           MIDI_APPLICATION_NAME,
                                            fetched.latest_version_name.c_str());
                                ImGui::SameLine();
-                               if (ImGui::Button("Visit website"))
+                               if (ImGui::Button(gettext("Visit website")))
                                {
                                    SDL_OpenURL(MC_WEBSITE_URL);
                                }
@@ -311,23 +380,28 @@ void Application::render_welcome_window()
                    latest_version);
 
         bool show_on_startup = m_config.get_show_welcome();
-        if (ImGui::Checkbox("Show this window on application startup", &show_on_startup))
+        // Translators: Checkbox on the welcome window
+        if (ImGui::Checkbox(gettext("Show this window on application startup"), &show_on_startup))
         {
             m_config.set_show_welcome(show_on_startup);
         }
-        if (ImGui::Button("New preset - empty"))
+        // Translators: Button on the welcome window to create a new empty preset
+        if (ImGui::Button(gettext("New preset - empty")))
         {
             new_preset();
             ImGui::CloseCurrentPopup();
         }
         ImGui::SameLine();
-        if (ImGui::Button("New preset - add all MIDI devices"))
+        // Translators: Button on the welcome window to create a new preset filled with all
+        // available devices
+        if (ImGui::Button(gettext("New preset - add all MIDI devices")))
         {
             new_preset(true);
             ImGui::CloseCurrentPopup();
         }
         ImGui::SameLine();
-        if (ImGui::Button("Browse preset"))
+        // Translators: Button on the welcome window to browse the filesystem for a preset to load
+        if (ImGui::Button(gettext("Browse preset")))
         {
             open_preset();
             ImGui::CloseCurrentPopup();
@@ -335,7 +409,8 @@ void Application::render_welcome_window()
         const auto last_preset_opt = m_config.get_last_preset_path();
         ImGui::BeginDisabled(!last_preset_opt);
         ImGui::SameLine();
-        if (ImGui::Button("Open last preset"))
+        // Translators: Button on the welcome window to open the last opened preset
+        if (ImGui::Button(gettext("Open last preset")))
         {
             open_last_preset();
             ImGui::CloseCurrentPopup();
@@ -346,7 +421,8 @@ void Application::render_welcome_window()
             ImGui::SetTooltip("%s", preset_str.c_str());
         }
         ImGui::EndDisabled();
-        if (ImGui::CollapsingHeader("Open source licenses"))
+        // Translators: Button on the welcome window to show the 3rd party library licenses
+        if (ImGui::CollapsingHeader(gettext("Open source licenses")))
         {
             for (auto& license : g_licenses)
             {
@@ -363,10 +439,13 @@ void Application::render_welcome_window()
 
 bool Application::query_save()
 {
-    const auto button = pfd::message(MIDI_APPLICATION_NAME,
-                                     "Do you want to save changes?",
-                                     pfd::choice::yes_no_cancel)
-                            .result();
+    const auto button =
+        pfd::message(
+            MIDI_APPLICATION_NAME,
+            // Translators: The message on the popup window when attempting to close the program
+            gettext("Do you want to save changes?"),
+            pfd::choice::yes_no_cancel)
+            .result();
     switch (button)
     {
     case pfd::button::yes:

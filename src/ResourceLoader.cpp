@@ -10,7 +10,7 @@
 #include <vector>
 
 CMRC_DECLARE(midiconn_resources);
-bool ImGui_ImplSDLRenderer_CreateFontsTexture();
+bool ImGui_ImplSDLRenderer2_CreateFontsTexture();
 
 namespace mc
 {
@@ -103,7 +103,7 @@ void ResourceLoader::load_fonts(const float scale)
                                    icons_ranges);
 
     // workaround, otherwise the fonts won't rebuild properly
-    ImGui_ImplSDLRenderer_CreateFontsTexture();
+    ImGui_ImplSDLRenderer2_CreateFontsTexture();
 }
 
 } // namespace mc

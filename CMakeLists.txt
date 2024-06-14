@@ -43,7 +43,7 @@ set(sources
     external/imgui/imgui_tables.cpp
     external/imgui/imgui_widgets.cpp
     external/imgui/backends/imgui_impl_sdl2.cpp
-    external/imgui/backends/imgui_impl_sdlrenderer.cpp
+    external/imgui/backends/imgui_impl_sdlrenderer2.cpp
     external/imgui/misc/freetype/imgui_freetype.cpp
     external/imnodes/imnodes.cpp
     src/ActivityIndicator.cpp

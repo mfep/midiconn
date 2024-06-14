@@ -5,7 +5,7 @@
 #include "SDL2/SDL.h"
 #include "SDL2/SDL_syswm.h"
 #include "backends/imgui_impl_sdl2.h"
-#include "backends/imgui_impl_sdlrenderer.h"
+#include "backends/imgui_impl_sdlrenderer2.h"
 #include "imgui.h"
 #include "imnodes.h"
 #include "spdlog/sinks/rotating_file_sink.h"
@@ -80,7 +80,7 @@ MC_MAIN
     ImNodes::GetIO().EmulateThreeButtonMouse.Modifier = &ImGui::GetIO().KeyCtrl;
 
     // Setup Platform/Renderer backends
-    ImGui_ImplSDLRenderer_Init(renderer);
+    ImGui_ImplSDLRenderer2_Init(renderer);
     ImGui_ImplSDL2_InitForSDLRenderer(window, renderer);
 
     // Load Fonts
@@ -145,7 +145,7 @@ MC_MAIN
             app.update_outside_frame();
 
             // Start the Dear ImGui frame
-            ImGui_ImplSDLRenderer_NewFrame();
+            ImGui_ImplSDLRenderer2_NewFrame();
             ImGui_ImplSDL2_NewFrame();
             ImGui::NewFrame();
 
@@ -162,12 +162,12 @@ MC_MAIN
             // Rendering
             ImGui::Render();
             SDL_RenderClear(renderer);
-            ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());
+            ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData(), renderer);
             SDL_RenderPresent(renderer);
         }
     }
 
-    ImGui_ImplSDLRenderer_Shutdown();
+    ImGui_ImplSDLRenderer2_Shutdown();
     ImGui_ImplSDL2_Shutdown();
     ImNodes::DestroyContext();
     ImGui::DestroyContext();

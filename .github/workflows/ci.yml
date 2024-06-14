@@ -70,7 +70,7 @@ jobs:
   build-windows:
     runs-on: windows-latest
     env:
-      vcpkg-prereqs: nlohmann-json:x64-windows spdlog:x64-windows sdl2:x64-windows freetype[core]:x64-windows zlib:x64-windows
+      vcpkg-prereqs: nlohmann-json:x64-windows spdlog:x64-windows sdl2:x64-windows freetype[core]:x64-windows zlib:x64-windows gettext:x64-windows
     steps:
     - uses: actions/checkout@v4
       with:

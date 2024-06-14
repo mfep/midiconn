@@ -22,6 +22,12 @@ if(NOT WIN32 AND MC_CHECK_FOR_UPDATES)
     find_package(CURL REQUIRED)
 endif()
 find_package(Intl REQUIRED)
+if (NOT TARGET Intl::Intl)
+    add_library(Intl UNKNOWN IMPORTED)
+    target_include_directories(Intl PUBLIC "${Intl_INCLUDE_DIRS}")
+    target_link_libraries(Intl PUBLIC "${Intl_LIBRARIES}")
+    add_library(Intl::Intl ALIAS Intl)
+endif()
 
 set(MC_LOCALE_DIR "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LOCALEDIR}")
 configure_file(
@@ -96,7 +102,7 @@ target_include_directories(midiconn PRIVATE
     external/portable-file-dialogs
     external/IconFontCppHeaders
     "${FREETYPE_INCLUDE_DIRS}"
-    "${Intl_INCLUDE_DIRS}")
+)
 target_link_libraries(midiconn PRIVATE
     nlohmann_json::nlohmann_json
     rtmidi
@@ -107,7 +113,8 @@ target_link_libraries(midiconn PRIVATE
     freetype
     resources
     midi
-    "${Intl_LIBRARIES}")
+    Intl::Intl
+)
 if(NOT WIN32 AND MC_CHECK_FOR_UPDATES)
     target_link_libraries(midiconn PRIVATE curl)
 endif()
@@ -173,6 +180,7 @@ if (XGETTEXT AND ${GETTEXT_FOUND})
         WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
         DEPENDS ${sources}
     )
+    add_custom_target(update-pot DEPENDS "${POT_FILE}")
 
     file(GLOB PO_FILES "${PROJECT_SOURCE_DIR}/po/*.po")
     if(PO_FILES)

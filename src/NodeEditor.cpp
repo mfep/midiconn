@@ -7,10 +7,10 @@
 #include "imnodes.h"
 #include "nlohmann/json.hpp"
 
+#include "LogNode.hpp"
 #include "MidiChannelNode.hpp"
 #include "MidiInNode.hpp"
 #include "MidiOutNode.hpp"
-#include "MidiPortWatchdog.hpp"
 #include "NodeFactory.hpp"
 #include "NodeSerializer.hpp"
 #include "PortNameDisplay.hpp"
@@ -143,21 +143,37 @@ NodeEditor NodeEditor::from_json(NodeFactory&           node_factory,
 std::shared_ptr<Node> NodeEditor::renderContextMenu(bool show_outputting_nodes,
                                                     bool show_inputting_nodes)
 {
-    constexpr ImGuiTreeNodeFlags leaf_flags =
-        ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
-    auto render_contents = [this](auto& infos) -> std::shared_ptr<Node> {
+    auto render_add_node = [this](auto               node_builder,
+                                  const std::string& name) -> std::shared_ptr<Node> {
+        constexpr ImGuiTreeNodeFlags leaf_flags =
+            ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+        ImGui::TreeNodeEx(name.c_str(), leaf_flags);
+        if (ImGui::IsItemClicked())
+        {
+            std::shared_ptr<Node> node = node_builder();
+            m_nodes.push_back(node);
+
+            ImNodes::SetNodeScreenSpacePos(node->id(), ImGui::GetMousePosOnOpeningCurrentPopup());
+            ImGui::CloseCurrentPopup();
+            return node;
+        }
+        else
+        {
+            return nullptr;
+        }
+    };
+
+    auto render_midi_inout_list = [this, render_add_node](auto& infos) -> std::shared_ptr<Node> {
         for (const auto& info : infos)
         {
-            const std::string port_name = m_port_name_display->get_port_name(info);
-            ImGui::TreeNodeEx(port_name.c_str(), leaf_flags);
-            if (ImGui::IsItemClicked())
+            const std::string port_name = m_port_name_display->get_port_name(info.m_name);
+            if (auto node = render_add_node(
+                    [this, &info] {
+                        return m_node_factory->build_midi_node(info);
+                    },
+                    port_name);
+                node != nullptr)
             {
-                std::shared_ptr<Node> node = m_node_factory->build_midi_node(info);
-                m_nodes.push_back(node);
-
-                ImNodes::SetNodeScreenSpacePos(node->id(),
-                                               ImGui::GetMousePosOnOpeningCurrentPopup());
-                ImGui::CloseCurrentPopup();
                 return node;
             }
         }
@@ -178,19 +194,23 @@ std::shared_ptr<Node> NodeEditor::renderContextMenu(bool show_outputting_nodes,
         }
         if (show_outputting_nodes || show_inputting_nodes)
         {
-            ImGui::TreeNodeEx("Channel map", leaf_flags);
-            if (ImGui::IsItemClicked())
-            {
-                node = m_node_factory->build_midi_channel_node();
-                ImNodes::SetNodeScreenSpacePos(node->id(),
-                                               ImGui::GetMousePosOnOpeningCurrentPopup());
-                m_nodes.push_back(node);
-                ImGui::CloseCurrentPopup();
-            }
+            node = render_add_node(
+                [this] {
+                    return m_node_factory->build_midi_channel_node();
+                },
+                "Channel map");
+        }
+        if (show_inputting_nodes)
+        {
+            node = render_add_node(
+                [this] {
+                    return m_node_factory->build_log_node();
+                },
+                "Message log");
         }
         if (show_outputting_nodes && ImGui::TreeNode("MIDI inputs"))
         {
-            auto tmp_node = render_contents(m_input_infos);
+            auto tmp_node = render_midi_inout_list(m_input_infos);
             if (tmp_node) // new node was created
             {
                 node = tmp_node;
@@ -199,7 +219,7 @@ std::shared_ptr<Node> NodeEditor::renderContextMenu(bool show_outputting_nodes,
         }
         if (show_inputting_nodes && ImGui::TreeNode("MIDI outputs"))
         {
-            auto tmp_node = render_contents(m_output_infos);
+            auto tmp_node = render_midi_inout_list(m_output_infos);
             if (tmp_node) // new node was created
             {
                 node = tmp_node;
@@ -214,7 +234,6 @@ std::shared_ptr<Node> NodeEditor::renderContextMenu(bool show_outputting_nodes,
 
 void NodeEditor::renderNodes()
 {
-    MidiPortWatchdog::check_nodes(m_nodes, *m_node_factory);
     for (const auto& node : m_nodes)
     {
         node->render();

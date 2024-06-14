@@ -4,46 +4,25 @@
 
 namespace mc
 {
-namespace
-{
-
-std::string abbreviate_port_name(const std::string& port_name)
-{
-    const std::regex re(R"(^(.+):(\1.*) \d+:\d+$)");
-    std::smatch      results;
-    if (std::regex_match(port_name, results, re))
-    {
-        return results[2].str();
-    }
-    else
-    {
-        return port_name;
-    }
-}
-
-} // namespace
 
 PortNameDisplay::PortNameDisplay(const bool initial_show_full_port_names)
     : m_show_full_port_names(initial_show_full_port_names)
 {
 }
 
-std::string PortNameDisplay::get_port_name(const midi::InputInfo& input_info) const
+std::string PortNameDisplay::get_port_name(std::string_view full_name) const
 {
-    if (m_show_full_port_names)
+    const std::regex re(R"(^(.+):(\1.*) \d+:\d+$)");
+    std::smatch      results;
+    std::string      full_name_copy(full_name);
+    if (!m_show_full_port_names && std::regex_match(full_name_copy, results, re))
     {
-        return input_info.m_name;
+        return results[2].str();
     }
-    return abbreviate_port_name(input_info.m_name);
-}
-
-std::string PortNameDisplay::get_port_name(const midi::OutputInfo& output_info) const
-{
-    if (m_show_full_port_names)
+    else
     {
-        return output_info.m_name;
+        return full_name_copy;
     }
-    return abbreviate_port_name(output_info.m_name);
 }
 
 } // namespace mc

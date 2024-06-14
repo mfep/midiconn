@@ -5,7 +5,6 @@
 #include "nlohmann/json.hpp"
 
 #include "NodeEditor.hpp"
-#include "midi/MessageTypeMask.hpp"
 
 namespace mc
 {
@@ -16,8 +15,7 @@ class ThemeControl;
 
 struct Preset
 {
-    NodeEditor            m_node_editor;
-    midi::MessageTypeMask m_message_type_mask;
+    NodeEditor m_node_editor;
 
     void          to_json(nlohmann::json& j) const;
     static Preset from_json(NodeFactory&           node_factory,

@@ -4,6 +4,7 @@
 
 #include "ActivityIndicator.hpp"
 #include "Node.hpp"
+#include "ScaleProvider.hpp"
 #include "midi/ChannelMapNode.hpp"
 
 namespace mc
@@ -12,7 +13,7 @@ namespace mc
 class MidiChannelNode final : public Node, private midi::GraphObserver
 {
 public:
-    explicit MidiChannelNode(std::function<float()> get_scale);
+    explicit MidiChannelNode(const ScaleProvider& scale_provider);
     ~MidiChannelNode();
 
     void accept_serializer(nlohmann::json& j, const NodeSerializer& serializer) const override;
@@ -31,8 +32,8 @@ private:
     static inline constexpr size_t sm_num_combo_items = 17;
     static const char*             sm_combo_items[sm_num_combo_items];
 
-    std::function<float()> m_get_scale;
-    midi::ChannelMapNode   m_midi_channel_map_node;
+    const ScaleProvider* m_scale_provider;
+    midi::ChannelMapNode m_midi_channel_map_node;
 
     ActivityIndicator m_input_indicator;
     ActivityIndicator m_output_indicator;

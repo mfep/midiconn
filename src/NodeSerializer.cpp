@@ -5,16 +5,22 @@
 #include "imnodes.h"
 #include "nlohmann/json.hpp"
 
-#include "DisconnectedMidiInNode.hpp"
-#include "DisconnectedMidiOutNode.hpp"
+#include "LogNode.hpp"
 #include "MidiChannelNode.hpp"
 #include "MidiInNode.hpp"
 #include "MidiOutNode.hpp"
 #include "NodeFactory.hpp"
-#include "midi/MidiInfo.hpp"
-#include "midi/MidiProbe.hpp"
+#include "midi/MessageTypeMask.hpp"
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ImVec2, x, y);
+
+namespace mc::midi
+{
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(MessageTypeMask,
+                                   m_sysex_enabled,
+                                   m_time_enabled,
+                                   m_sensing_enabled);
+}
 
 namespace mc
 {
@@ -42,32 +48,25 @@ void NodeSerializer::serialize_node(json& j, const Node& node) const
 void NodeSerializer::serialize_node(json& j, const MidiInNode& node) const
 {
     j = json{
-        {"type",       "midi_in"               },
-        {"input_name", node.m_input_info.m_name}
-    };
-}
-
-void NodeSerializer::serialize_node(json& j, const DisconnectedMidiInNode& node) const
-{
-    j = json{
-        {"type",       "midi_in"        },
-        {"input_name", node.m_input_name}
+        {"type",              "midi_in"               },
+        {"input_name",        node.m_input_name       },
+        {"message_type_mask", node.m_message_type_mask},
     };
 }
 
 void NodeSerializer::serialize_node(json& j, const MidiOutNode& node) const
 {
     j = json{
-        {"type",        "midi_out"               },
-        {"output_name", node.m_output_info.m_name}
+        {"type",        "midi_out"        },
+        {"output_name", node.m_output_name}
     };
 }
 
-void NodeSerializer::serialize_node(json& j, const DisconnectedMidiOutNode& node) const
+void NodeSerializer::serialize_node(nlohmann::json& j, const LogNode& node) const
 {
     j = json{
-        {"type",        "midi_out"        },
-        {"output_name", node.m_output_name}
+        {"type",            "log"                 },
+        {"max_buffer_size", node.m_max_buffer_size},
     };
 }
 
@@ -85,29 +84,19 @@ std::shared_ptr<Node> NodeSerializer::deserialize_node(const json& j) const
     std::shared_ptr<Node> node;
     if (node_type == "midi_in")
     {
-        const auto input_name     = j.at("input_name").get<std::string>();
-        const auto input_info_opt = midi::MidiProbe::get_valid_input(input_name);
-        if (input_info_opt.has_value())
+        const auto input_name   = j.at("input_name").get<std::string>();
+        auto       midi_in_node = m_node_factory->build_midi_in_node(input_name);
+        if (j.contains("message_type_mask"))
         {
-            node = m_node_factory->build_midi_node(input_info_opt.value());
+            midi_in_node->set_message_type_mask(
+                j.at("message_type_mask").get<midi::MessageTypeMask>());
         }
-        else
-        {
-            node = m_node_factory->build_disconnected_midi_in_node(input_name);
-        }
+        node = midi_in_node;
     }
     else if (node_type == "midi_out")
     {
-        const auto output_name     = j.at("output_name").get<std::string>();
-        const auto output_info_opt = midi::MidiProbe::get_valid_output(output_name);
-        if (output_info_opt.has_value())
-        {
-            node = m_node_factory->build_midi_node(output_info_opt.value());
-        }
-        else
-        {
-            node = m_node_factory->build_disconnected_midi_out_node(output_name);
-        }
+        const auto output_name = j.at("output_name").get<std::string>();
+        node                   = m_node_factory->build_midi_out_node(output_name);
     }
     else if (node_type == "midi_channel")
     {
@@ -115,6 +104,12 @@ std::shared_ptr<Node> NodeSerializer::deserialize_node(const json& j) const
         channel_node->m_midi_channel_map_node.map().data() =
             j.at("channels").get<midi::ChannelMap::data_t>();
         node = channel_node;
+    }
+    else if (node_type == "log")
+    {
+        auto log_node = m_node_factory->build_log_node();
+        j["max_buffer_size"].get_to(log_node->m_max_buffer_size);
+        node = log_node;
     }
     else
     {

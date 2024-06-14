@@ -36,7 +36,7 @@ std::vector<InfoT> get_connections()
 }
 
 template <class Info>
-std::optional<Info> get_valid_info(const std::string& name, const std::vector<Info>& infos)
+std::optional<Info> get_valid_info(std::string_view name, const std::vector<Info>& infos)
 {
     auto found_it = std::find_if(infos.begin(), infos.end(), [&](const auto& info) {
         return info.m_name == name;
@@ -80,12 +80,12 @@ std::vector<OutputInfo> MidiProbe::get_outputs()
     return get_connections<RtMidiOut, OutputInfo>();
 }
 
-std::optional<InputInfo> MidiProbe::get_valid_input(const std::string& input_name)
+std::optional<InputInfo> MidiProbe::get_valid_input(std::string_view input_name)
 {
     return get_valid_info(input_name, get_inputs());
 }
 
-std::optional<OutputInfo> MidiProbe::get_valid_output(const std::string& output_name)
+std::optional<OutputInfo> MidiProbe::get_valid_output(std::string_view output_name)
 {
     return get_valid_info(output_name, get_outputs());
 }

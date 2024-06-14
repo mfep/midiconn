@@ -2,6 +2,8 @@
 
 #include <filesystem>
 #include <string>
+#include <utility>
+#include <variant>
 
 namespace mc::utils
 {
@@ -49,6 +51,28 @@ inline std::string path_to_utf8str(const std::filesystem::path& path)
 {
     const std::u8string u8str = path.generic_u8string();
     return {u8str.begin(), u8str.end()};
+}
+
+template <class... Args>
+struct variant_cast_proxy
+{
+    std::variant<Args...> v;
+
+    template <class... ToArgs>
+    operator std::variant<ToArgs...>() const
+    {
+        return std::visit(
+            [](auto&& arg) -> std::variant<ToArgs...> {
+                return arg;
+            },
+            v);
+    }
+};
+
+template <class... Args>
+auto variant_cast(const std::variant<Args...>& v) -> variant_cast_proxy<Args...>
+{
+    return {v};
 }
 
 } // namespace mc::utils

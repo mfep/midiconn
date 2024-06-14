@@ -4,6 +4,8 @@
 #include <optional>
 #include <string_view>
 
+#include "ScaleProvider.hpp"
+
 #include "imnodes.h"
 
 struct SDL_Window;
@@ -21,22 +23,7 @@ enum class Theme
     Default = Dark
 };
 
-enum class InterfaceScale
-{
-    Scale_1_00,
-    Scale_1_25,
-    Scale_1_50,
-    Scale_1_75,
-    Scale_2_00,
-    Auto,
-    Size,
-    Undefined
-};
-
-constexpr inline std::array<std::string_view, static_cast<size_t>(InterfaceScale::Size)>
-    interface_scale_labels{"1.0", "1.25", "1.5", "1.75", "2.0", "Auto"};
-
-class ThemeControl final
+class ThemeControl final : public ScaleProvider
 {
 public:
     ThemeControl(ConfigFile& config, SDL_Window* window);
@@ -44,8 +31,8 @@ public:
     void           set_theme(const Theme theme);
     Theme          get_theme() const { return m_current_theme; }
     void           set_scale(const InterfaceScale scale);
-    InterfaceScale get_scale() const { return m_scale; }
-    float          get_scale_value() const { return calculate_scale_value(m_scale); };
+    InterfaceScale get_scale() const override { return m_scale; }
+    float          get_scale_value() const override { return calculate_scale_value(m_scale); }
 
     // Call this outside of ImGui's NewFrame() and Render()
     void update_scale_if_needed();

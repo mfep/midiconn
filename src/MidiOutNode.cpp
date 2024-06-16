@@ -8,6 +8,8 @@
 #include "midi/MidiProbe.hpp"
 #include "midi/OutputNode.hpp"
 
+#include "libintl.h"
+
 namespace mc
 {
 
@@ -55,11 +57,11 @@ void MidiOutNode::render_internal()
     {
         m_midi_activity.render();
         ImGui::SameLine();
-        ImGui::TextUnformatted("all channels");
+        ImGui::TextUnformatted(gettext("all channels"));
     }
     else
     {
-        ImGui::TextUnformatted("disconnected");
+        ImGui::TextUnformatted(gettext("disconnected"));
     }
 
     ImNodes::EndInputAttribute();

@@ -10,6 +10,8 @@
 #include "midi/InputNode.hpp"
 #include "midi/MidiProbe.hpp"
 
+#include "libintl.h"
+
 namespace mc
 {
 
@@ -57,11 +59,14 @@ void MidiInNode::render_internal()
     {
         m_midi_activity.render();
         ImGui::SameLine();
-        ImGui::TextUnformatted("all channels");
+        // Translators: Label of the connection pin in the MIDI input node
+        ImGui::TextUnformatted(gettext("all channels"));
     }
     else
     {
-        ImGui::TextUnformatted("disconnected");
+        // Translators: Label of the connection pin in the MIDI input node when the device is not
+        // available
+        ImGui::TextUnformatted(gettext("disconnected"));
     }
     ImNodes::EndOutputAttribute();
 
@@ -72,12 +77,14 @@ void MidiInNode::render_internal()
 
     ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4{});
     ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4{});
-    if (ImGui::TreeNode("Advanced"))
+    // Translators: The label of the dropdown in the MIDI input node
+    if (ImGui::TreeNode(gettext("Advanced")))
     {
         midi::MessageTypeMask new_message_type_mask = m_message_type_mask;
-        ImGui::Checkbox("Receive SysEx", &new_message_type_mask.m_sysex_enabled);
-        ImGui::Checkbox("Receive MIDI Clock", &new_message_type_mask.m_time_enabled);
-        ImGui::Checkbox("Receive Active Sensing", &new_message_type_mask.m_sensing_enabled);
+        ImGui::Checkbox(gettext("Receive SysEx"), &new_message_type_mask.m_sysex_enabled);
+        ImGui::Checkbox(gettext("Receive MIDI Clock"), &new_message_type_mask.m_time_enabled);
+        ImGui::Checkbox(gettext("Receive Active Sensing"),
+                        &new_message_type_mask.m_sensing_enabled);
         set_message_type_mask(new_message_type_mask);
         ImGui::TreePop();
     }

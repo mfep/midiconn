@@ -9,8 +9,25 @@
 
 #include "NodeSerializer.hpp"
 
-const char* mc::MidiChannelNode::sm_combo_items[] = {
-    "None", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16"};
+#include "libintl.h"
+
+const char* mc::MidiChannelNode::sm_combo_items[] = {gettext("None"),
+                                                     "1",
+                                                     "2",
+                                                     "3",
+                                                     "4",
+                                                     "5",
+                                                     "6",
+                                                     "7",
+                                                     "8",
+                                                     "9",
+                                                     "10",
+                                                     "11",
+                                                     "12",
+                                                     "13",
+                                                     "14",
+                                                     "15",
+                                                     "16"};
 
 mc::MidiChannelNode::MidiChannelNode(const ScaleProvider& scale_provider)
     : m_scale_provider(&scale_provider)
@@ -37,16 +54,17 @@ mc::midi::Node* mc::MidiChannelNode::get_midi_node()
 void mc::MidiChannelNode::render_internal()
 {
     ImNodes::BeginNodeTitleBar();
-    ImGui::TextUnformatted("Channel map");
+    // Translators: The name of the channel map node
+    ImGui::TextUnformatted(gettext("Channel map"));
     ImNodes::EndNodeTitleBar();
     ImNodes::BeginInputAttribute(in_id());
     m_input_indicator.render();
     ImGui::SameLine();
-    ImGui::TextUnformatted("MIDI in");
+    ImGui::TextUnformatted(gettext("MIDI in"));
     ImNodes::EndInputAttribute();
     ImGui::SameLine(100 * m_scale_provider->get_scale_value());
     ImNodes::BeginOutputAttribute(out_id());
-    ImGui::TextUnformatted("MIDI out");
+    ImGui::TextUnformatted(gettext("MIDI out"));
     ImGui::SameLine();
     m_output_indicator.render();
     ImNodes::EndOutputAttribute();
@@ -97,12 +115,14 @@ void mc::MidiChannelNode::render_internal()
         }
         ImGui::EndTable();
     }
-    if (ImGui::Button("Default"))
+    // Translators: Button to set the default channel map
+    if (ImGui::Button(gettext("Default")))
     {
         std::iota(updated_channels.begin(), updated_channels.end(), 1);
     }
     ImGui::SameLine();
-    if (ImGui::Button("Disable all"))
+    // Translators: Button to disable all channels in the channel map
+    if (ImGui::Button(gettext("Disable all")))
     {
         std::fill(updated_channels.begin(), updated_channels.end(), 0);
     }

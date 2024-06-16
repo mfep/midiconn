@@ -40,7 +40,7 @@ Alternatively, the build instructions can be found below.
 # Installing prerequisites with vcpkg
 > git clone https://github.com/Microsoft/vcpkg.git
 > .\vcpkg\bootstrap-vcpkg.bat
-> .\vcpkg\vcpkg.exe install spdlog:x64-windows sdl2:x64-windows freetype[core]:x64-windows rtmidi:x64-windows
+> .\vcpkg\vcpkg.exe install nlohmann-json:x64-windows spdlog:x64-windows sdl2:x64-windows freetype[core]:x64-windows zlib:x64-windows gettext:x64-windows
 
 # Cloning and building midiconn
 > git clone --recursive https://github.com/mfep/midiconn.git

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-14 15:46+0200\n"
+"POT-Creation-Date: 2024-06-16 12:28+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,3 +17,421 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+#. Translators: The name of the default preset
+#: src/Application.cpp:102
+msgid "Untitled"
+msgstr ""
+
+#. Translators: the title of the open preset file browser dialog
+#. Translators: Menu entry to open a preset file
+#. Translators: the title of the open preset file browser dialog
+#. Translators: Menu entry to open a preset file
+#: src/Application.cpp:127 src/Application.cpp:181
+msgid "Open preset"
+msgstr ""
+
+#. Translators: File menu label
+#: src/Application.cpp:169
+msgid "File"
+msgstr ""
+
+#. Translators: Menu entry to initialize an empty preset
+#: src/Application.cpp:174
+msgid "New preset"
+msgstr ""
+
+#. Translators: Menu entry to save the current preset to file where it was already
+#. saved
+#: src/Application.cpp:189
+msgid "Save preset"
+msgstr ""
+
+#. Translators: Menu entry to save the current preset to file (query location)
+#: src/Application.cpp:196
+msgid "Save preset as"
+msgstr ""
+
+#. Translators: Menu entry to exit the program
+#: src/Application.cpp:204
+msgid "Exit"
+msgstr ""
+
+#. Translators: Settings menu label
+#: src/Application.cpp:213
+msgid "Settings"
+msgstr ""
+
+#. Translators: Theme menu label
+#: src/Application.cpp:218
+msgid "Theme"
+msgstr ""
+
+#. Translators: Menu entry for selecting the dark theme
+#: src/Application.cpp:224
+msgid "Dark theme"
+msgstr ""
+
+#. Translators: Menu entry for selecting the light theme
+#: src/Application.cpp:232
+msgid "Light theme"
+msgstr ""
+
+#. Translators: Menu entry for selecting the classic theme
+#: src/Application.cpp:240
+msgid "Classic theme"
+msgstr ""
+
+#. Translators: Menu entry for selecting the interface scale
+#: src/Application.cpp:250
+msgid "Interface Scale"
+msgstr ""
+
+#. Translators: Menu entry that controls whether the full or abbreviated MIDI port names
+#. are displayed
+#: src/Application.cpp:269
+msgid "Show full port names"
+msgstr ""
+
+#. Translators: Menu entry for the help submenu
+#: src/Application.cpp:278
+msgid "Help"
+msgstr ""
+
+#. Translators: Menu entry to enable and disable debug logging
+#: src/Application.cpp:283
+msgid "Enable debug log"
+msgstr ""
+
+#. Translators: Menu entry to open the log file with the default application
+#: src/Application.cpp:291
+msgid "Open logfile"
+msgstr ""
+
+#. Translators: Menu entry to open the project's website with the browser
+#: src/Application.cpp:298 src/Application.cpp:373
+msgid "Visit website"
+msgstr ""
+
+#. Translators: Menu entry to open the about window
+#: src/Application.cpp:305
+msgid "About"
+msgstr ""
+
+#. Translators: Welcome message in the welcome window
+#: src/Application.cpp:333
+#, c-format
+msgid "Welcome to %s"
+msgstr ""
+
+#. Translators: Message in the welcome window while downloading the
+#. latest version number
+#: src/Application.cpp:345
+#, c-format
+msgid "Fetching latest %s version number..."
+msgstr ""
+
+#. Translators: Message in the welcome window, when an error occurred
+#. while fetching the version number from the web
+#: src/Application.cpp:351
+#, c-format
+msgid "Error fetching latest %s version number"
+msgstr ""
+
+#. Translators: Message in the welcome window, when the downloaded
+#. latest version is the same as the current application's version
+#: src/Application.cpp:361
+#, c-format
+msgid "Congratulations! You are using the latest version of %s"
+msgstr ""
+
+#. Translators: Message in the welcome window, when the downloaded
+#. latest version is newer than the current application's version
+#: src/Application.cpp:369
+#, c-format
+msgid "A new version of %s is available: %s"
+msgstr ""
+
+#. Translators: Checkbox on the welcome window
+#: src/Application.cpp:384
+msgid "Show this window on application startup"
+msgstr ""
+
+#. Translators: Button on the welcome window to create a new empty preset
+#: src/Application.cpp:389
+msgid "New preset - empty"
+msgstr ""
+
+#. Translators: Button on the welcome window to create a new preset filled with all
+#. available devices
+#: src/Application.cpp:397
+msgid "New preset - add all MIDI devices"
+msgstr ""
+
+#. Translators: Button on the welcome window to browse the filesystem for a preset to load
+#: src/Application.cpp:404
+msgid "Browse preset"
+msgstr ""
+
+#. Translators: Button on the welcome window to open the last opened preset
+#: src/Application.cpp:413
+msgid "Open last preset"
+msgstr ""
+
+#. Translators: Button on the welcome window to show the 3rd party library licenses
+#: src/Application.cpp:425
+msgid "Open source licenses"
+msgstr ""
+
+#. Translators: The message on the popup window when attempting to close the program
+#: src/Application.cpp:446
+msgid "Do you want to save changes?"
+msgstr ""
+
+#. Translators: The name of the log node
+#: src/LogNode.cpp:44
+msgid "Message log"
+msgstr ""
+
+#. Translators: The caption of the MIDI input pin on the node
+#: src/LogNode.cpp:50 src/MidiChannelNode.cpp:63
+msgid "MIDI in"
+msgstr ""
+
+#. Translators: The button to clear the buffer of the log node
+#: src/LogNode.cpp:55
+msgid "Clear"
+msgstr ""
+
+#. Translators: The input field to set the buffer size of the log node
+#: src/LogNode.cpp:63
+msgid "Buffer Size"
+msgstr ""
+
+#. Translators: The header of the message arrive time column
+#: src/LogNode.cpp:89
+msgid "Time"
+msgstr ""
+
+#. Translators: The header of the message type column
+#: src/LogNode.cpp:93 src/LogNode.cpp:277
+msgid "Type"
+msgstr ""
+
+#. Translators: The header of the message channel column
+#: src/LogNode.cpp:95
+msgid "Channel"
+msgstr ""
+
+#. Translators: The header of the first message data column
+#: src/LogNode.cpp:99
+msgid "Data #0"
+msgstr ""
+
+#. Translators: The header of the second message data column
+#: src/LogNode.cpp:101
+msgid "Data #1"
+msgstr ""
+
+#. Translators: Name of an unrecognized MIDI message
+#: src/LogNode.cpp:165 src/LogNode.cpp:166
+msgid "Unknown"
+msgstr ""
+
+#: src/LogNode.cpp:181
+msgid "Note On"
+msgstr ""
+
+#: src/LogNode.cpp:184 src/LogNode.cpp:191
+msgid "Velocity"
+msgstr ""
+
+#: src/LogNode.cpp:188
+msgid "Note Off"
+msgstr ""
+
+#: src/LogNode.cpp:195
+msgid "Poly Aftertouch"
+msgstr ""
+
+#: src/LogNode.cpp:198 src/LogNode.cpp:249
+msgid "Pressure"
+msgstr ""
+
+#: src/LogNode.cpp:201
+msgid "All Sound Off"
+msgstr ""
+
+#: src/LogNode.cpp:204
+msgid "Reset All Controllers"
+msgstr ""
+
+#: src/LogNode.cpp:208
+msgid "Local Control"
+msgstr ""
+
+#: src/LogNode.cpp:210
+msgid "On"
+msgstr ""
+
+#: src/LogNode.cpp:210
+msgid "Off"
+msgstr ""
+
+#: src/LogNode.cpp:213
+msgid "All Notes Off"
+msgstr ""
+
+#: src/LogNode.cpp:216
+msgid "Omni Mode Off"
+msgstr ""
+
+#: src/LogNode.cpp:219
+msgid "Omni Mode On"
+msgstr ""
+
+#: src/LogNode.cpp:223
+msgid "Mono Mode On"
+msgstr ""
+
+#: src/LogNode.cpp:225
+msgid "Channels"
+msgstr ""
+
+#: src/LogNode.cpp:228
+msgid "Poly Mode On"
+msgstr ""
+
+#: src/LogNode.cpp:232
+msgid "Control Change"
+msgstr ""
+
+#: src/LogNode.cpp:237 src/LogNode.cpp:255
+msgid "Value"
+msgstr ""
+
+#: src/LogNode.cpp:241
+msgid "Program Change"
+msgstr ""
+
+#: src/LogNode.cpp:243
+msgid "Program"
+msgstr ""
+
+#: src/LogNode.cpp:247
+msgid "Channel Aftertouch"
+msgstr ""
+
+#: src/LogNode.cpp:253
+msgid "Pitch bend"
+msgstr ""
+
+#: src/LogNode.cpp:258
+msgid "Unknown channel message"
+msgstr ""
+
+#: src/LogNode.cpp:270
+msgid "System Exclusive"
+msgstr ""
+
+#: src/LogNode.cpp:272
+msgid "bytes"
+msgstr ""
+
+#: src/LogNode.cpp:276
+msgid "Timecode Quarter Frame"
+msgstr ""
+
+#: src/LogNode.cpp:278
+msgid "Values"
+msgstr ""
+
+#: src/LogNode.cpp:281
+msgid "Song Position"
+msgstr ""
+
+#: src/LogNode.cpp:285
+msgid "Song Select"
+msgstr ""
+
+#: src/LogNode.cpp:288
+msgid "Tune Request"
+msgstr ""
+
+#: src/LogNode.cpp:291
+msgid "Timing Clock"
+msgstr ""
+
+#: src/LogNode.cpp:294
+msgid "Start Sequence"
+msgstr ""
+
+#: src/LogNode.cpp:297
+msgid "Continue Sequence"
+msgstr ""
+
+#: src/LogNode.cpp:300
+msgid "Stop Sequence"
+msgstr ""
+
+#: src/LogNode.cpp:303
+msgid "Active Sensing"
+msgstr ""
+
+#: src/LogNode.cpp:306
+msgid "Reset everything"
+msgstr ""
+
+#: src/LogNode.cpp:309
+msgid "Unknown system message"
+msgstr ""
+
+#: src/MidiChannelNode.cpp:14
+msgid "None"
+msgstr ""
+
+#. Translators: The name of the channel map node
+#: src/MidiChannelNode.cpp:58
+msgid "Channel map"
+msgstr ""
+
+#: src/MidiChannelNode.cpp:67
+msgid "MIDI out"
+msgstr ""
+
+#. Translators: Button to set the default channel map
+#: src/MidiChannelNode.cpp:119
+msgid "Default"
+msgstr ""
+
+#. Translators: Button to disable all channels in the channel map
+#: src/MidiChannelNode.cpp:125
+msgid "Disable all"
+msgstr ""
+
+#. Translators: Label of the connection pin in the MIDI input node
+#: src/MidiInNode.cpp:61 src/MidiOutNode.cpp:60
+msgid "all channels"
+msgstr ""
+
+#. Translators: Label of the connection pin in the MIDI input node when the device is not
+#. available
+#: src/MidiInNode.cpp:67 src/MidiOutNode.cpp:64
+msgid "disconnected"
+msgstr ""
+
+#. Translators: The label of the dropdown in the MIDI input node
+#: src/MidiInNode.cpp:79
+msgid "Advanced"
+msgstr ""
+
+#: src/MidiInNode.cpp:82
+msgid "Receive SysEx"
+msgstr ""
+
+#: src/MidiInNode.cpp:83
+msgid "Receive MIDI Clock"
+msgstr ""
+
+#: src/MidiInNode.cpp:84
+msgid "Receive Active Sensing"
+msgstr ""

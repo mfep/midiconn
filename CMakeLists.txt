@@ -176,7 +176,7 @@ if (XGETTEXT AND ${GETTEXT_FOUND})
     set(POT_FILE "${PROJECT_SOURCE_DIR}/po/midiconn.pot")
     add_custom_command(
         OUTPUT "${POT_FILE}"
-        COMMAND "${XGETTEXT}" "--join-existing" "--add-comments" "--output=${POT_FILE}" "--output-dir=${PROJECT_SOURCE_DIR}/po" ${sources}
+        COMMAND "${XGETTEXT}" "--add-comments" "--output=${POT_FILE}" "--output-dir=${PROJECT_SOURCE_DIR}/po" ${sources}
         WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
         DEPENDS ${sources}
     )

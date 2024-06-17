@@ -1,435 +1,436 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#, fuzzy
+#  <>, 2024.
+#
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: midiconn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-17 10:26+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"POT-Creation-Date: 2024-06-16 12:28+0200\n"
+"PO-Revision-Date: 2024-06-17 10:25+0200\n"
+"Last-Translator:  <>\n"
+"Language-Team: Hungarian\n"
+"Language: hu\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Gtranslator 46.1\n"
 
 #. Translators: The name of the default preset
 #: src/Application.cpp:102
 msgid "Untitled"
-msgstr ""
+msgstr "Névtelen"
 
+#. Translators: the title of the open preset file browser dialog
+#. Translators: Menu entry to open a preset file
 #. Translators: the title of the open preset file browser dialog
 #. Translators: Menu entry to open a preset file
 #: src/Application.cpp:127 src/Application.cpp:181
 msgid "Open preset"
-msgstr ""
+msgstr "Konfiguráció megnyitása"
 
 #. Translators: File menu label
 #: src/Application.cpp:169
 msgid "File"
-msgstr ""
+msgstr "Fájl"
 
 #. Translators: Menu entry to initialize an empty preset
 #: src/Application.cpp:174
 msgid "New preset"
-msgstr ""
+msgstr "Új konfiguráció"
 
 #. Translators: Menu entry to save the current preset to file where it was already
 #. saved
 #: src/Application.cpp:189
 msgid "Save preset"
-msgstr ""
+msgstr "Konfiguráció mentése"
 
 #. Translators: Menu entry to save the current preset to file (query location)
 #: src/Application.cpp:196
 msgid "Save preset as"
-msgstr ""
+msgstr "Konfiguráció mentése másként"
 
 #. Translators: Menu entry to exit the program
 #: src/Application.cpp:204
 msgid "Exit"
-msgstr ""
+msgstr "Kilépés"
 
 #. Translators: Settings menu label
 #: src/Application.cpp:213
 msgid "Settings"
-msgstr ""
+msgstr "Beállítások"
 
 #. Translators: Theme menu label
 #: src/Application.cpp:218
 msgid "Theme"
-msgstr ""
+msgstr "Téma"
 
 #. Translators: Menu entry for selecting the dark theme
 #: src/Application.cpp:224
 msgid "Dark theme"
-msgstr ""
+msgstr "Sötét téma"
 
 #. Translators: Menu entry for selecting the light theme
 #: src/Application.cpp:232
 msgid "Light theme"
-msgstr ""
+msgstr "Világos téma"
 
 #. Translators: Menu entry for selecting the classic theme
 #: src/Application.cpp:240
 msgid "Classic theme"
-msgstr ""
+msgstr "Klasszikus téma"
 
 #. Translators: Menu entry for selecting the interface scale
 #: src/Application.cpp:250
 msgid "Interface Scale"
-msgstr ""
+msgstr "Megjelenítés nagyítása"
 
 #. Translators: Menu entry that controls whether the full or abbreviated MIDI port names
 #. are displayed
 #: src/Application.cpp:269
 msgid "Show full port names"
-msgstr ""
+msgstr "Teljes eszköznevek kijelzése"
 
 #. Translators: Menu entry for the help submenu
 #: src/Application.cpp:278
 msgid "Help"
-msgstr ""
+msgstr "Súgó"
 
 #. Translators: Menu entry to enable and disable debug logging
 #: src/Application.cpp:283
 msgid "Enable debug log"
-msgstr ""
+msgstr "Hibalog engedélyezése"
 
 #. Translators: Menu entry to open the log file with the default application
 #: src/Application.cpp:291
 msgid "Open logfile"
-msgstr ""
+msgstr "Logfájl megnyitása"
 
 #. Translators: Menu entry to open the project's website with the browser
 #: src/Application.cpp:298 src/Application.cpp:373
 msgid "Visit website"
-msgstr ""
+msgstr "Weboldal felkeresése"
 
 #. Translators: Menu entry to open the about window
 #: src/Application.cpp:305
 msgid "About"
-msgstr ""
+msgstr "Névjegy"
 
 #. Translators: Welcome message in the welcome window
 #: src/Application.cpp:333
 #, c-format
 msgid "Welcome to %s"
-msgstr ""
+msgstr "Üdvözli a %s"
 
 #. Translators: Message in the welcome window while downloading the
 #. latest version number
 #: src/Application.cpp:345
 #, c-format
 msgid "Fetching latest %s version number..."
-msgstr ""
+msgstr "Legutóbbi %s verziószám lekérése..."
 
 #. Translators: Message in the welcome window, when an error occurred
 #. while fetching the version number from the web
 #: src/Application.cpp:351
 #, c-format
 msgid "Error fetching latest %s version number"
-msgstr ""
+msgstr "Hiba a legutóbbi %s verziószám lekérésénél"
 
 #. Translators: Message in the welcome window, when the downloaded
 #. latest version is the same as the current application's version
 #: src/Application.cpp:361
 #, c-format
 msgid "Congratulations! You are using the latest version of %s"
-msgstr ""
+msgstr "Gratulálunk! A %s legújabb verzióját használja"
 
 #. Translators: Message in the welcome window, when the downloaded
 #. latest version is newer than the current application's version
 #: src/Application.cpp:369
 #, c-format
 msgid "A new version of %s is available: %s"
-msgstr ""
+msgstr "Egy új %s verzió elérhető: %s"
 
 #. Translators: Checkbox on the welcome window
 #: src/Application.cpp:384
 msgid "Show this window on application startup"
-msgstr ""
+msgstr "Ablak megjelenítése indításkor"
 
 #. Translators: Button on the welcome window to create a new empty preset
 #: src/Application.cpp:389
 msgid "New preset - empty"
-msgstr ""
+msgstr "Új konfiguráció - üres"
 
 #. Translators: Button on the welcome window to create a new preset filled with all
 #. available devices
 #: src/Application.cpp:397
 msgid "New preset - add all MIDI devices"
-msgstr ""
+msgstr "Új konfiguráció - az összes MIDI eszközzel"
 
 #. Translators: Button on the welcome window to browse the filesystem for a preset to load
 #: src/Application.cpp:404
 msgid "Browse preset"
-msgstr ""
+msgstr "Konfiguráció tallózása"
 
 #. Translators: Button on the welcome window to open the last opened preset
 #: src/Application.cpp:413
 msgid "Open last preset"
-msgstr ""
+msgstr "Legutóbbi konfiguráció megnyitása"
 
 #. Translators: Button on the welcome window to show the 3rd party library licenses
 #: src/Application.cpp:425
 msgid "Open source licenses"
-msgstr ""
+msgstr "Licencinformációk"
 
 #. Translators: The message on the popup window when attempting to close the program
 #: src/Application.cpp:446
 msgid "Do you want to save changes?"
-msgstr ""
+msgstr "Menti a módosításokat?"
 
 #. Translators: The name of the log node
 #: src/LogNode.cpp:44
 msgid "Message log"
-msgstr ""
+msgstr "Üzenetlista"
 
 #. Translators: The caption of the MIDI input pin on the node
 #: src/LogNode.cpp:50 src/MidiChannelNode.cpp:63
 msgid "MIDI in"
-msgstr ""
+msgstr "MIDI be"
 
 #. Translators: The button to clear the buffer of the log node
 #: src/LogNode.cpp:55
 msgid "Clear"
-msgstr ""
+msgstr "Törlés"
 
 #. Translators: The input field to set the buffer size of the log node
 #: src/LogNode.cpp:63
 msgid "Buffer Size"
-msgstr ""
+msgstr "Pufferméret"
 
 #. Translators: The header of the message arrive time column
 #: src/LogNode.cpp:89
 msgid "Time"
-msgstr ""
+msgstr "Időpont"
 
 #. Translators: The header of the message type column
 #: src/LogNode.cpp:93 src/LogNode.cpp:277
 msgid "Type"
-msgstr ""
+msgstr "Típus"
 
 #. Translators: The header of the message channel column
 #: src/LogNode.cpp:95
 msgid "Channel"
-msgstr ""
+msgstr "Csatorna"
 
 #. Translators: The header of the first message data column
 #: src/LogNode.cpp:99
 msgid "Data #0"
-msgstr ""
+msgstr "Adat 0"
 
 #. Translators: The header of the second message data column
 #: src/LogNode.cpp:101
 msgid "Data #1"
-msgstr ""
+msgstr "Adat 1"
 
 #. Translators: Name of an unrecognized MIDI message
-#: src/LogNode.cpp:166
+#: src/LogNode.cpp:165 src/LogNode.cpp:166
 msgid "Unknown"
-msgstr ""
+msgstr "Ismeretlen"
 
 #: src/LogNode.cpp:181
 msgid "Note On"
-msgstr ""
+msgstr "Billentyűleütés"
 
 #: src/LogNode.cpp:184 src/LogNode.cpp:191
 msgid "Velocity"
-msgstr ""
+msgstr "Leütés erőssége"
 
 #: src/LogNode.cpp:188
 msgid "Note Off"
-msgstr ""
+msgstr "Billentyűfelengedés"
 
 #: src/LogNode.cpp:195
 msgid "Poly Aftertouch"
-msgstr ""
+msgstr "Polifonikus Aftertouch"
 
 #: src/LogNode.cpp:198 src/LogNode.cpp:249
 msgid "Pressure"
-msgstr ""
+msgstr "Nyomás"
 
 #: src/LogNode.cpp:201
 msgid "All Sound Off"
-msgstr ""
+msgstr "Minden hang elhallgat"
 
 #: src/LogNode.cpp:204
 msgid "Reset All Controllers"
-msgstr ""
+msgstr "Minden kontroller alaphelyzetbe állítása"
 
 #: src/LogNode.cpp:208
 msgid "Local Control"
-msgstr ""
+msgstr "Lokális vezérlés"
 
 #: src/LogNode.cpp:210
 msgid "On"
-msgstr ""
+msgstr "Be"
 
 #: src/LogNode.cpp:210
 msgid "Off"
-msgstr ""
+msgstr "Ki"
 
 #: src/LogNode.cpp:213
 msgid "All Notes Off"
-msgstr ""
+msgstr "Minden hangjegy elhallgat"
 
 #: src/LogNode.cpp:216
 msgid "Omni Mode Off"
-msgstr ""
+msgstr "Omni mód ki"
 
 #: src/LogNode.cpp:219
 msgid "Omni Mode On"
-msgstr ""
+msgstr "Omni mód be"
 
 #: src/LogNode.cpp:223
 msgid "Mono Mode On"
-msgstr ""
+msgstr "Monó mód be"
 
 #: src/LogNode.cpp:225
 msgid "Channels"
-msgstr ""
+msgstr "Csatornák"
 
 #: src/LogNode.cpp:228
 msgid "Poly Mode On"
-msgstr ""
+msgstr "Polifónikus mód be"
 
 #: src/LogNode.cpp:232
 msgid "Control Change"
-msgstr ""
+msgstr "Kontrollváltás"
 
 #: src/LogNode.cpp:237 src/LogNode.cpp:255
 msgid "Value"
-msgstr ""
+msgstr "Érték"
 
 #: src/LogNode.cpp:241
 msgid "Program Change"
-msgstr ""
+msgstr "Programváltás"
 
 #: src/LogNode.cpp:243
 msgid "Program"
-msgstr ""
+msgstr "Program"
 
 #: src/LogNode.cpp:247
 msgid "Channel Aftertouch"
-msgstr ""
+msgstr "Csatorna Aftertouch"
 
 #: src/LogNode.cpp:253
 msgid "Pitch bend"
-msgstr ""
+msgstr "Hajlítás"
 
 #: src/LogNode.cpp:258
 msgid "Unknown channel message"
-msgstr ""
+msgstr "Ismeretlen csatorna üzenet"
 
 #: src/LogNode.cpp:270
 msgid "System Exclusive"
-msgstr ""
+msgstr "Rendszer exkluzív"
 
 #: src/LogNode.cpp:272
 msgid "bytes"
-msgstr ""
+msgstr "bájt"
 
 #: src/LogNode.cpp:276
 msgid "Timecode Quarter Frame"
-msgstr ""
+msgstr "Timekód negyed"
 
 #: src/LogNode.cpp:278
 msgid "Values"
-msgstr ""
+msgstr "Értékek"
 
 #: src/LogNode.cpp:281
 msgid "Song Position"
-msgstr ""
+msgstr "Dal pozíció"
 
 #: src/LogNode.cpp:285
 msgid "Song Select"
-msgstr ""
+msgstr "Dal kiválasztás"
 
 #: src/LogNode.cpp:288
 msgid "Tune Request"
-msgstr ""
+msgstr "Hangolási kérelem"
 
 #: src/LogNode.cpp:291
 msgid "Timing Clock"
-msgstr ""
+msgstr "Időzítő óra"
 
 #: src/LogNode.cpp:294
 msgid "Start Sequence"
-msgstr ""
+msgstr "Szekvencia elindítása"
 
 #: src/LogNode.cpp:297
 msgid "Continue Sequence"
-msgstr ""
+msgstr "Szekvencia folytatása"
 
 #: src/LogNode.cpp:300
 msgid "Stop Sequence"
-msgstr ""
+msgstr "Szekvencia leállítása"
 
 #: src/LogNode.cpp:303
 msgid "Active Sensing"
-msgstr ""
+msgstr "Aktív érzékelés"
 
 #: src/LogNode.cpp:306
 msgid "Reset everything"
-msgstr ""
+msgstr "Minden alaphelyzetbe állítása"
 
 #: src/LogNode.cpp:309
 msgid "Unknown system message"
-msgstr ""
+msgstr "Ismeretlen rendszerüzenet"
 
 #: src/MidiChannelNode.cpp:14
 msgid "None"
-msgstr ""
+msgstr "Egyik sem"
 
 #. Translators: The name of the channel map node
 #: src/MidiChannelNode.cpp:58
 msgid "Channel map"
-msgstr ""
+msgstr "Csatornaváltó"
 
 #: src/MidiChannelNode.cpp:67
 msgid "MIDI out"
-msgstr ""
+msgstr "MIDI ki"
 
 #. Translators: Button to set the default channel map
 #: src/MidiChannelNode.cpp:119
 msgid "Default"
-msgstr ""
+msgstr "Alaphelyzet"
 
 #. Translators: Button to disable all channels in the channel map
 #: src/MidiChannelNode.cpp:125
 msgid "Disable all"
-msgstr ""
+msgstr "Minden kikapcsolása"
 
 #. Translators: Label of the connection pin in the MIDI input node
-#: src/MidiInNode.cpp:63 src/MidiOutNode.cpp:60
+#: src/MidiInNode.cpp:61 src/MidiOutNode.cpp:60
 msgid "all channels"
-msgstr ""
+msgstr "minden csatorna"
 
 #. Translators: Label of the connection pin in the MIDI input node when the device is not
 #. available
-#: src/MidiInNode.cpp:69 src/MidiOutNode.cpp:64
+#: src/MidiInNode.cpp:67 src/MidiOutNode.cpp:64
 msgid "disconnected"
-msgstr ""
+msgstr "nincs csatlakoztatva"
 
 #. Translators: The label of the dropdown in the MIDI input node
-#: src/MidiInNode.cpp:81
+#: src/MidiInNode.cpp:79
 msgid "Advanced"
-msgstr ""
+msgstr "Haladó"
+
+#: src/MidiInNode.cpp:82
+msgid "Receive SysEx"
+msgstr "SysEx fogadása"
+
+#: src/MidiInNode.cpp:83
+msgid "Receive MIDI Clock"
+msgstr "MIDI óra fogadása"
 
 #: src/MidiInNode.cpp:84
-msgid "Receive SysEx"
-msgstr ""
-
-#: src/MidiInNode.cpp:85
-msgid "Receive MIDI Clock"
-msgstr ""
-
-#: src/MidiInNode.cpp:86
 msgid "Receive Active Sensing"
-msgstr ""
+msgstr "Aktív érzékelés fogadása"

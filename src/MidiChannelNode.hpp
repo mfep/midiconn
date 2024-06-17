@@ -18,6 +18,8 @@ public:
 
     void accept_serializer(nlohmann::json& j, const NodeSerializer& serializer) const override;
 
+    static const char* name();
+
 protected:
     midi::Node* get_midi_node() override;
 

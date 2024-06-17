@@ -46,6 +46,12 @@ void mc::MidiChannelNode::accept_serializer(nlohmann::json&       j,
     serializer.serialize_node(j, *this);
 }
 
+const char* mc::MidiChannelNode::name()
+{
+    // Translators: The name of the channel map node
+    return gettext("Channel map");
+}
+
 mc::midi::Node* mc::MidiChannelNode::get_midi_node()
 {
     return &m_midi_channel_map_node;
@@ -54,8 +60,7 @@ mc::midi::Node* mc::MidiChannelNode::get_midi_node()
 void mc::MidiChannelNode::render_internal()
 {
     ImNodes::BeginNodeTitleBar();
-    // Translators: The name of the channel map node
-    ImGui::TextUnformatted(gettext("Channel map"));
+    ImGui::TextUnformatted(name());
     ImNodes::EndNodeTitleBar();
     ImNodes::BeginInputAttribute(in_id());
     m_input_indicator.render();

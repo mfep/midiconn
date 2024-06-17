@@ -17,6 +17,8 @@
 #include "Theme.hpp"
 #include "midi/MidiProbe.hpp"
 
+#include "libintl.h"
+
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ImVec2, x, y);
 
 namespace
@@ -198,7 +200,7 @@ std::shared_ptr<Node> NodeEditor::renderContextMenu(bool show_outputting_nodes,
                 [this] {
                     return m_node_factory->build_midi_channel_node();
                 },
-                "Channel map");
+                MidiChannelNode::name());
         }
         if (show_inputting_nodes)
         {
@@ -206,9 +208,10 @@ std::shared_ptr<Node> NodeEditor::renderContextMenu(bool show_outputting_nodes,
                 [this] {
                     return m_node_factory->build_log_node();
                 },
-                "Message log");
+                LogNode::name());
         }
-        if (show_outputting_nodes && ImGui::TreeNode("MIDI inputs"))
+        // Translators: Context menu entry for listing the MIDI input devices
+        if (show_outputting_nodes && ImGui::TreeNode(gettext("MIDI inputs")))
         {
             auto tmp_node = render_midi_inout_list(m_input_infos);
             if (tmp_node) // new node was created
@@ -217,7 +220,8 @@ std::shared_ptr<Node> NodeEditor::renderContextMenu(bool show_outputting_nodes,
             }
             ImGui::TreePop();
         }
-        if (show_inputting_nodes && ImGui::TreeNode("MIDI outputs"))
+        // Translators: Context menu entry for listing the MIDI output devices
+        if (show_inputting_nodes && ImGui::TreeNode(gettext("MIDI outputs")))
         {
             auto tmp_node = render_midi_inout_list(m_output_infos);
             if (tmp_node) // new node was created
@@ -242,8 +246,9 @@ void NodeEditor::renderNodes()
 
 void NodeEditor::renderHelpText()
 {
-    constexpr std::string_view help_text = "Left click to select. Right click to create nodes. "
-                                           "Middle click (or Ctrl + left click) to pan view.";
+    // Translators: Help text in the bottom of the node editor
+    const std::string_view help_text = gettext("Left click to select. Right click to create nodes. "
+                                               "Middle click (or Ctrl + left click) to pan view.");
 
     const auto text_size           = ImGui::CalcTextSize(help_text.data());
     const auto window_size         = ImGui::GetWindowSize();

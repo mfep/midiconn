@@ -32,6 +32,12 @@ void mc::LogNode::accept_serializer(nlohmann::json& j, const NodeSerializer& ser
     serializer.serialize_node(j, *this);
 }
 
+const char* mc::LogNode::name()
+{
+    // Translators: The name of the log node
+    return gettext("Message log");
+}
+
 mc::midi::Node* mc::LogNode::get_midi_node()
 {
     return &m_log_midi_node;
@@ -40,8 +46,7 @@ mc::midi::Node* mc::LogNode::get_midi_node()
 void mc::LogNode::render_internal()
 {
     ImNodes::BeginNodeTitleBar();
-    // Translators: The name of the log node
-    ImGui::TextUnformatted(gettext("Message log"));
+    ImGui::TextUnformatted(name());
     ImNodes::EndNodeTitleBar();
     ImNodes::BeginInputAttribute(in_id());
     m_input_indicator.render();

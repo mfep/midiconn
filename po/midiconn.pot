@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-17 10:26+0200\n"
+"POT-Creation-Date: 2024-06-17 10:41+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -186,200 +186,200 @@ msgid "Do you want to save changes?"
 msgstr ""
 
 #. Translators: The name of the log node
-#: src/LogNode.cpp:44
+#: src/LogNode.cpp:38
 msgid "Message log"
 msgstr ""
 
 #. Translators: The caption of the MIDI input pin on the node
-#: src/LogNode.cpp:50 src/MidiChannelNode.cpp:63
+#: src/LogNode.cpp:55 src/MidiChannelNode.cpp:68
 msgid "MIDI in"
 msgstr ""
 
 #. Translators: The button to clear the buffer of the log node
-#: src/LogNode.cpp:55
+#: src/LogNode.cpp:60
 msgid "Clear"
 msgstr ""
 
 #. Translators: The input field to set the buffer size of the log node
-#: src/LogNode.cpp:63
+#: src/LogNode.cpp:68
 msgid "Buffer Size"
 msgstr ""
 
 #. Translators: The header of the message arrive time column
-#: src/LogNode.cpp:89
+#: src/LogNode.cpp:94
 msgid "Time"
 msgstr ""
 
 #. Translators: The header of the message type column
-#: src/LogNode.cpp:93 src/LogNode.cpp:277
+#: src/LogNode.cpp:98 src/LogNode.cpp:282
 msgid "Type"
 msgstr ""
 
 #. Translators: The header of the message channel column
-#: src/LogNode.cpp:95
+#: src/LogNode.cpp:100
 msgid "Channel"
 msgstr ""
 
 #. Translators: The header of the first message data column
-#: src/LogNode.cpp:99
+#: src/LogNode.cpp:104
 msgid "Data #0"
 msgstr ""
 
 #. Translators: The header of the second message data column
-#: src/LogNode.cpp:101
+#: src/LogNode.cpp:106
 msgid "Data #1"
 msgstr ""
 
 #. Translators: Name of an unrecognized MIDI message
-#: src/LogNode.cpp:166
+#: src/LogNode.cpp:171
 msgid "Unknown"
 msgstr ""
 
-#: src/LogNode.cpp:181
+#: src/LogNode.cpp:186
 msgid "Note On"
 msgstr ""
 
-#: src/LogNode.cpp:184 src/LogNode.cpp:191
+#: src/LogNode.cpp:189 src/LogNode.cpp:196
 msgid "Velocity"
 msgstr ""
 
-#: src/LogNode.cpp:188
+#: src/LogNode.cpp:193
 msgid "Note Off"
 msgstr ""
 
-#: src/LogNode.cpp:195
+#: src/LogNode.cpp:200
 msgid "Poly Aftertouch"
 msgstr ""
 
-#: src/LogNode.cpp:198 src/LogNode.cpp:249
+#: src/LogNode.cpp:203 src/LogNode.cpp:254
 msgid "Pressure"
 msgstr ""
 
-#: src/LogNode.cpp:201
+#: src/LogNode.cpp:206
 msgid "All Sound Off"
 msgstr ""
 
-#: src/LogNode.cpp:204
+#: src/LogNode.cpp:209
 msgid "Reset All Controllers"
 msgstr ""
 
-#: src/LogNode.cpp:208
+#: src/LogNode.cpp:213
 msgid "Local Control"
 msgstr ""
 
-#: src/LogNode.cpp:210
+#: src/LogNode.cpp:215
 msgid "On"
 msgstr ""
 
-#: src/LogNode.cpp:210
+#: src/LogNode.cpp:215
 msgid "Off"
 msgstr ""
 
-#: src/LogNode.cpp:213
+#: src/LogNode.cpp:218
 msgid "All Notes Off"
 msgstr ""
 
-#: src/LogNode.cpp:216
+#: src/LogNode.cpp:221
 msgid "Omni Mode Off"
 msgstr ""
 
-#: src/LogNode.cpp:219
+#: src/LogNode.cpp:224
 msgid "Omni Mode On"
 msgstr ""
 
-#: src/LogNode.cpp:223
+#: src/LogNode.cpp:228
 msgid "Mono Mode On"
 msgstr ""
 
-#: src/LogNode.cpp:225
+#: src/LogNode.cpp:230
 msgid "Channels"
 msgstr ""
 
-#: src/LogNode.cpp:228
+#: src/LogNode.cpp:233
 msgid "Poly Mode On"
 msgstr ""
 
-#: src/LogNode.cpp:232
+#: src/LogNode.cpp:237
 msgid "Control Change"
 msgstr ""
 
-#: src/LogNode.cpp:237 src/LogNode.cpp:255
+#: src/LogNode.cpp:242 src/LogNode.cpp:260
 msgid "Value"
 msgstr ""
 
-#: src/LogNode.cpp:241
+#: src/LogNode.cpp:246
 msgid "Program Change"
 msgstr ""
 
-#: src/LogNode.cpp:243
+#: src/LogNode.cpp:248
 msgid "Program"
 msgstr ""
 
-#: src/LogNode.cpp:247
+#: src/LogNode.cpp:252
 msgid "Channel Aftertouch"
 msgstr ""
 
-#: src/LogNode.cpp:253
+#: src/LogNode.cpp:258
 msgid "Pitch bend"
 msgstr ""
 
-#: src/LogNode.cpp:258
+#: src/LogNode.cpp:263
 msgid "Unknown channel message"
 msgstr ""
 
-#: src/LogNode.cpp:270
+#: src/LogNode.cpp:275
 msgid "System Exclusive"
 msgstr ""
 
-#: src/LogNode.cpp:272
+#: src/LogNode.cpp:277
 msgid "bytes"
 msgstr ""
 
-#: src/LogNode.cpp:276
+#: src/LogNode.cpp:281
 msgid "Timecode Quarter Frame"
 msgstr ""
 
-#: src/LogNode.cpp:278
+#: src/LogNode.cpp:283
 msgid "Values"
 msgstr ""
 
-#: src/LogNode.cpp:281
+#: src/LogNode.cpp:286
 msgid "Song Position"
 msgstr ""
 
-#: src/LogNode.cpp:285
+#: src/LogNode.cpp:290
 msgid "Song Select"
 msgstr ""
 
-#: src/LogNode.cpp:288
+#: src/LogNode.cpp:293
 msgid "Tune Request"
 msgstr ""
 
-#: src/LogNode.cpp:291
+#: src/LogNode.cpp:296
 msgid "Timing Clock"
 msgstr ""
 
-#: src/LogNode.cpp:294
+#: src/LogNode.cpp:299
 msgid "Start Sequence"
 msgstr ""
 
-#: src/LogNode.cpp:297
+#: src/LogNode.cpp:302
 msgid "Continue Sequence"
 msgstr ""
 
-#: src/LogNode.cpp:300
+#: src/LogNode.cpp:305
 msgid "Stop Sequence"
 msgstr ""
 
-#: src/LogNode.cpp:303
+#: src/LogNode.cpp:308
 msgid "Active Sensing"
 msgstr ""
 
-#: src/LogNode.cpp:306
+#: src/LogNode.cpp:311
 msgid "Reset everything"
 msgstr ""
 
-#: src/LogNode.cpp:309
+#: src/LogNode.cpp:314
 msgid "Unknown system message"
 msgstr ""
 
@@ -388,21 +388,21 @@ msgid "None"
 msgstr ""
 
 #. Translators: The name of the channel map node
-#: src/MidiChannelNode.cpp:58
+#: src/MidiChannelNode.cpp:52
 msgid "Channel map"
 msgstr ""
 
-#: src/MidiChannelNode.cpp:67
+#: src/MidiChannelNode.cpp:72
 msgid "MIDI out"
 msgstr ""
 
 #. Translators: Button to set the default channel map
-#: src/MidiChannelNode.cpp:119
+#: src/MidiChannelNode.cpp:124
 msgid "Default"
 msgstr ""
 
 #. Translators: Button to disable all channels in the channel map
-#: src/MidiChannelNode.cpp:125
+#: src/MidiChannelNode.cpp:130
 msgid "Disable all"
 msgstr ""
 
@@ -432,4 +432,21 @@ msgstr ""
 
 #: src/MidiInNode.cpp:86
 msgid "Receive Active Sensing"
+msgstr ""
+
+#. Translators: Context menu entry for listing the MIDI input devices
+#: src/NodeEditor.cpp:214
+msgid "MIDI inputs"
+msgstr ""
+
+#. Translators: Context menu entry for listing the MIDI output devices
+#: src/NodeEditor.cpp:224
+msgid "MIDI outputs"
+msgstr ""
+
+#. Translators: Help text in the bottom of the node editor
+#: src/NodeEditor.cpp:250
+msgid ""
+"Left click to select. Right click to create nodes. Middle click (or Ctrl + "
+"left click) to pan view."
 msgstr ""

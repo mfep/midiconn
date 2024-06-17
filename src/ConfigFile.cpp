@@ -54,6 +54,7 @@ ConfigFile::ConfigFile()
         try_load_item(m_show_full_port_names, false, "show_full_port_names");
         try_load_item(m_theme, Theme::Default, "theme");
         try_load_item(m_show_welcome, true, "show_welcome");
+        try_load_item(m_locale, std::string(), "locale");
         if (j.contains("last_preset_path"))
         {
             m_last_preset_path = std::filesystem::u8path(j["last_preset_path"].get<std::string>());
@@ -100,6 +101,12 @@ void ConfigFile::set_show_welcome(const bool value)
     save_config_file();
 }
 
+void ConfigFile::set_locale(std::string_view value)
+{
+    m_locale = value;
+    save_config_file();
+}
+
 void ConfigFile::save_config_file() const
 {
     spdlog::info("Saving config file to: \"{}\"", utils::path_to_utf8str(m_config_json_path));
@@ -109,6 +116,7 @@ void ConfigFile::save_config_file() const
     j["theme"]                = m_theme;
     j["show_full_port_names"] = m_show_full_port_names;
     j["show_welcome"]         = m_show_welcome;
+    j["locale"]               = m_locale;
     if (m_last_preset_path)
     {
         j["last_preset_path"] = utils::path_to_utf8str(*m_last_preset_path);

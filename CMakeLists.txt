@@ -60,6 +60,7 @@ set(sources
     src/ConfigFile.cpp
     src/KeyboardShortcutAggregator.cpp
     src/Licenses.cpp
+    src/Locale.cpp
     src/LogNode.cpp
     src/MidiChannelNode.cpp
     src/MidiInNode.cpp

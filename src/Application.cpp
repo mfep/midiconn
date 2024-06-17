@@ -28,7 +28,8 @@ Application::Application(SDL_Window*                  window,
       m_preset_manager(m_preset, m_node_factory, m_config, m_port_name_display, m_theme_control),
       m_port_name_display(m_config.get_show_full_port_names()),
       m_welcome_enabled(m_config.get_show_welcome() && path_to_preset.empty()),
-      m_logo_texture(ResourceLoader::load_texture(renderer, "graphics/mc_logo.png"))
+      m_logo_texture(ResourceLoader::load_texture(renderer, "graphics/mc_logo.png")),
+      m_locale(m_config)
 {
     spdlog::info("Starting " MIDI_APPLICATION_NAME " version {}", g_current_version);
 
@@ -259,6 +260,27 @@ void Application::render_main_menu()
                                         static_cast<size_t>(current_scale) == i))
                     {
                         m_theme_control.set_scale(static_cast<InterfaceScale>(i));
+                    }
+                }
+                ImGui::EndMenu();
+            }
+            static auto language_label =
+                // Translators: Menu entry for selecting the display language
+                fmt::format("{} {}", ICON_FK_LANGUAGE, gettext("Language"));
+            if (ImGui::BeginMenu(language_label.c_str()))
+            {
+                const auto& current_locale = m_config.get_locale();
+                if (ImGui::MenuItem(gettext("Reset to system language")))
+                {
+                    m_locale.set_locale("");
+                }
+                const auto supported_locales = Locale::get_supported_locales();
+                for (const auto& locale : supported_locales)
+                {
+                    const bool selected = locale.locale_code == current_locale;
+                    if (ImGui::MenuItem(locale.display_name.c_str(), nullptr, selected))
+                    {
+                        m_locale.set_locale(locale.locale_code);
                     }
                 }
                 ImGui::EndMenu();

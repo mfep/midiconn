@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-17 10:41+0200\n"
+"POT-Creation-Date: 2024-06-17 12:08+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,171 +18,184 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #. Translators: The name of the default preset
-#: src/Application.cpp:102
+#: src/Application.cpp:103
 msgid "Untitled"
 msgstr ""
 
 #. Translators: the title of the open preset file browser dialog
 #. Translators: Menu entry to open a preset file
-#: src/Application.cpp:127 src/Application.cpp:181
+#: src/Application.cpp:128 src/Application.cpp:182
 msgid "Open preset"
 msgstr ""
 
 #. Translators: File menu label
-#: src/Application.cpp:169
+#: src/Application.cpp:170
 msgid "File"
 msgstr ""
 
 #. Translators: Menu entry to initialize an empty preset
-#: src/Application.cpp:174
+#: src/Application.cpp:175
 msgid "New preset"
 msgstr ""
 
 #. Translators: Menu entry to save the current preset to file where it was already
 #. saved
-#: src/Application.cpp:189
+#: src/Application.cpp:190
 msgid "Save preset"
 msgstr ""
 
 #. Translators: Menu entry to save the current preset to file (query location)
-#: src/Application.cpp:196
+#: src/Application.cpp:197
 msgid "Save preset as"
 msgstr ""
 
 #. Translators: Menu entry to exit the program
-#: src/Application.cpp:204
+#: src/Application.cpp:205
 msgid "Exit"
 msgstr ""
 
 #. Translators: Settings menu label
-#: src/Application.cpp:213
+#: src/Application.cpp:214
 msgid "Settings"
 msgstr ""
 
 #. Translators: Theme menu label
-#: src/Application.cpp:218
+#: src/Application.cpp:219
 msgid "Theme"
 msgstr ""
 
 #. Translators: Menu entry for selecting the dark theme
-#: src/Application.cpp:224
+#: src/Application.cpp:225
 msgid "Dark theme"
 msgstr ""
 
 #. Translators: Menu entry for selecting the light theme
-#: src/Application.cpp:232
+#: src/Application.cpp:233
 msgid "Light theme"
 msgstr ""
 
 #. Translators: Menu entry for selecting the classic theme
-#: src/Application.cpp:240
+#: src/Application.cpp:241
 msgid "Classic theme"
 msgstr ""
 
 #. Translators: Menu entry for selecting the interface scale
-#: src/Application.cpp:250
+#: src/Application.cpp:251
 msgid "Interface Scale"
+msgstr ""
+
+#. Translators: Menu entry for selecting the display language
+#: src/Application.cpp:269
+msgid "Language"
+msgstr ""
+
+#: src/Application.cpp:273
+msgid "Reset to system language"
 msgstr ""
 
 #. Translators: Menu entry that controls whether the full or abbreviated MIDI port names
 #. are displayed
-#: src/Application.cpp:269
+#: src/Application.cpp:291
 msgid "Show full port names"
 msgstr ""
 
 #. Translators: Menu entry for the help submenu
-#: src/Application.cpp:278
+#: src/Application.cpp:300
 msgid "Help"
 msgstr ""
 
 #. Translators: Menu entry to enable and disable debug logging
-#: src/Application.cpp:283
+#: src/Application.cpp:305
 msgid "Enable debug log"
 msgstr ""
 
 #. Translators: Menu entry to open the log file with the default application
-#: src/Application.cpp:291
+#: src/Application.cpp:313
 msgid "Open logfile"
 msgstr ""
 
 #. Translators: Menu entry to open the project's website with the browser
-#: src/Application.cpp:298 src/Application.cpp:373
+#: src/Application.cpp:320 src/Application.cpp:395
 msgid "Visit website"
 msgstr ""
 
 #. Translators: Menu entry to open the about window
-#: src/Application.cpp:305
+#: src/Application.cpp:327
 msgid "About"
 msgstr ""
 
 #. Translators: Welcome message in the welcome window
-#: src/Application.cpp:333
+#: src/Application.cpp:355
 #, c-format
 msgid "Welcome to %s"
 msgstr ""
 
 #. Translators: Message in the welcome window while downloading the
 #. latest version number
-#: src/Application.cpp:345
+#: src/Application.cpp:367
 #, c-format
 msgid "Fetching latest %s version number..."
 msgstr ""
 
 #. Translators: Message in the welcome window, when an error occurred
 #. while fetching the version number from the web
-#: src/Application.cpp:351
+#: src/Application.cpp:373
 #, c-format
 msgid "Error fetching latest %s version number"
 msgstr ""
 
 #. Translators: Message in the welcome window, when the downloaded
 #. latest version is the same as the current application's version
-#: src/Application.cpp:361
+#: src/Application.cpp:383
 #, c-format
 msgid "Congratulations! You are using the latest version of %s"
 msgstr ""
 
 #. Translators: Message in the welcome window, when the downloaded
 #. latest version is newer than the current application's version
-#: src/Application.cpp:369
+#: src/Application.cpp:391
 #, c-format
 msgid "A new version of %s is available: %s"
 msgstr ""
 
 #. Translators: Checkbox on the welcome window
-#: src/Application.cpp:384
+#: src/Application.cpp:406
 msgid "Show this window on application startup"
 msgstr ""
 
 #. Translators: Button on the welcome window to create a new empty preset
-#: src/Application.cpp:389
+#: src/Application.cpp:411
 msgid "New preset - empty"
 msgstr ""
 
 #. Translators: Button on the welcome window to create a new preset filled with all
 #. available devices
-#: src/Application.cpp:397
+#: src/Application.cpp:419
 msgid "New preset - add all MIDI devices"
 msgstr ""
 
 #. Translators: Button on the welcome window to browse the filesystem for a preset to load
-#: src/Application.cpp:404
+#: src/Application.cpp:426
 msgid "Browse preset"
 msgstr ""
 
 #. Translators: Button on the welcome window to open the last opened preset
-#: src/Application.cpp:413
+#: src/Application.cpp:435
 msgid "Open last preset"
 msgstr ""
 
 #. Translators: Button on the welcome window to show the 3rd party library licenses
-#: src/Application.cpp:425
+#: src/Application.cpp:447
 msgid "Open source licenses"
 msgstr ""
 
 #. Translators: The message on the popup window when attempting to close the program
-#: src/Application.cpp:446
+#: src/Application.cpp:468
 msgid "Do you want to save changes?"
+msgstr ""
+
+#: src/Locale.cpp:26
+msgid "The change of display language is applied after restart"
 msgstr ""
 
 #. Translators: The name of the log node

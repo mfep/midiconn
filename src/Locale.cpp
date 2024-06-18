@@ -7,8 +7,6 @@
 #include "portable-file-dialogs.h"
 #include "spdlog/spdlog.h"
 
-#include <clocale>
-
 mc::Locale::Locale(ConfigFile& config_file) : m_config_file(&config_file)
 {
     const auto config_locale = m_config_file->get_locale();

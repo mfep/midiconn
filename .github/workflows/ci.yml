@@ -99,6 +99,7 @@ jobs:
         -D MC_CHECK_FOR_UPDATES=ON
         -D CMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake
         -D CMAKE_CXX_FLAGS="/await /EHsc"
+        -D X_VCPKG_APPLOCAL_DEPS_INSTALL=ON
         -T host=x64
         -A x64
     - name: Build

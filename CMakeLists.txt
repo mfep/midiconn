@@ -23,10 +23,9 @@ if(NOT WIN32 AND MC_CHECK_FOR_UPDATES)
 endif()
 find_package(Intl REQUIRED)
 if (NOT TARGET Intl::Intl)
-    add_library(Intl UNKNOWN IMPORTED)
-    target_include_directories(Intl PUBLIC "${Intl_INCLUDE_DIRS}")
-    target_link_libraries(Intl PUBLIC "${Intl_LIBRARIES}")
-    add_library(Intl::Intl ALIAS Intl)
+    add_library(Intl::Intl UNKNOWN IMPORTED)
+    target_include_directories(Intl::Intl PUBLIC "${Intl_INCLUDE_DIRS}")
+    target_link_libraries(Intl::Intl PUBLIC "${Intl_LIBRARIES}")
 endif()
 
 set(MC_LOCALE_DIR "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LOCALEDIR}")
@@ -135,8 +134,6 @@ if(WIN32)
     set(CPACK_WIX_UPGRADE_GUID "96D23EBE-7D9E-4C53-8CD7-6E5CC32A5CE1")
     set(CPACK_WIX_PATCH_FILE "${CMAKE_CURRENT_SOURCE_DIR}/data/packaging/wix_patch.xml")
     set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.txt")
-    install(IMPORTED_RUNTIME_ARTIFACTS spdlog::spdlog fmt::fmt SDL2::SDL2 freetype
-        RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
     target_compile_definitions(midiconn PRIVATE
         WINVER=0x0A00
         NTDDI_VERSION=0x0A000000

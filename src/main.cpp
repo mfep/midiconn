@@ -51,12 +51,18 @@ MC_MAIN
         spdlog::error("Cannot bind text domain");
         return -1;
     }
+#ifdef _WIN32
+    if (bind_textdomain_codeset(MIDI_APPLICATION_NAME_SNAKE, "utf-8") == nullptr)
+    {
+        spdlog::error("Cannot bind text domain codeset");
+        return -1;
+    }
+#endif
     if (textdomain(MIDI_APPLICATION_NAME_SNAKE) == nullptr)
     {
         spdlog::error("Cannot set text domain");
         return -1;
     }
-
     mc::platform::set_process_dpi_aware();
 
     const auto file_to_open = mc::wrap_exception([&]() {

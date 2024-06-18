@@ -264,6 +264,8 @@ void Application::render_main_menu()
                 }
                 ImGui::EndMenu();
             }
+// This kind of locale selection is broken on Windows
+#ifndef _WIN32
             static auto language_label =
                 // Translators: Menu entry for selecting the display language
                 fmt::format("{} {}", ICON_FK_LANGUAGE, gettext("Language"));
@@ -285,6 +287,7 @@ void Application::render_main_menu()
                 }
                 ImGui::EndMenu();
             }
+#endif
             bool show_full_port_names = m_port_name_display.get_show_full_port_names();
             // Translators: Menu entry that controls whether the full or abbreviated MIDI port names
             // are displayed

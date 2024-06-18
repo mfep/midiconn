@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: midiconn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-17 12:08+0200\n"
+"POT-Creation-Date: 2024-06-18 17:27+0200\n"
 "PO-Revision-Date: 2024-06-17 12:09+0200\n"
 "Last-Translator:  <>\n"
 "Language-Team: Hungarian\n"
@@ -84,116 +84,116 @@ msgid "Interface Scale"
 msgstr "Megjelenítés nagyítása"
 
 #. Translators: Menu entry for selecting the display language
-#: src/Application.cpp:269
+#: src/Application.cpp:271
 msgid "Language"
 msgstr "Nyelv"
 
-#: src/Application.cpp:273
+#: src/Application.cpp:275
 msgid "Reset to system language"
 msgstr "Visszaállítás a rendszer nyelvére"
 
 #. Translators: Menu entry that controls whether the full or abbreviated MIDI port names
 #. are displayed
-#: src/Application.cpp:291
+#: src/Application.cpp:294
 msgid "Show full port names"
 msgstr "Teljes eszköznevek kijelzése"
 
 #. Translators: Menu entry for the help submenu
-#: src/Application.cpp:300
+#: src/Application.cpp:303
 msgid "Help"
 msgstr "Súgó"
 
 #. Translators: Menu entry to enable and disable debug logging
-#: src/Application.cpp:305
+#: src/Application.cpp:308
 msgid "Enable debug log"
 msgstr "Hibalog engedélyezése"
 
 #. Translators: Menu entry to open the log file with the default application
-#: src/Application.cpp:313
+#: src/Application.cpp:316
 msgid "Open logfile"
 msgstr "Logfájl megnyitása"
 
 #. Translators: Menu entry to open the project's website with the browser
-#: src/Application.cpp:320 src/Application.cpp:395
+#: src/Application.cpp:323 src/Application.cpp:398
 msgid "Visit website"
 msgstr "Weboldal felkeresése"
 
 #. Translators: Menu entry to open the about window
-#: src/Application.cpp:327
+#: src/Application.cpp:330
 msgid "About"
 msgstr "Névjegy"
 
 #. Translators: Welcome message in the welcome window
-#: src/Application.cpp:355
+#: src/Application.cpp:358
 #, c-format
 msgid "Welcome to %s"
 msgstr "Üdvözli a %s"
 
 #. Translators: Message in the welcome window while downloading the
 #. latest version number
-#: src/Application.cpp:367
+#: src/Application.cpp:370
 #, c-format
 msgid "Fetching latest %s version number..."
 msgstr "Legutóbbi %s verziószám lekérése..."
 
 #. Translators: Message in the welcome window, when an error occurred
 #. while fetching the version number from the web
-#: src/Application.cpp:373
+#: src/Application.cpp:376
 #, c-format
 msgid "Error fetching latest %s version number"
 msgstr "Hiba a legutóbbi %s verziószám lekérésénél"
 
 #. Translators: Message in the welcome window, when the downloaded
 #. latest version is the same as the current application's version
-#: src/Application.cpp:383
+#: src/Application.cpp:386
 #, c-format
 msgid "Congratulations! You are using the latest version of %s"
 msgstr "Gratulálunk! A %s legújabb verzióját használja"
 
 #. Translators: Message in the welcome window, when the downloaded
 #. latest version is newer than the current application's version
-#: src/Application.cpp:391
+#: src/Application.cpp:394
 #, c-format
 msgid "A new version of %s is available: %s"
 msgstr "Egy új %s verzió elérhető: %s"
 
 #. Translators: Checkbox on the welcome window
-#: src/Application.cpp:406
+#: src/Application.cpp:409
 msgid "Show this window on application startup"
 msgstr "Ablak megjelenítése indításkor"
 
 #. Translators: Button on the welcome window to create a new empty preset
-#: src/Application.cpp:411
+#: src/Application.cpp:414
 msgid "New preset - empty"
 msgstr "Új konfiguráció - üres"
 
 #. Translators: Button on the welcome window to create a new preset filled with all
 #. available devices
-#: src/Application.cpp:419
+#: src/Application.cpp:422
 msgid "New preset - add all MIDI devices"
 msgstr "Új konfiguráció - az összes MIDI eszközzel"
 
 #. Translators: Button on the welcome window to browse the filesystem for a preset to load
-#: src/Application.cpp:426
+#: src/Application.cpp:429
 msgid "Browse preset"
 msgstr "Konfiguráció tallózása"
 
 #. Translators: Button on the welcome window to open the last opened preset
-#: src/Application.cpp:435
+#: src/Application.cpp:438
 msgid "Open last preset"
 msgstr "Legutóbbi konfiguráció megnyitása"
 
 #. Translators: Button on the welcome window to show the 3rd party library licenses
-#: src/Application.cpp:447
+#: src/Application.cpp:450
 msgid "Open source licenses"
 msgstr "Licencinformációk"
 
 #. Translators: The message on the popup window when attempting to close the program
-#: src/Application.cpp:468
+#: src/Application.cpp:471
 msgid "Do you want to save changes?"
 msgstr "Menti a módosításokat?"
 
-#: src/Locale.cpp:26
+#: src/Locale.cpp:24
 msgid "The change of display language is applied after restart"
 msgstr "A nyelv megváltoztatása a program újraindítása után jut érvényre"
 

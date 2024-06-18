@@ -137,4 +137,5 @@ jobs:
         unzip butler.zip
         export BUTLER_API_KEY=${{ secrets.BUTLER_API_KEY }}
         ./butler push ${{github.workspace}}/artifact/*.msi mfeproject/midiconn:windows-msi --userversion $GITHUB_REF_NAME
-        ./butler push ${{github.workspace}}/artifact/*.deb mfeproject/midiconn:ubuntu2204-deb --userversion $GITHUB_REF_NAME
+        ./butler push ${{github.workspace}}/artifact/*jammy*.deb mfeproject/midiconn:ubuntu2204-deb --userversion $GITHUB_REF_NAME
+        ./butler push ${{github.workspace}}/artifact/*noble*.deb mfeproject/midiconn:ubuntu2404-deb --userversion $GITHUB_REF_NAME

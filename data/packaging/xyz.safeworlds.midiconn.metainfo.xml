@@ -43,7 +43,20 @@
  
   <launchable type="desktop-id">xyz.safeworlds.midiconn.desktop</launchable>
 
+  <developer_name>safe worlds</developer_name>
+
   <releases>
+    <release version="0.3.0" date="2024-06-18">
+      <description>
+        <p>Improvements and bug fixes in the current release:</p>
+        <ul>
+          <li>New node: Message log. Lists all kind of MIDI messages that are sent to the node.</li>
+          <li>A large internal refactor that makes it possible to process MIDI data on a per-node basis. This paves the road for more advanced node functionality.</li>
+          <li>A logic change: Only single instances of the same input and output nodes can exist.</li>
+          <li>Added support for internatialization.</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.2.2" date="2023-11-06">
       <description>
         <p>Improvements and bug fixes in the current release:</p>

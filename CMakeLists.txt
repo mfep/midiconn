@@ -9,8 +9,7 @@ project(midiconn VERSION 0.3.0 LANGUAGES CXX)
 
 option(MC_CHECK_FOR_UPDATES "Build ${PROJECT_NAME} to check for updates on start" OFF)
 
-find_package(fmt REQUIRED)
-find_package(spdlog REQUIRED)
+find_package(spdlog 1.15.0 REQUIRED)
 find_package(SDL2 REQUIRED)
 find_package(nlohmann_json REQUIRED)
 if(WIN32)
@@ -109,7 +108,6 @@ target_link_libraries(midiconn PRIVATE
     spdlog::spdlog
     spng_static
     SDL2::SDL2
-    fmt::fmt
     freetype
     resources
     midi
@@ -120,6 +118,7 @@ if(NOT WIN32 AND MC_CHECK_FOR_UPDATES)
 endif()
 target_compile_definitions(midiconn PRIVATE
     SPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_DEBUG
+    SPDLOG_USE_STD_FORMAT=1
     IMGUI_ENABLE_FREETYPE
 )
 

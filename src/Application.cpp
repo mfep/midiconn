@@ -167,19 +167,19 @@ void Application::render_main_menu()
     if (ImGui::BeginMenuBar())
     {
         // Translators: File menu label
-        static auto begin_menu_label = fmt::format("{} {}", ICON_FK_FILE_O, gettext("File"));
+        static auto begin_menu_label = std::format("{} {}", ICON_FK_FILE_O, gettext("File"));
         if (ImGui::BeginMenu(begin_menu_label.c_str()))
         {
             static auto new_preset_label =
                 // Translators: Menu entry to initialize an empty preset
-                fmt::format("{} {}", ICON_FK_FILE_O, gettext("New preset"));
+                std::format("{} {}", ICON_FK_FILE_O, gettext("New preset"));
             if (ImGui::MenuItem(new_preset_label.c_str(), "Ctrl+N"))
             {
                 new_preset();
             }
             static auto open_preset_label =
                 // Translators: Menu entry to open a preset file
-                fmt::format("{} {}", ICON_FK_FOLDER_OPEN_O, gettext("Open preset"));
+                std::format("{} {}", ICON_FK_FOLDER_OPEN_O, gettext("Open preset"));
             if (ImGui::MenuItem(open_preset_label.c_str(), "Ctrl+O"))
             {
                 open_preset();
@@ -187,14 +187,14 @@ void Application::render_main_menu()
             static auto save_preset_label =
                 // Translators: Menu entry to save the current preset to file where it was already
                 // saved
-                fmt::format("{} {}", ICON_FK_FLOPPY_O, gettext("Save preset"));
+                std::format("{} {}", ICON_FK_FLOPPY_O, gettext("Save preset"));
             if (ImGui::MenuItem(save_preset_label.c_str(), "Ctrl+S"))
             {
                 save_preset();
             }
             static auto save_preset_as_label =
                 // Translators: Menu entry to save the current preset to file (query location)
-                fmt::format("{} {}", ICON_FK_FLOPPY_O, gettext("Save preset as"));
+                std::format("{} {}", ICON_FK_FLOPPY_O, gettext("Save preset as"));
             if (ImGui::MenuItem(save_preset_as_label.c_str(), "Ctrl+Shift+S"))
             {
                 save_preset_as();
@@ -202,7 +202,7 @@ void Application::render_main_menu()
             ImGui::Separator();
             static auto exit_label =
                 // Translators: Menu entry to exit the program
-                fmt::format("{} {}", ICON_FK_TIMES, gettext("Exit"));
+                std::format("{} {}", ICON_FK_TIMES, gettext("Exit"));
             if (ImGui::MenuItem(exit_label.c_str(), "Alt+F4"))
             {
                 exit();
@@ -211,18 +211,18 @@ void Application::render_main_menu()
         }
         static auto settings_label =
             // Translators: Settings menu label
-            fmt::format("{} {}", ICON_FK_COG, gettext("Settings"));
+            std::format("{} {}", ICON_FK_COG, gettext("Settings"));
         if (ImGui::BeginMenu(settings_label.c_str()))
         {
             static auto theme_label =
                 // Translators: Theme menu label
-                fmt::format("{} {}", ICON_FK_PAINT_BRUSH, gettext("Theme"));
+                std::format("{} {}", ICON_FK_PAINT_BRUSH, gettext("Theme"));
             if (ImGui::BeginMenu(theme_label.c_str()))
             {
                 const auto  current_theme = m_theme_control.get_theme();
                 static auto dark_theme_label =
                     // Translators: Menu entry for selecting the dark theme
-                    fmt::format("{} {}", ICON_FK_MOON_O, gettext("Dark theme"));
+                    std::format("{} {}", ICON_FK_MOON_O, gettext("Dark theme"));
                 if (ImGui::MenuItem(
                         dark_theme_label.c_str(), nullptr, current_theme == Theme::Dark))
                 {
@@ -230,7 +230,7 @@ void Application::render_main_menu()
                 }
                 static auto light_theme_label =
                     // Translators: Menu entry for selecting the light theme
-                    fmt::format("{} {}", ICON_FK_SUN_O, gettext("Light theme"));
+                    std::format("{} {}", ICON_FK_SUN_O, gettext("Light theme"));
                 if (ImGui::MenuItem(
                         light_theme_label.c_str(), nullptr, current_theme == Theme::Light))
                 {
@@ -238,7 +238,7 @@ void Application::render_main_menu()
                 }
                 static auto classic_theme_label =
                     // Translators: Menu entry for selecting the classic theme
-                    fmt::format("{} {}", ICON_FK_STAR_O, gettext("Classic theme"));
+                    std::format("{} {}", ICON_FK_STAR_O, gettext("Classic theme"));
                 if (ImGui::MenuItem(
                         classic_theme_label.c_str(), nullptr, current_theme == Theme::Classic))
                 {
@@ -248,7 +248,7 @@ void Application::render_main_menu()
             }
             static auto interface_scale_label =
                 // Translators: Menu entry for selecting the interface scale
-                fmt::format("{} {}", ICON_FK_EYE, gettext("Interface Scale"));
+                std::format("{} {}", ICON_FK_EYE, gettext("Interface Scale"));
             if (ImGui::BeginMenu(interface_scale_label.c_str()))
             {
                 const auto current_scale          = m_theme_control.get_scale();
@@ -268,7 +268,7 @@ void Application::render_main_menu()
 #ifndef _WIN32
             static auto language_label =
                 // Translators: Menu entry for selecting the display language
-                fmt::format("{} {}", ICON_FK_LANGUAGE, gettext("Language"));
+                std::format("{} {}", ICON_FK_LANGUAGE, gettext("Language"));
             if (ImGui::BeginMenu(language_label.c_str()))
             {
                 const auto& current_locale = m_config.get_locale();
@@ -300,12 +300,12 @@ void Application::render_main_menu()
         }
         static auto help_label =
             // Translators: Menu entry for the help submenu
-            fmt::format("{} {}", ICON_FK_QUESTION, gettext("Help"));
+            std::format("{} {}", ICON_FK_QUESTION, gettext("Help"));
         if (ImGui::BeginMenu(help_label.c_str()))
         {
             static auto debug_log_label =
                 // Translators: Menu entry to enable and disable debug logging
-                fmt::format("{} {}", ICON_FK_PENCIL, gettext("Enable debug log"));
+                std::format("{} {}", ICON_FK_PENCIL, gettext("Enable debug log"));
             if (ImGui::MenuItem(debug_log_label.c_str(), nullptr, &m_debug_log_enabled))
             {
                 spdlog::set_level(m_debug_log_enabled ? spdlog::level::debug : spdlog::level::info);
@@ -313,21 +313,21 @@ void Application::render_main_menu()
             }
             static auto open_logfile_label =
                 // Translators: Menu entry to open the log file with the default application
-                fmt::format("{} {}", ICON_FK_PENCIL_SQUARE, gettext("Open logfile"));
+                std::format("{} {}", ICON_FK_PENCIL_SQUARE, gettext("Open logfile"));
             if (ImGui::MenuItem(open_logfile_label.c_str()))
             {
                 platform::open_logfile_external();
             }
             static auto visit_website_label =
                 // Translators: Menu entry to open the project's website with the browser
-                fmt::format("{} {}", ICON_FK_GLOBE, gettext("Visit website"));
+                std::format("{} {}", ICON_FK_GLOBE, gettext("Visit website"));
             if (ImGui::MenuItem(visit_website_label.c_str()))
             {
                 SDL_OpenURL(MC_WEBSITE_URL);
             }
             static auto about_label =
                 // Translators: Menu entry to open the about window
-                fmt::format("{} {}", ICON_FK_QUESTION, gettext("About"));
+                std::format("{} {}", ICON_FK_QUESTION, gettext("About"));
             if (ImGui::MenuItem(about_label.c_str()))
             {
                 m_welcome_enabled = true;

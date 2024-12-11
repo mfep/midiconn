@@ -2,9 +2,6 @@
 
 #include "MessageView.hpp"
 
-#include "fmt/format.h"
-
-#include <type_traits>
 #include <variant>
 
 mc::midi::ChannelMapNode::ChannelMapNode(const ChannelMap& map) : m_map(map)

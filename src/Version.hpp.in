@@ -1,10 +1,9 @@
 #pragma once
 #include <compare>
+#include <format>
 #include <optional>
-#include <ostream>
 #include <string_view>
 
-#include "fmt/format.h"
 
 #define MC_MAJOR_VERSION "@CMAKE_PROJECT_VERSION_MAJOR@"
 #define MC_MINOR_VERSION "@CMAKE_PROJECT_VERSION_MINOR@"
@@ -51,23 +50,23 @@ private:
     int                m_patch;
     std::optional<int> m_build_num;
 
-    friend struct fmt::formatter<mc::Version>;
+    friend struct std::formatter<mc::Version>;
 };
 
 } // namespace mc
 
 template <>
-struct fmt::formatter<mc::Version>
+struct std::formatter<mc::Version>
 {
     constexpr auto parse(format_parse_context& ctx) { return ctx.begin(); }
 
-    auto format(const mc::Version& v, format_context& ctx)
+    auto format(const mc::Version& v, format_context& ctx) const
     {
         if (v.m_build_num.has_value())
         {
-            return fmt::format_to(ctx.out(), "{}.{}.{}.{}", v.m_major, v.m_minor, v.m_patch, *v.m_build_num);
+            return std::format_to(ctx.out(), "{}.{}.{}.{}", v.m_major, v.m_minor, v.m_patch, *v.m_build_num);
         }
-        return fmt::format_to(ctx.out(), "{}.{}.{}", v.m_major, v.m_minor, v.m_patch);
+        return std::format_to(ctx.out(), "{}.{}.{}", v.m_major, v.m_minor, v.m_patch);
     }
 };
 

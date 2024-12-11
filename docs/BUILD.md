@@ -21,7 +21,6 @@
 Make sure that the development packages of the dependencies are installed. The list of library dependencies is the following:
 - ALSA
 - JSON for Modern C++ ([nlohmann/json](https://github.com/nlohmann/json))
-- libfmt
 - libfreetype
 - libsdl2 (>= 2.0.17)
 - libspdlog
@@ -33,13 +32,13 @@ On Ubuntu (version 22.04 or later), the following script installs these prerequi
 
 ```shell
 $ sudo apt-get update
-$ sudo apt-get install -y git build-essential cmake libasound2-dev libfmt-dev libfreetype-dev libsdl2-dev libspdlog-dev nlohmann-json3-dev
+$ sudo apt-get install -y git build-essential cmake libasound2-dev libfreetype-dev libsdl2-dev libspdlog-dev nlohmann-json3-dev
 ```
 
 On Fedora (version 36 or later), the following script installs these prerequisites:
 
 ```shell
-$ sudo dnf install -y git gcc-c++ cmake alsa-lib-devel fmt-devel freetype-devel json-devel SDL2-devel spdlog-devel
+$ sudo dnf install -y git gcc-c++ cmake alsa-lib-devel freetype-devel json-devel SDL2-devel spdlog-devel
 ```
 
 Once the prerequisites are installed, **midiconn** can be built and packaged:

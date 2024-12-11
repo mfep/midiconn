@@ -7,10 +7,9 @@
 
 #include "imgui.h"
 #include "imnodes.h"
-
-#include "fmt/format.h"
-
 #include "libintl.h"
+
+#include <format>
 
 std::string_view mc::LogNode::LogMidiNode::name()
 {
@@ -185,22 +184,22 @@ mc::LogNode::BufferElement mc::LogNode::parse_channel_message(
             return BufferElement{
                 gettext("Note On"),
                 note_on.get_channel_human(),
-                fmt::format("{}", midi::Note(note_on.get_note())),
-                fmt::format("{}: {}", gettext("Velocity"), note_on.get_velocity())};
+                std::format("{}", midi::Note(note_on.get_note())),
+                std::format("{}: {}", gettext("Velocity"), note_on.get_velocity())};
         },
         [](midi::NoteOffMessageViewTag, auto note_off) -> BufferElement {
             return BufferElement{
                 gettext("Note Off"),
                 note_off.get_channel_human(),
-                fmt::format("{}", midi::Note(note_off.get_note())),
-                fmt::format("{}: {}", gettext("Velocity"), note_off.get_velocity())};
+                std::format("{}", midi::Note(note_off.get_note())),
+                std::format("{}: {}", gettext("Velocity"), note_off.get_velocity())};
         },
         [](midi::PolyKeyPressureMessageViewTag, auto poly_key_pressure) -> BufferElement {
             return BufferElement{
                 gettext("Poly Aftertouch"),
                 poly_key_pressure.get_channel_human(),
-                fmt::format("{}", midi::Note(poly_key_pressure.get_note())),
-                fmt::format("{}: {}", gettext("Pressure"), poly_key_pressure.get_pressure())};
+                std::format("{}", midi::Note(poly_key_pressure.get_note())),
+                std::format("{}: {}", gettext("Pressure"), poly_key_pressure.get_pressure())};
         },
         [](midi::AllSoundOffMessageViewTag, auto all_sound_off) -> BufferElement {
             return BufferElement{gettext("All Sound Off"), all_sound_off.get_channel_human()};
@@ -227,7 +226,7 @@ mc::LogNode::BufferElement mc::LogNode::parse_channel_message(
             return BufferElement{
                 gettext("Mono Mode On"),
                 mono_mode.get_channel_human(),
-                fmt::format("{}: {}", gettext("Channels"), mono_mode.get_num_channels())};
+                std::format("{}: {}", gettext("Channels"), mono_mode.get_num_channels())};
         },
         [](midi::PolyModeOnMessageViewTag, auto poly_mode) -> BufferElement {
             return BufferElement{gettext("Poly Mode On"), poly_mode.get_channel_human()};
@@ -236,28 +235,28 @@ mc::LogNode::BufferElement mc::LogNode::parse_channel_message(
             return BufferElement{
                 gettext("Control Change"),
                 control_change.get_channel_human(),
-                fmt::format("CC {} ({})",
+                std::format("CC {} ({})",
                             control_change.get_controller(),
                             control_change.get_function_name()),
-                fmt::format("{}: {}", gettext("Value"), control_change.get_value())};
+                std::format("{}: {}", gettext("Value"), control_change.get_value())};
         },
         [](midi::ProgramChangeMessageViewTag, auto program_change) -> BufferElement {
             return BufferElement{
                 gettext("Program Change"),
                 program_change.get_channel_human(),
-                fmt::format("{}: {}", gettext("Program"), program_change.get_program_number())};
+                std::format("{}: {}", gettext("Program"), program_change.get_program_number())};
         },
         [](midi::ChannelPressureMessageViewTag, auto channel_pressure) -> BufferElement {
             return BufferElement{
                 gettext("Channel Aftertouch"),
                 channel_pressure.get_channel_human(),
-                fmt::format("{}: {}", gettext("Pressure"), channel_pressure.get_pressure())};
+                std::format("{}: {}", gettext("Pressure"), channel_pressure.get_pressure())};
         },
         [](midi::PitchBendMessageViewTag, auto pitch_bend) -> BufferElement {
             return BufferElement{
                 gettext("Pitch bend"),
                 pitch_bend.get_channel_human(),
-                fmt::format("{}: {}", gettext("Value"), pitch_bend.get_value_human())};
+                std::format("{}: {}", gettext("Value"), pitch_bend.get_value_human())};
         },
         [](auto, auto) -> BufferElement {
             return BufferElement{gettext("Unknown channel message")};
@@ -273,14 +272,14 @@ mc::LogNode::BufferElement mc::LogNode::parse_system_message(
         [](midi::SystemExclusiveMessageViewTag, auto system_exclusive) -> BufferElement {
             return BufferElement{
                 gettext("System Exclusive"),
-                fmt::format("ID: {}", system_exclusive.get_manufacturer_id()),
-                fmt::format("{} {}", system_exclusive.get_length(), gettext("bytes"))};
+                std::format("ID: {}", system_exclusive.get_manufacturer_id()),
+                std::format("{} {}", system_exclusive.get_length(), gettext("bytes"))};
         },
         [](midi::TimeCodeQuarterFrameMessageViewTag, auto timecode_quarter) -> BufferElement {
             return BufferElement{
                 gettext("Timecode Quarter Frame"),
-                fmt::format("{}: {}", gettext("Type"), timecode_quarter.get_type()),
-                fmt::format("{}: {}", gettext("Values"), timecode_quarter.get_values())};
+                std::format("{}: {}", gettext("Type"), timecode_quarter.get_type()),
+                std::format("{}: {}", gettext("Values"), timecode_quarter.get_values())};
         },
         [](midi::SongPositionPointerMessageViewTag, auto song_position) -> BufferElement {
             return BufferElement{gettext("Song Position"),

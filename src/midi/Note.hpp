@@ -1,6 +1,6 @@
 #pragma once
 
-#include "fmt/format.h"
+#include <format>
 
 #include <sstream>
 #include <string_view>
@@ -16,13 +16,13 @@ public:
 private:
     unsigned char m_note;
 
-    friend struct fmt::formatter<Note>;
+    friend struct std::formatter<Note>;
 };
 
 } // namespace mc::midi
 
 template <>
-struct fmt::formatter<mc::midi::Note>
+struct std::formatter<mc::midi::Note>
 {
     template <class ParseContext>
     constexpr ParseContext::iterator parse(ParseContext& ctx)

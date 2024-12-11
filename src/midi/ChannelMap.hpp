@@ -1,10 +1,8 @@
 #pragma once
 
-#include "fmt/format.h"
 
 #include <array>
 #include <cstdint>
-#include <sstream>
 
 namespace mc::midi
 {

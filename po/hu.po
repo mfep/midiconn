@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: midiconn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-18 17:27+0200\n"
+"POT-Creation-Date: 2024-12-11 19:57+0100\n"
 "PO-Revision-Date: 2024-06-17 12:09+0200\n"
 "Last-Translator:  <>\n"
 "Language-Team: Hungarian\n"
@@ -198,200 +198,200 @@ msgid "The change of display language is applied after restart"
 msgstr "A nyelv megváltoztatása a program újraindítása után jut érvényre"
 
 #. Translators: The name of the log node
-#: src/LogNode.cpp:38
+#: src/LogNode.cpp:37
 msgid "Message log"
 msgstr "Üzenetlista"
 
 #. Translators: The caption of the MIDI input pin on the node
-#: src/LogNode.cpp:55 src/MidiChannelNode.cpp:68
+#: src/LogNode.cpp:54 src/MidiChannelNode.cpp:68
 msgid "MIDI in"
 msgstr "MIDI be"
 
 #. Translators: The button to clear the buffer of the log node
-#: src/LogNode.cpp:60
+#: src/LogNode.cpp:59
 msgid "Clear"
 msgstr "Törlés"
 
 #. Translators: The input field to set the buffer size of the log node
-#: src/LogNode.cpp:68
+#: src/LogNode.cpp:67
 msgid "Buffer Size"
 msgstr "Pufferméret"
 
 #. Translators: The header of the message arrive time column
-#: src/LogNode.cpp:94
+#: src/LogNode.cpp:93
 msgid "Time"
 msgstr "Időpont"
 
 #. Translators: The header of the message type column
-#: src/LogNode.cpp:98 src/LogNode.cpp:282
+#: src/LogNode.cpp:97 src/LogNode.cpp:281
 msgid "Type"
 msgstr "Típus"
 
 #. Translators: The header of the message channel column
-#: src/LogNode.cpp:100
+#: src/LogNode.cpp:99
 msgid "Channel"
 msgstr "Csatorna"
 
 #. Translators: The header of the first message data column
-#: src/LogNode.cpp:104
+#: src/LogNode.cpp:103
 msgid "Data #0"
 msgstr "Adat 0"
 
 #. Translators: The header of the second message data column
-#: src/LogNode.cpp:106
+#: src/LogNode.cpp:105
 msgid "Data #1"
 msgstr "Adat 1"
 
 #. Translators: Name of an unrecognized MIDI message
-#: src/LogNode.cpp:171
+#: src/LogNode.cpp:170
 msgid "Unknown"
 msgstr "Ismeretlen"
 
-#: src/LogNode.cpp:186
+#: src/LogNode.cpp:185
 msgid "Note On"
 msgstr "Billentyűleütés"
 
-#: src/LogNode.cpp:189 src/LogNode.cpp:196
+#: src/LogNode.cpp:188 src/LogNode.cpp:195
 msgid "Velocity"
 msgstr "Leütés erőssége"
 
-#: src/LogNode.cpp:193
+#: src/LogNode.cpp:192
 msgid "Note Off"
 msgstr "Billentyűfelengedés"
 
-#: src/LogNode.cpp:200
+#: src/LogNode.cpp:199
 msgid "Poly Aftertouch"
 msgstr "Polifonikus Aftertouch"
 
-#: src/LogNode.cpp:203 src/LogNode.cpp:254
+#: src/LogNode.cpp:202 src/LogNode.cpp:253
 msgid "Pressure"
 msgstr "Nyomás"
 
-#: src/LogNode.cpp:206
+#: src/LogNode.cpp:205
 msgid "All Sound Off"
 msgstr "Minden hang elhallgat"
 
-#: src/LogNode.cpp:209
+#: src/LogNode.cpp:208
 msgid "Reset All Controllers"
 msgstr "Minden kontroller alaphelyzetbe állítása"
 
-#: src/LogNode.cpp:213
+#: src/LogNode.cpp:212
 msgid "Local Control"
 msgstr "Lokális vezérlés"
 
-#: src/LogNode.cpp:215
+#: src/LogNode.cpp:214
 msgid "On"
 msgstr "Be"
 
-#: src/LogNode.cpp:215
+#: src/LogNode.cpp:214
 msgid "Off"
 msgstr "Ki"
 
-#: src/LogNode.cpp:218
+#: src/LogNode.cpp:217
 msgid "All Notes Off"
 msgstr "Minden hangjegy elhallgat"
 
-#: src/LogNode.cpp:221
+#: src/LogNode.cpp:220
 msgid "Omni Mode Off"
 msgstr "Omni mód ki"
 
-#: src/LogNode.cpp:224
+#: src/LogNode.cpp:223
 msgid "Omni Mode On"
 msgstr "Omni mód be"
 
-#: src/LogNode.cpp:228
+#: src/LogNode.cpp:227
 msgid "Mono Mode On"
 msgstr "Monó mód be"
 
-#: src/LogNode.cpp:230
+#: src/LogNode.cpp:229
 msgid "Channels"
 msgstr "Csatornák"
 
-#: src/LogNode.cpp:233
+#: src/LogNode.cpp:232
 msgid "Poly Mode On"
 msgstr "Polifónikus mód be"
 
-#: src/LogNode.cpp:237
+#: src/LogNode.cpp:236
 msgid "Control Change"
 msgstr "Kontrollváltás"
 
-#: src/LogNode.cpp:242 src/LogNode.cpp:260
+#: src/LogNode.cpp:241 src/LogNode.cpp:259
 msgid "Value"
 msgstr "Érték"
 
-#: src/LogNode.cpp:246
+#: src/LogNode.cpp:245
 msgid "Program Change"
 msgstr "Programváltás"
 
-#: src/LogNode.cpp:248
+#: src/LogNode.cpp:247
 msgid "Program"
 msgstr "Program"
 
-#: src/LogNode.cpp:252
+#: src/LogNode.cpp:251
 msgid "Channel Aftertouch"
 msgstr "Csatorna Aftertouch"
 
-#: src/LogNode.cpp:258
+#: src/LogNode.cpp:257
 msgid "Pitch bend"
 msgstr "Hajlítás"
 
-#: src/LogNode.cpp:263
+#: src/LogNode.cpp:262
 msgid "Unknown channel message"
 msgstr "Ismeretlen csatorna üzenet"
 
-#: src/LogNode.cpp:275
+#: src/LogNode.cpp:274
 msgid "System Exclusive"
 msgstr "Rendszer exkluzív"
 
-#: src/LogNode.cpp:277
+#: src/LogNode.cpp:276
 msgid "bytes"
 msgstr "bájt"
 
-#: src/LogNode.cpp:281
+#: src/LogNode.cpp:280
 msgid "Timecode Quarter Frame"
 msgstr "Timekód negyed"
 
-#: src/LogNode.cpp:283
+#: src/LogNode.cpp:282
 msgid "Values"
 msgstr "Értékek"
 
-#: src/LogNode.cpp:286
+#: src/LogNode.cpp:285
 msgid "Song Position"
 msgstr "Dal pozíció"
 
-#: src/LogNode.cpp:290
+#: src/LogNode.cpp:289
 msgid "Song Select"
 msgstr "Dal kiválasztás"
 
-#: src/LogNode.cpp:293
+#: src/LogNode.cpp:292
 msgid "Tune Request"
 msgstr "Hangolási kérelem"
 
-#: src/LogNode.cpp:296
+#: src/LogNode.cpp:295
 msgid "Timing Clock"
 msgstr "Időzítő óra"
 
-#: src/LogNode.cpp:299
+#: src/LogNode.cpp:298
 msgid "Start Sequence"
 msgstr "Szekvencia elindítása"
 
-#: src/LogNode.cpp:302
+#: src/LogNode.cpp:301
 msgid "Continue Sequence"
 msgstr "Szekvencia folytatása"
 
-#: src/LogNode.cpp:305
+#: src/LogNode.cpp:304
 msgid "Stop Sequence"
 msgstr "Szekvencia leállítása"
 
-#: src/LogNode.cpp:308
+#: src/LogNode.cpp:307
 msgid "Active Sensing"
 msgstr "Aktív érzékelés"
 
-#: src/LogNode.cpp:311
+#: src/LogNode.cpp:310
 msgid "Reset everything"
 msgstr "Minden alaphelyzetbe állítása"
 
-#: src/LogNode.cpp:314
+#: src/LogNode.cpp:313
 msgid "Unknown system message"
 msgstr "Ismeretlen rendszerüzenet"
 

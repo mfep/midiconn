@@ -56,6 +56,6 @@ Version Version::parse(std::string_view str)
 }
 
 const Version     g_current_version     = Version::parse(MC_FULL_VERSION);
-const std::string g_current_version_str = fmt::format("{}", g_current_version);
+const std::string g_current_version_str = std::format("{}", g_current_version);
 
 } // namespace mc

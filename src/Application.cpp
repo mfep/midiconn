@@ -351,7 +351,8 @@ void Application::render_welcome_window()
     ImGui::SetNextWindowSizeConstraints({600 * scale, 0}, {600 * scale, 400 * scale});
     if (ImGui::BeginPopup("Welcome", ImGuiWindowFlags_AlwaysAutoResize))
     {
-        ImGui::Image(m_logo_texture.m_texture, ImVec2{96 * scale, 96 * scale});
+        ImGui::Image(reinterpret_cast<ImTextureID>(m_logo_texture.m_texture),
+                     ImVec2{96 * scale, 96 * scale});
         ImGui::SameLine();
         ImGui::BeginGroup();
         // Translators: Welcome message in the welcome window

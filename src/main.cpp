@@ -186,6 +186,8 @@ MC_MAIN
 
             // Rendering
             ImGui::Render();
+            SDL_RenderSetScale(
+                renderer, io.DisplayFramebufferScale.x, io.DisplayFramebufferScale.y);
             SDL_RenderClear(renderer);
             ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData(), renderer);
             SDL_RenderPresent(renderer);

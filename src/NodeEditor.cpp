@@ -262,8 +262,7 @@ void NodeEditor::renderHelpText()
 
 void NodeEditor::handleDelete()
 {
-    if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Delete)) ||
-        ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Backspace)))
+    if (ImGui::IsKeyPressed(ImGuiKey_Delete) || ImGui::IsKeyPressed(ImGuiKey_Backspace))
     {
         std::vector<int> selected_ids;
         selected_ids.resize(ImNodes::NumSelectedNodes());

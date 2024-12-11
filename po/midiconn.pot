@@ -115,7 +115,7 @@ msgid "Open logfile"
 msgstr ""
 
 #. Translators: Menu entry to open the project's website with the browser
-#: src/Application.cpp:323 src/Application.cpp:398
+#: src/Application.cpp:323 src/Application.cpp:399
 msgid "Visit website"
 msgstr ""
 
@@ -125,72 +125,72 @@ msgid "About"
 msgstr ""
 
 #. Translators: Welcome message in the welcome window
-#: src/Application.cpp:358
+#: src/Application.cpp:359
 #, c-format
 msgid "Welcome to %s"
 msgstr ""
 
 #. Translators: Message in the welcome window while downloading the
 #. latest version number
-#: src/Application.cpp:370
+#: src/Application.cpp:371
 #, c-format
 msgid "Fetching latest %s version number..."
 msgstr ""
 
 #. Translators: Message in the welcome window, when an error occurred
 #. while fetching the version number from the web
-#: src/Application.cpp:376
+#: src/Application.cpp:377
 #, c-format
 msgid "Error fetching latest %s version number"
 msgstr ""
 
 #. Translators: Message in the welcome window, when the downloaded
 #. latest version is the same as the current application's version
-#: src/Application.cpp:386
+#: src/Application.cpp:387
 #, c-format
 msgid "Congratulations! You are using the latest version of %s"
 msgstr ""
 
 #. Translators: Message in the welcome window, when the downloaded
 #. latest version is newer than the current application's version
-#: src/Application.cpp:394
+#: src/Application.cpp:395
 #, c-format
 msgid "A new version of %s is available: %s"
 msgstr ""
 
 #. Translators: Checkbox on the welcome window
-#: src/Application.cpp:409
+#: src/Application.cpp:410
 msgid "Show this window on application startup"
 msgstr ""
 
 #. Translators: Button on the welcome window to create a new empty preset
-#: src/Application.cpp:414
+#: src/Application.cpp:415
 msgid "New preset - empty"
 msgstr ""
 
 #. Translators: Button on the welcome window to create a new preset filled with all
 #. available devices
-#: src/Application.cpp:422
+#: src/Application.cpp:423
 msgid "New preset - add all MIDI devices"
 msgstr ""
 
 #. Translators: Button on the welcome window to browse the filesystem for a preset to load
-#: src/Application.cpp:429
+#: src/Application.cpp:430
 msgid "Browse preset"
 msgstr ""
 
 #. Translators: Button on the welcome window to open the last opened preset
-#: src/Application.cpp:438
+#: src/Application.cpp:439
 msgid "Open last preset"
 msgstr ""
 
 #. Translators: Button on the welcome window to show the 3rd party library licenses
-#: src/Application.cpp:450
+#: src/Application.cpp:451
 msgid "Open source licenses"
 msgstr ""
 
 #. Translators: The message on the popup window when attempting to close the program
-#: src/Application.cpp:471
+#: src/Application.cpp:472
 msgid "Do you want to save changes?"
 msgstr ""
 

@@ -26,10 +26,16 @@ jobs:
         libsdl2-dev
         libspdlog-dev
         nlohmann-json3-dev
+    - name: Install spdlog
+      run: git clone --branch v1.15.0 https://github.com/gabime/spdlog.git &&
+        cmake -S spdlog -B spdlog/build -D SPDLOG_USE_STD_FORMAT=ON -D CMAKE_BUILD_TYPE=Release &&
+        cmake --build spdlog/build -j $(nproc) &&
+        cmake --install spdlog/build --prefix spdlog/install
     - name: Configure CMake
       run: cmake
         -S ${{github.workspace}}
         -B ${{github.workspace}}/build
+        -D CMAKE_PREFIX_PATH=spdlog/install
         -D CMAKE_BUILD_TYPE=Release
         -D MC_COMMIT_SHA=${{github.sha}}
         -D MC_BUILD_NUMBER=${{github.run_number}}
@@ -69,7 +75,7 @@ jobs:
   build-windows:
     runs-on: windows-latest
     env:
-      vcpkg-prereqs: nlohmann-json:x64-windows spdlog:x64-windows sdl2:x64-windows freetype[core]:x64-windows zlib:x64-windows gettext:x64-windows
+      vcpkg-prereqs: nlohmann-json:x64-windows sdl2:x64-windows freetype[core]:x64-windows zlib:x64-windows gettext:x64-windows
     steps:
     - uses: actions/checkout@v4
       with:
@@ -90,12 +96,18 @@ jobs:
       with:
         path: C:\vcpkg
         key: ${{env.vcpkg-prereqs}}
+    - name: Install spdlog
+      run: git clone --branch v1.15.0 https://github.com/gabime/spdlog.git &&
+        cmake -S spdlog -B spdlog\build -D SPDLOG_USE_STD_FORMAT=ON -D CMAKE_BUILD_TYPE=Release &&
+        cmake --build spdlog\build &&
+        cmake --install spdlog\build --prefix spdlog\install
     - name: Configure CMake
       run: cmake
         -B ${{github.workspace}}/build
         -D MC_COMMIT_SHA=${{github.sha}}
         -D MC_BUILD_NUMBER=${{github.run_number}}
         -D MC_CHECK_FOR_UPDATES=ON
+        -D CMAKE_PREFIX_PATH=spdlog\install
         -D CMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake
         -D CMAKE_CXX_FLAGS="/await /EHsc"
         -D X_VCPKG_APPLOCAL_DEPS_INSTALL=ON

@@ -22,14 +22,8 @@ private:
 } // namespace mc::midi
 
 template <>
-struct fmt::formatter<mc::midi::Note>
+struct fmt::formatter<mc::midi::Note> : fmt::formatter<std::string_view>
 {
-    template <class ParseContext>
-    constexpr ParseContext::iterator parse(ParseContext& ctx)
-    {
-        return ctx.begin();
-    }
-
     template <class FmtContext>
     FmtContext::iterator format(mc::midi::Note note, FmtContext& ctx) const
     {
@@ -66,8 +60,6 @@ struct fmt::formatter<mc::midi::Note>
             }
         }();
         const auto         octave = note.m_note / 12;
-        std::ostringstream out;
-        out << key << octave;
-        return std::ranges::copy(std::move(out).str(), ctx.out()).out;
+        return format_to(ctx.out(), "{}{}", key, octave);
     }
 };

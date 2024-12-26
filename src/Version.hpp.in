@@ -61,7 +61,7 @@ struct fmt::formatter<mc::Version>
 {
     constexpr auto parse(format_parse_context& ctx) { return ctx.begin(); }
 
-    auto format(const mc::Version& v, format_context& ctx)
+    auto format(const mc::Version& v, format_context& ctx) const
     {
         if (v.m_build_num.has_value())
         {

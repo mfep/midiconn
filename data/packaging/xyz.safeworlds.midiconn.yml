@@ -32,7 +32,7 @@ modules:
     sources:
       - type: git
         url: https://github.com/fmtlib/fmt
-        tag: '8.1.1'
+        tag: '11.0.2'
   - name: spdlog
     buildsystem: cmake-ninja
     config-opts:
@@ -40,7 +40,7 @@ modules:
     sources:
       - type: git
         url: https://github.com/gabime/spdlog
-        tag: v1.10.0
+        tag: v1.14.1
   - name: nlohmann_json
     buildsystem: cmake-ninja
     config-opts:

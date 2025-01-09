@@ -22,11 +22,19 @@ jobs:
     - name: Install prerequisites
       run: sudo apt-get update -y && sudo apt-get install -y
         libasound2-dev
-        libfmt-dev
         libfreetype-dev
         libsdl2-dev
-        libspdlog-dev
         nlohmann-json3-dev
+    - name: Install fmtlib
+      run: git clone --branch 11.0.2 https://github.com/fmtlib/fmt &&
+        cmake -Sfmt -Bfmt/build -DFMT_DOC=OFF -DFMT_INSTALL=ON -DFMT_TEST=OFF -DCMAKE_BUILD_TYPE=Release &&
+        cmake --build fmt/build -j $(nproc) &&
+        cmake --install fmt/build --prefix fmt/install
+    - name: Install spdlog
+      run: git clone --branch v1.14.1 https://github.com/gabime/spdlog &&
+          cmake -Sspdlog -Bspdlog/build -DCMAKE_BUILD_TYPE=Release &&
+          cmake --build spdlog/build -j $(nproc) &&
+          cmake --install spdlog/build --prefix spdlog/install
     - name: Configure CMake
       run: cmake
         -S ${{github.workspace}}
@@ -36,6 +44,7 @@ jobs:
         -D MC_BUILD_NUMBER=${{github.run_number}}
         -D CPACK_GENERATOR=DEB
         -D CPACK_SYSTEM_NAME=$SYSTEM_NAME
+        -D CMAKE_INSTALL_PREFIX="fmt/install;spdlog/install"
     - name: Build
       run: cmake --build ${{github.workspace}}/build --target midiconn -j $(nproc)
     - name: Create DEB package

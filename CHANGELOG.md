@@ -2,6 +2,18 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## [v0.3.1](https://github.com/mfep/midiconn/compare/2321bde5a1d3d0aa2c1eee3c41ba3f12d84b35db..v0.3.1) - 2025-01-13
+#### Bug Fixes
+- **(dependencies)** Install specific versions of fmt and spdlog - ([379e8ad](https://github.com/mfep/midiconn/commit/379e8adb6d8a8cc4e32134e738528f2481f58078)) - [@mfep](https://github.com/mfep)
+- **(deps)** Fix spdlog and fmt versions in flatpak manifest - ([60cec71](https://github.com/mfep/midiconn/commit/60cec71ae1205c19668192d9c64091a5e51aa4bb)) - [@mfep](https://github.com/mfep)
+- **(deps)** Fix build failure of fmtlib - ([2321bde](https://github.com/mfep/midiconn/commit/2321bde5a1d3d0aa2c1eee3c41ba3f12d84b35db)) - [@mfep](https://github.com/mfep)
+- Fix header include problems on Windows - ([718515c](https://github.com/mfep/midiconn/commit/718515c309db085ee89c92d5e455a2bd7fee1d89)) - [@mfep](https://github.com/mfep)
+- Fixed HiDPI rendering on Wayland - ([4ea2dd4](https://github.com/mfep/midiconn/commit/4ea2dd416d70d88f667f008e735386b9bb66ed7d)) - [@mfep](https://github.com/mfep)
+#### Miscellaneous Chores
+- **(docs)** Update metainfo - ([966e74c](https://github.com/mfep/midiconn/commit/966e74c09b4e6bf6af1e23f876b5daa2f55c10fd)) - [@mfep](https://github.com/mfep)
+
+- - -
+
 ## [v0.3.0](https://github.com/mfep/midiconn/compare/9e585043acce173f6a1d2ff83de32bd41b46a53a..v0.3.0) - 2024-06-18
 #### Bug Fixes
 - **(CI)** Fix Windows CI build - ([3076509](https://github.com/mfep/midiconn/commit/30765094001723ef733ccf4665ad21377445a625)) - [@mfep](https://github.com/mfep)

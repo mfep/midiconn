@@ -46,6 +46,14 @@
   <developer_name>safe worlds</developer_name>
 
   <releases>
+    <release version="0.3.1" date="2025-01-13">
+      <description>
+        <p>Improvements and bug fixes in the current release:</p>
+        <ul>
+          <li>Fixed rendering with Wayland upscaling</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.3.0" date="2024-06-18">
       <description>
         <p>Improvements and bug fixes in the current release:</p>

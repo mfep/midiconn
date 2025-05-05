@@ -202,7 +202,7 @@ std::shared_ptr<Node> NodeEditor::renderContextMenu(bool show_outputting_nodes,
                 },
                 MidiChannelNode::name());
         }
-        if (show_inputting_nodes)
+        if (!node && show_inputting_nodes)
         {
             node = render_add_node(
                 [this] {
@@ -211,23 +211,15 @@ std::shared_ptr<Node> NodeEditor::renderContextMenu(bool show_outputting_nodes,
                 LogNode::name());
         }
         // Translators: Context menu entry for listing the MIDI input devices
-        if (show_outputting_nodes && ImGui::TreeNode(gettext("MIDI inputs")))
+        if (!node && show_outputting_nodes && ImGui::TreeNode(gettext("MIDI inputs")))
         {
-            auto tmp_node = render_midi_inout_list(m_input_infos);
-            if (tmp_node) // new node was created
-            {
-                node = tmp_node;
-            }
+            node = render_midi_inout_list(m_input_infos);
             ImGui::TreePop();
         }
         // Translators: Context menu entry for listing the MIDI output devices
-        if (show_inputting_nodes && ImGui::TreeNode(gettext("MIDI outputs")))
+        if (!node && show_inputting_nodes && ImGui::TreeNode(gettext("MIDI outputs")))
         {
-            auto tmp_node = render_midi_inout_list(m_output_infos);
-            if (tmp_node) // new node was created
-            {
-                node = tmp_node;
-            }
+            node = render_midi_inout_list(m_output_infos);
             ImGui::TreePop();
         }
         ImGui::EndPopup();

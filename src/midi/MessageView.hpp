@@ -54,15 +54,21 @@ template <bool Mutable>
 class ChannelPressureMessageView;
 template <bool Mutable>
 class PitchBendMessageView;
+template <bool Mutable>
 class AllSoundOffMessageView;
+template <bool Mutable>
 class ResetAllControllersMessageView;
 template <bool Mutable>
 class LocalControlMessageView;
+template <bool Mutable>
 class AllNotesOffMessageView;
+template <bool Mutable>
 class OmniModeOffMessageView;
+template <bool Mutable>
 class OmniModeOnMessageView;
 template <bool Mutable>
 class MonoModeOnMessageView;
+template <bool Mutable>
 class PolyModeOnMessageView;
 template <bool Mutable>
 class SystemMessageView;
@@ -116,14 +122,14 @@ public:
                  ProgramChangeMessageView<Mutable>,
                  ChannelPressureMessageView<Mutable>,
                  PitchBendMessageView<Mutable>,
-                 AllSoundOffMessageView,
-                 ResetAllControllersMessageView,
+                 AllSoundOffMessageView<Mutable>,
+                 ResetAllControllersMessageView<Mutable>,
                  LocalControlMessageView<Mutable>,
-                 AllNotesOffMessageView,
-                 OmniModeOffMessageView,
-                 OmniModeOnMessageView,
+                 AllNotesOffMessageView<Mutable>,
+                 OmniModeOffMessageView<Mutable>,
+                 OmniModeOnMessageView<Mutable>,
                  MonoModeOnMessageView<Mutable>,
-                 PolyModeOnMessageView,
+                 PolyModeOnMessageView<Mutable>,
                  ChannelMessageView<Mutable>,
                  SystemMessageView<Mutable>,
                  SystemCommonMessageView<Mutable>,
@@ -197,14 +203,14 @@ public:
                  ProgramChangeMessageView<Mutable>,
                  ChannelPressureMessageView<Mutable>,
                  PitchBendMessageView<Mutable>,
-                 AllSoundOffMessageView,
-                 ResetAllControllersMessageView,
+                 AllSoundOffMessageView<Mutable>,
+                 ResetAllControllersMessageView<Mutable>,
                  LocalControlMessageView<Mutable>,
-                 AllNotesOffMessageView,
-                 OmniModeOffMessageView,
-                 OmniModeOnMessageView,
+                 AllNotesOffMessageView<Mutable>,
+                 OmniModeOffMessageView<Mutable>,
+                 OmniModeOnMessageView<Mutable>,
                  MonoModeOnMessageView<Mutable>,
-                 PolyModeOnMessageView,
+                 PolyModeOnMessageView<Mutable>,
                  ChannelMessageView<Mutable>>
     parse() const
     {
@@ -531,35 +537,35 @@ public:
     {
     }
 
-    std::variant<AllSoundOffMessageView,
-                 ResetAllControllersMessageView,
+    std::variant<AllSoundOffMessageView<Mutable>,
+                 ResetAllControllersMessageView<Mutable>,
                  LocalControlMessageView<Mutable>,
-                 AllNotesOffMessageView,
-                 OmniModeOffMessageView,
-                 OmniModeOnMessageView,
+                 AllNotesOffMessageView<Mutable>,
+                 OmniModeOffMessageView<Mutable>,
+                 OmniModeOnMessageView<Mutable>,
                  MonoModeOnMessageView<Mutable>,
-                 PolyModeOnMessageView,
+                 PolyModeOnMessageView<Mutable>,
                  ChannelModeMessageView>
     parse() const
     {
         switch (this->m_message_data[1])
         {
         case 120:
-            return AllSoundOffMessageView(this->m_message_data);
+            return AllSoundOffMessageView<Mutable>(this->m_message_data);
         case 121:
-            return ResetAllControllersMessageView(this->m_message_data);
+            return ResetAllControllersMessageView<Mutable>(this->m_message_data);
         case 122:
             return LocalControlMessageView<Mutable>(this->m_message_data);
         case 123:
-            return AllNotesOffMessageView(this->m_message_data);
+            return AllNotesOffMessageView<Mutable>(this->m_message_data);
         case 124:
-            return OmniModeOffMessageView(this->m_message_data);
+            return OmniModeOffMessageView<Mutable>(this->m_message_data);
         case 125:
-            return OmniModeOnMessageView(this->m_message_data);
+            return OmniModeOnMessageView<Mutable>(this->m_message_data);
         case 126:
             return MonoModeOnMessageView<Mutable>(this->m_message_data);
         case 127:
-            return PolyModeOnMessageView(this->m_message_data);
+            return PolyModeOnMessageView<Mutable>(this->m_message_data);
         default:
             return *this;
         }
@@ -570,13 +576,14 @@ struct AllSoundOffMessageViewTag : public ChannelModeMessageViewTag
 {
 };
 
-class AllSoundOffMessageView : public ChannelModeMessageView<false>
+template <bool Mutable = true>
+class AllSoundOffMessageView : public ChannelModeMessageView<Mutable>
 {
 public:
     using tag_t = AllSoundOffMessageViewTag;
 
-    explicit AllSoundOffMessageView(MessageView<false>::span_t message_data)
-        : ChannelModeMessageView<false>(message_data)
+    explicit AllSoundOffMessageView(MessageView<Mutable>::span_t message_data)
+        : ChannelModeMessageView<Mutable>(message_data)
     {
     }
 };
@@ -585,13 +592,14 @@ struct ResetAllControllersMessageViewTag : public ChannelModeMessageViewTag
 {
 };
 
-class ResetAllControllersMessageView : public ChannelModeMessageView<false>
+template <bool Mutable = true>
+class ResetAllControllersMessageView : public ChannelModeMessageView<Mutable>
 {
 public:
     using tag_t = ResetAllControllersMessageViewTag;
 
-    explicit ResetAllControllersMessageView(MessageView<false>::span_t message_data)
-        : ChannelModeMessageView<false>(message_data)
+    explicit ResetAllControllersMessageView(MessageView<Mutable>::span_t message_data)
+        : ChannelModeMessageView<Mutable>(message_data)
     {
     }
 };
@@ -624,13 +632,14 @@ struct AllNotesOffMessageViewTag : public ChannelModeMessageViewTag
 {
 };
 
-class AllNotesOffMessageView : public ChannelModeMessageView<false>
+template <bool Mutable = true>
+class AllNotesOffMessageView : public ChannelModeMessageView<Mutable>
 {
 public:
     using tag_t = AllNotesOffMessageViewTag;
 
-    explicit AllNotesOffMessageView(MessageView<false>::span_t message_data)
-        : ChannelModeMessageView<false>(message_data)
+    explicit AllNotesOffMessageView(MessageView<Mutable>::span_t message_data)
+        : ChannelModeMessageView<Mutable>(message_data)
     {
     }
 };
@@ -639,13 +648,14 @@ struct OmniModeOffMessageViewTag : public ChannelModeMessageViewTag
 {
 };
 
-class OmniModeOffMessageView : public ChannelModeMessageView<false>
+template <bool Mutable = true>
+class OmniModeOffMessageView : public ChannelModeMessageView<Mutable>
 {
 public:
     using tag_t = OmniModeOffMessageViewTag;
 
-    explicit OmniModeOffMessageView(MessageView<false>::span_t message_data)
-        : ChannelModeMessageView<false>(message_data)
+    explicit OmniModeOffMessageView(MessageView<Mutable>::span_t message_data)
+        : ChannelModeMessageView<Mutable>(message_data)
     {
     }
 };
@@ -654,13 +664,14 @@ struct OmniModeOnMessageViewTag : public ChannelModeMessageViewTag
 {
 };
 
-class OmniModeOnMessageView : public ChannelModeMessageView<false>
+template <bool Mutable = true>
+class OmniModeOnMessageView : public ChannelModeMessageView<Mutable>
 {
 public:
     using tag_t = OmniModeOnMessageViewTag;
 
-    explicit OmniModeOnMessageView(MessageView<false>::span_t message_data)
-        : ChannelModeMessageView<false>(message_data)
+    explicit OmniModeOnMessageView(MessageView<Mutable>::span_t message_data)
+        : ChannelModeMessageView<Mutable>(message_data)
     {
     }
 };
@@ -693,13 +704,14 @@ struct PolyModeOnMessageViewTag : public ChannelModeMessageViewTag
 {
 };
 
-class PolyModeOnMessageView : public ChannelModeMessageView<false>
+template <bool Mutable = true>
+class PolyModeOnMessageView : public ChannelModeMessageView<Mutable>
 {
 public:
     using tag_t = PolyModeOnMessageViewTag;
 
-    explicit PolyModeOnMessageView(MessageView<false>::span_t message_data)
-        : ChannelModeMessageView<false>(message_data)
+    explicit PolyModeOnMessageView(MessageView<Mutable>::span_t message_data)
+        : ChannelModeMessageView<Mutable>(message_data)
     {
     }
 };

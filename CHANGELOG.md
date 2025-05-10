@@ -2,6 +2,16 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## [v0.3.2](https://github.com/mfep/midiconn/compare/e63cde7e6317f79df47469138f4a7826f5632b48..v0.3.2) - 2025-05-10
+#### Bug Fixes
+- **(midi)** Fix channel map node not modifying MIDI data (#1) - ([b5fce47](https://github.com/mfep/midiconn/commit/b5fce47ab524fead659e31106b09e785a64dc109)) - [@mfep](https://github.com/mfep)
+- Fix channel node not automatically connecting on mouseup - ([e63cde7](https://github.com/mfep/midiconn/commit/e63cde7e6317f79df47469138f4a7826f5632b48)) - [@mfep](https://github.com/mfep)
+#### Miscellaneous Chores
+- **(deps)** Update flatpak platform to 24.08 - ([afc0441](https://github.com/mfep/midiconn/commit/afc0441ec6d101553a60d1eeb48c4a7c26209d48)) - [@mfep](https://github.com/mfep)
+- **(docs)** Update release notes - ([3c75f81](https://github.com/mfep/midiconn/commit/3c75f811ff79ad643fcd9530cada95ee661fba6d)) - [@mfep](https://github.com/mfep)
+
+- - -
+
 ## [v0.3.1](https://github.com/mfep/midiconn/compare/2321bde5a1d3d0aa2c1eee3c41ba3f12d84b35db..v0.3.1) - 2025-01-13
 #### Bug Fixes
 - **(dependencies)** Install specific versions of fmt and spdlog - ([379e8ad](https://github.com/mfep/midiconn/commit/379e8adb6d8a8cc4e32134e738528f2481f58078)) - [@mfep](https://github.com/mfep)

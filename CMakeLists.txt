@@ -5,7 +5,7 @@ include(FetchContent)
 include(external/CMakeRC.cmake)
 include(GNUInstallDirs)
 
-project(midiconn VERSION 0.3.1 LANGUAGES CXX)
+project(midiconn VERSION 0.3.2 LANGUAGES CXX)
 
 option(MC_CHECK_FOR_UPDATES "Build ${PROJECT_NAME} to check for updates on start" OFF)
 

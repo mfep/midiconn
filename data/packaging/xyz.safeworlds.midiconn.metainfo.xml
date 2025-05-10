@@ -46,6 +46,16 @@
   <developer_name>safe worlds</developer_name>
 
   <releases>
+    <release version="0.3.2" date="2025-05-10">
+      <description>
+        <p>Improvements and bug fixes in the current release:</p>
+        <ul>
+          <li>Fixed channel node not automatically connecting on mouseup</li>
+          <li>Fixed channel map node not modifying MIDI data</li>
+          <li>Updated flatpak to Freedesktop Platform 24.08</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.3.1" date="2025-01-13">
       <description>
         <p>Improvements and bug fixes in the current release:</p>

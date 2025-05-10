@@ -137,14 +137,14 @@ jobs:
       uses: softprops/action-gh-release@v2
       with:
         files: |
-          ${{github.workspace}}/artifact/*.deb
-          ${{github.workspace}}/artifact/*.msi
+          ${{github.workspace}}/linux*/*.deb
+          ${{github.workspace}}/windows/*.msi
     - name: Push artifacts to itch.io
       shell: bash
       run: |
         wget https://broth.itch.ovh/butler/linux-amd64/LATEST/archive/default -O butler.zip
         unzip butler.zip
         export BUTLER_API_KEY=${{ secrets.BUTLER_API_KEY }}
-        ./butler push ${{github.workspace}}/artifact/*.msi mfeproject/midiconn:windows-msi --userversion $GITHUB_REF_NAME
-        ./butler push ${{github.workspace}}/artifact/*jammy*.deb mfeproject/midiconn:ubuntu2204-deb --userversion $GITHUB_REF_NAME
-        ./butler push ${{github.workspace}}/artifact/*noble*.deb mfeproject/midiconn:ubuntu2404-deb --userversion $GITHUB_REF_NAME
+        ./butler push ${{github.workspace}}/windows/*.msi mfeproject/midiconn:windows-msi --userversion $GITHUB_REF_NAME
+        ./butler push ${{github.workspace}}/linux-jammy/*.deb mfeproject/midiconn:ubuntu2204-deb --userversion $GITHUB_REF_NAME
+        ./butler push ${{github.workspace}}/linux-noble/*.deb mfeproject/midiconn:ubuntu2404-deb --userversion $GITHUB_REF_NAME

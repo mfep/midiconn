@@ -8,6 +8,7 @@ include(GNUInstallDirs)
 project(midiconn VERSION 0.3.2 LANGUAGES CXX)
 
 option(MC_CHECK_FOR_UPDATES "Build ${PROJECT_NAME} to check for updates on start" OFF)
+option(MC_BUILD_WITH_TRANSLATIONS "Build ${PROJECT_NAME} with translations support" OFF)
 
 find_package(fmt REQUIRED)
 find_package(spdlog REQUIRED)
@@ -21,11 +22,14 @@ endif()
 if(NOT WIN32 AND MC_CHECK_FOR_UPDATES)
     find_package(CURL REQUIRED)
 endif()
-find_package(Intl REQUIRED)
-if (NOT TARGET Intl::Intl)
-    add_library(Intl::Intl UNKNOWN IMPORTED)
-    target_include_directories(Intl::Intl PUBLIC "${Intl_INCLUDE_DIRS}")
-    target_link_libraries(Intl::Intl PUBLIC "${Intl_LIBRARIES}")
+
+if (MC_BUILD_WITH_TRANSLATIONS)
+    find_package(Intl REQUIRED)
+    if (NOT TARGET Intl::Intl)
+        add_library(Intl::Intl UNKNOWN IMPORTED)
+        target_include_directories(Intl::Intl PUBLIC "${Intl_INCLUDE_DIRS}")
+        target_link_libraries(Intl::Intl PUBLIC "${Intl_LIBRARIES}")
+    endif()
 endif()
 
 set(MC_LOCALE_DIR "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LOCALEDIR}")
@@ -59,7 +63,7 @@ set(sources
     src/ConfigFile.cpp
     src/KeyboardShortcutAggregator.cpp
     src/Licenses.cpp
-    src/Locale.cpp
+    $<$<BOOL:${MC_BUILD_WITH_TRANSLATIONS}>:src/Locale.cpp>
     src/LogNode.cpp
     src/MidiChannelNode.cpp
     src/MidiInNode.cpp
@@ -113,7 +117,7 @@ target_link_libraries(midiconn PRIVATE
     freetype
     resources
     midi
-    Intl::Intl
+    $<$<BOOL:${MC_BUILD_WITH_TRANSLATIONS}>:Intl::Intl>
 )
 if(NOT WIN32 AND MC_CHECK_FOR_UPDATES)
     target_link_libraries(midiconn PRIVATE curl)
@@ -121,6 +125,7 @@ endif()
 target_compile_definitions(midiconn PRIVATE
     SPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_DEBUG
     IMGUI_ENABLE_FREETYPE
+    $<$<BOOL:${MC_BUILD_WITH_TRANSLATIONS}>:MC_BUILD_WITH_TRANSLATIONS>
 )
 
 set(CPACK_PACKAGE_NAME "midiconn")
@@ -170,7 +175,7 @@ include(CPack)
 
 find_program(XGETTEXT xgettext)
 find_package(Gettext)
-if (XGETTEXT AND ${GETTEXT_FOUND})
+if (MC_BUILD_WITH_TRANSLATIONS AND XGETTEXT AND ${GETTEXT_FOUND})
     set(POT_FILE "${PROJECT_SOURCE_DIR}/po/midiconn.pot")
     add_custom_command(
         OUTPUT "${POT_FILE}"

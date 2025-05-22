@@ -7,7 +7,9 @@
 #include "ApplicationName.hpp"
 #include "Commands.hpp"
 #include "ConfigFile.hpp"
+#ifdef MC_BUILD_WITH_TRANSLATIONS
 #include "Locale.hpp"
+#endif
 #include "NodeEditor.hpp"
 #include "NodeFactory.hpp"
 #include "PortNameDisplay.hpp"
@@ -54,7 +56,9 @@ private:
     UpdateChecker   m_update_checker;
     bool            m_welcome_enabled;
     Texture         m_logo_texture;
+#ifdef MC_BUILD_WITH_TRANSLATIONS
     Locale          m_locale;
+#endif
 };
 
 } // namespace mc

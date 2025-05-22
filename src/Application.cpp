@@ -28,8 +28,10 @@ Application::Application(SDL_Window*                  window,
       m_preset_manager(m_preset, m_node_factory, m_config, m_port_name_display, m_theme_control),
       m_port_name_display(m_config.get_show_full_port_names()),
       m_welcome_enabled(m_config.get_show_welcome() && path_to_preset.empty()),
-      m_logo_texture(ResourceLoader::load_texture(renderer, "graphics/mc_logo.png")),
-      m_locale(m_config)
+      m_logo_texture(ResourceLoader::load_texture(renderer, "graphics/mc_logo.png"))
+#ifdef MC_BUILD_WITH_TRANSLATIONS
+      , m_locale(m_config)
+#endif
 {
     spdlog::info("Starting " MIDI_APPLICATION_NAME " version {}", g_current_version);
 
@@ -265,7 +267,7 @@ void Application::render_main_menu()
                 ImGui::EndMenu();
             }
 // This kind of locale selection is broken on Windows
-#ifndef _WIN32
+#if !defined(_WIN32) && defined(MC_BUILD_WITH_TRANSLATIONS)
             static auto language_label =
                 // Translators: Menu entry for selecting the display language
                 fmt::format("{} {}", ICON_FK_LANGUAGE, gettext("Language"));

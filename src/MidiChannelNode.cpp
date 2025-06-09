@@ -1,5 +1,7 @@
 #include "MidiChannelNode.hpp"
 
+#include "Intl.hpp"
+
 #include <iomanip>
 #include <numeric>
 #include <sstream>
@@ -8,8 +10,6 @@
 #include "imnodes.h"
 
 #include "NodeSerializer.hpp"
-
-#include "libintl.h"
 
 const char* mc::MidiChannelNode::sm_combo_items[] = {gettext("None"),
                                                      "1",

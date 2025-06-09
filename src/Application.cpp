@@ -10,12 +10,11 @@
 #include "spdlog/spdlog.h"
 
 #include "ErrorHandler.hpp"
+#include "Intl.hpp"
 #include "Licenses.hpp"
 #include "PlatformUtils.hpp"
 #include "Utils.hpp"
 #include "Version.hpp"
-
-#include "libintl.h"
 
 namespace mc
 {

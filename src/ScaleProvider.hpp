@@ -1,9 +1,9 @@
 #pragma once
 
+#include "Intl.hpp"
+
 #include <array>
 #include <string_view>
-
-#include "libintl.h"
 
 namespace mc
 {

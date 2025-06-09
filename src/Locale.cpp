@@ -2,8 +2,8 @@
 
 #include "ApplicationName.hpp"
 #include "ConfigFile.hpp"
+#include "Intl.hpp"
 
-#include "libintl.h"
 #include "portable-file-dialogs.h"
 #include "spdlog/spdlog.h"
 

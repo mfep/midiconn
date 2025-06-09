@@ -14,12 +14,11 @@
 
 #include "Application.hpp"
 #include "ErrorHandler.hpp"
+#include "Intl.hpp"
 #include "KeyboardShortcutAggregator.hpp"
 #include "PlatformUtils.hpp"
 #include "Utils.hpp"
 #include "Version.hpp"
-
-#include "libintl.h"
 
 #if !SDL_VERSION_ATLEAST(2, 0, 17)
 #error This backend requires SDL 2.0.17+ because of SDL_RenderGeometry() function

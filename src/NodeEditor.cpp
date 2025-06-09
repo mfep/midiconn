@@ -7,6 +7,7 @@
 #include "imnodes.h"
 #include "nlohmann/json.hpp"
 
+#include "Intl.hpp"
 #include "LogNode.hpp"
 #include "MidiChannelNode.hpp"
 #include "MidiInNode.hpp"
@@ -16,8 +17,6 @@
 #include "PortNameDisplay.hpp"
 #include "Theme.hpp"
 #include "midi/MidiProbe.hpp"
-
-#include "libintl.h"
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ImVec2, x, y);
 

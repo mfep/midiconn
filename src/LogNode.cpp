@@ -1,6 +1,7 @@
 #include "LogNode.hpp"
 
 #include "NodeSerializer.hpp"
+#include "Intl.hpp"
 
 #include "midi/MessageView.hpp"
 #include "midi/Note.hpp"
@@ -9,8 +10,6 @@
 #include "imnodes.h"
 
 #include "fmt/format.h"
-
-#include "libintl.h"
 
 std::string_view mc::LogNode::LogMidiNode::name()
 {

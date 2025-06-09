@@ -2,6 +2,18 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## [v0.3.3](https://github.com/mfep/midiconn/compare/98f5057704bf860cac7b7d45413b32a552b975e3..v0.3.3) - 2025-06-09
+#### Bug Fixes
+- **(ci)** Remove gettext vcpkg dependency in Windows CI - ([10b03d5](https://github.com/mfep/midiconn/commit/10b03d5dcf0df4fba97fd62d2b3d73b46cce2e20)) - [@mfep](https://github.com/mfep)
+- **(i18n)** gettext proxy function - ([cc037dd](https://github.com/mfep/midiconn/commit/cc037dd39a61347ae4c939127475b024f5559bcd)) - [@mfep](https://github.com/mfep)
+- **(i18n)** Enable i18n in main based on compilation flag - ([859741e](https://github.com/mfep/midiconn/commit/859741e8b7e93e889e6cb849183061c9ca2167f9)) - [@mfep](https://github.com/mfep)
+- **(i18n)** Enable i18n with compilation flag - ([98f5057](https://github.com/mfep/midiconn/commit/98f5057704bf860cac7b7d45413b32a552b975e3)) - [@mfep](https://github.com/mfep)
+#### Miscellaneous Chores
+- **(docs)** Update release in metainfo - ([783c5d7](https://github.com/mfep/midiconn/commit/783c5d78e3ad9dbcf6a59285945f6e581f50fce0)) - [@mfep](https://github.com/mfep)
+- **(docs)** Added donation link - ([1880f3d](https://github.com/mfep/midiconn/commit/1880f3d8d7193f4adbc020805b528b14d42c3e73)) - [@mfep](https://github.com/mfep)
+
+- - -
+
 ## [v0.3.2](https://github.com/mfep/midiconn/compare/e63cde7e6317f79df47469138f4a7826f5632b48..v0.3.2) - 2025-05-10
 #### Bug Fixes
 - **(midi)** Fix channel map node not modifying MIDI data (#1) - ([b5fce47](https://github.com/mfep/midiconn/commit/b5fce47ab524fead659e31106b09e785a64dc109)) - [@mfep](https://github.com/mfep)

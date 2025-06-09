@@ -54,6 +54,15 @@
   </branding>
 
   <releases>
+    <release version="0.3.3" date="2025-06-09">
+      <description>
+        <p>Improvements and bug fixes in the current release:</p>
+        <ul>
+          <li>Removed i18n menu</li>
+          <li>Added donation links</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.3.2" date="2025-05-10">
       <description>
         <p>Improvements and bug fixes in the current release:</p>

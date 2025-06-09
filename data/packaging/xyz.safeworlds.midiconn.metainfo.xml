@@ -40,10 +40,18 @@
 
   <url type="homepage">https://mfeproject.itch.io/midiconn</url>
   <url type="bugtracker">https://github.com/mfep/midiconn/issues</url>
+  <url type="donation">https://ko-fi.com/safeworlds</url>
  
   <launchable type="desktop-id">xyz.safeworlds.midiconn.desktop</launchable>
 
-  <developer_name>safe worlds</developer_name>
+  <developer id="xyz.safeworlds">
+    <name>Lőrinc Serfőző</name>
+  </developer>
+
+  <branding>
+    <color type="primary" scheme_preference="light">#2AB4F5</color>
+    <color type="primary" scheme_preference="dark">#294979</color>
+  </branding>
 
   <releases>
     <release version="0.3.2" date="2025-05-10">

@@ -326,6 +326,12 @@ void Application::render_main_menu()
             {
                 SDL_OpenURL(MC_WEBSITE_URL);
             }
+            static auto donation_label =
+                fmt::format("{} {}", ICON_FK_MONEY, gettext("Donate"));
+            if (ImGui::MenuItem(donation_label.c_str()))
+            {
+                SDL_OpenURL(MC_DONATION_URL);
+            }
             static auto about_label =
                 // Translators: Menu entry to open the about window
                 fmt::format("{} {}", ICON_FK_QUESTION, gettext("About"));

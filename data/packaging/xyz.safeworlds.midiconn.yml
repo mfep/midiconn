@@ -1,59 +1,54 @@
-id: xyz.safeworlds.midiconn.Devel
+id: xyz.safeworlds.midiconn
 command: midiconn
 runtime: org.freedesktop.Platform
-runtime-version: '24.08'
+runtime-version: '25.08'
 sdk: org.freedesktop.Sdk
-separate-locales: false
-cleanup:
-  - /bin/sdl2-config
-  - /include
-  - /lib/cmake
-  - /lib/pkgconfig
-  - /lib/*.a
-  - /lib/*.la
-  - /share/aclocal
-  - /share/rtmidi
-  - /share/cmake
-  - /share/pkgconfig
 finish-args:
   - --socket=fallback-x11
   - --socket=wayland
   - --socket=pulseaudio
   - --device=dri
   - --share=ipc
+cleanup:
+  - /bin/sdl2-config
+  - /include
+  - /lib/cmake
+  - /lib/pkgconfig
+  - /share/aclocal
+  - /share/rtmidi
+  - /share/cmake
+  - /share/pkgconfig
+  - '*.la'
+  - '*.a'
 modules:
-  - name: fmt
-    buildsystem: cmake-ninja
-    config-opts:
-      - -DFMT_DOC=OFF
-      - -DFMT_INSTALL=ON
-      - -DFMT_TEST=OFF 
-      - -DCMAKE_BUILD_TYPE=Release
-    sources:
-      - type: git
-        url: https://github.com/fmtlib/fmt
-        tag: '11.0.2'
   - name: spdlog
     buildsystem: cmake-ninja
     config-opts:
       - -DCMAKE_BUILD_TYPE=Release
+      - -DSPDLOG_BUILD_EXAMPLE=OFF
     sources:
       - type: git
         url: https://github.com/gabime/spdlog
         tag: v1.14.1
+        commit: 27cb4c76708608465c413f6d0e6b8d99a4d84302
+        
   - name: nlohmann_json
     buildsystem: cmake-ninja
     config-opts:
       - -DCMAKE_BUILD_TYPE=Release
       - -DJSON_BuildTests=OFF
+      - -DCMAKE_POLICY_VERSION_MINIMUM=3.5
     sources:
       - type: git
         url: https://github.com/nlohmann/json
         tag: v3.11.2
+        commit: bc889afb4c5bf1c0d8ee29ef35eaaf4c8bef8a5d
+
   - name: midiconn
     buildsystem: cmake-ninja
     config-opts:
       - -DCMAKE_BUILD_TYPE=Release
+      - -DCMAKE_POLICY_VERSION_MINIMUM=3.5
     sources:
       - type: dir
         path: './../..'

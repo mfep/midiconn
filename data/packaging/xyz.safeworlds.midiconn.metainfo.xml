@@ -23,6 +23,7 @@
 
   <screenshots>
     <screenshot type="default">
+      <caption>The midiconn main window</caption>
       <image width="1266" height="900">https://github.com/mfep/midiconn/raw/main/data/graphics/screenshot_0.png</image>
     </screenshot>
   </screenshots>
@@ -39,6 +40,7 @@
   </categories>
 
   <url type="homepage">https://mfeproject.itch.io/midiconn</url>
+  <url type="vcs-browser">https://github.com/mfep/midiconn/</url>
   <url type="bugtracker">https://github.com/mfep/midiconn/issues</url>
   <url type="donation">https://ko-fi.com/safeworlds</url>
  
@@ -54,6 +56,14 @@
   </branding>
 
   <releases>
+    <release version="0.3.4" date="2026-01-24">
+      <description>
+        <p>Improvements and bug fixes in the current release:</p>
+        <ul>
+          <li>Updated Flatpak runtime to Freedesktop Platform 25.08</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.3.3" date="2025-06-09">
       <description>
         <p>Improvements and bug fixes in the current release:</p>

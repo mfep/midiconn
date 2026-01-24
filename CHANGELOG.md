@@ -2,6 +2,22 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## [v0.3.4](https://github.com/mfep/midiconn/compare/aca37b5b1fc897d6160ba3c71fdc3bf795685b30..v0.3.4) - 2026-01-24
+#### Bug Fixes
+- **(ci)** Remove metainfo validation step from CI - ([232c2e6](https://github.com/mfep/midiconn/commit/232c2e6b3e64ae5fb15f0c2ac03acaad664250be)) - [@mfep](https://github.com/mfep)
+- **(ci)** Update Flatpak GitHub Actions container image - ([d7d80d0](https://github.com/mfep/midiconn/commit/d7d80d0584fa7229c41ea3458254ea66eb24e248)) - [@mfep](https://github.com/mfep)
+- **(dependencies)** Fix Windows linking problem - ([17b0317](https://github.com/mfep/midiconn/commit/17b031734fed9a6e8566eaec7d5250fcaeaba5a3)) - [@mfep](https://github.com/mfep)
+#### Miscellaneous Chores
+- **(ci)** Update Flatpak GitHub Actions image version - ([0e85dc3](https://github.com/mfep/midiconn/commit/0e85dc32e71f0f4c5c5bb6cb191efd4b73928e78)) - [@mfep](https://github.com/mfep)
+- **(ci)** Add VCPKG_ROOT environment variable to Windows workflow - ([8c4a39d](https://github.com/mfep/midiconn/commit/8c4a39da4ecb0db60399aca606996844069cdfd4)) - [@mfep](https://github.com/mfep)
+- **(ci)** Windows build uses CMakePresets - ([f793545](https://github.com/mfep/midiconn/commit/f7935453781f92b4f3b5b3952b4454b780d08a0c)) - [@mfep](https://github.com/mfep)
+- **(ci)** Add CMakePresets for Windows - ([43f1c87](https://github.com/mfep/midiconn/commit/43f1c873912074985d86b4d5461428f7f03865f4)) - [@mfep](https://github.com/mfep)
+- **(dependencies)** Update Flatpak to Freedesktop Platform 25.08 - ([d816a47](https://github.com/mfep/midiconn/commit/d816a472be7a63ad8f967d8b26e98db4cc501f04)) - [@mfep](https://github.com/mfep)
+- **(dependencies)** Updated imgui and imnodes - ([aca37b5](https://github.com/mfep/midiconn/commit/aca37b5b1fc897d6160ba3c71fdc3bf795685b30)) - [@mfep](https://github.com/mfep)
+- **(docs)** Update metainfo - ([130d7e7](https://github.com/mfep/midiconn/commit/130d7e724aebbdb03d72a54de549027502794276)) - [@mfep](https://github.com/mfep)
+
+- - -
+
 ## [v0.3.3](https://github.com/mfep/midiconn/compare/98f5057704bf860cac7b7d45413b32a552b975e3..v0.3.3) - 2025-06-09
 #### Bug Fixes
 - **(ci)** Remove gettext vcpkg dependency in Windows CI - ([10b03d5](https://github.com/mfep/midiconn/commit/10b03d5dcf0df4fba97fd62d2b3d73b46cce2e20)) - [@mfep](https://github.com/mfep)

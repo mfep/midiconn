@@ -1,0 +1,13 @@
+{
+    "dependencies": [
+        "nlohmann-json",
+        "spdlog",
+        "sdl2",
+        "zlib",
+        {
+            "name": "freetype",
+            "default-features": false
+        }
+    ],
+    "builtin-baseline": "de51e6bfa96e1245f2a969a8cde249baac89f7be"
+}

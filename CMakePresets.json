@@ -1,0 +1,52 @@
+{
+    "version": 6,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 22,
+        "patch": 0
+    },
+    "configurePresets": [
+        {
+            "name": "windows-x64",
+            "displayName": "Windows x64 (Visual Studio 2022)",
+            "generator": "Visual Studio 17 2022",
+            "binaryDir": "${sourceDir}/build/",
+            "cacheVariables": {
+                "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+                "CMAKE_GENERATOR_PLATFORM": "x64",
+                "X_VCPKG_APPLOCAL_DEPS_INSTALL": "ON",
+                "MC_COMMIT_SHA": "$env{MC_COMMIT_SHA}",
+                "MC_BUILD_NUMBER": "$env{MC_BUILD_NUMBER}",
+                "MC_CHECK_FOR_UPDATES": "ON"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "windows-x64-debug",
+            "displayName": "Windows x64 Debug",
+            "configurePreset": "windows-x64",
+            "configuration": "Debug"
+        },
+        {
+            "name": "windows-x64-release",
+            "displayName": "Windows x64 Release",
+            "configurePreset": "windows-x64",
+            "configuration": "Release"
+        }
+    ],
+    "packagePresets": [
+        {
+            "name": "x64-release-msi",
+            "configurePreset": "windows-x64",
+            "configurations": [
+                "Release"
+            ]
+        }
+    ]
+}

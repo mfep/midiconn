@@ -146,6 +146,7 @@ if(WIN32)
     target_compile_options(midiconn PRIVATE "/utf-8")
     target_link_libraries(midiconn PRIVATE
         Shcore.lib
+        mincore.lib
     )
     target_link_options(midiconn PRIVATE "/SUBSYSTEM:WINDOWS")
 else()

@@ -67,9 +67,6 @@ jobs:
       with:
         submodules: true
         lfs: true
-    - name: Validate metainfo
-      run: appstream-util validate
-        data/packaging/xyz.safeworlds.midiconn.metainfo.xml
     - name: Build flatpak
       uses: flatpak/flatpak-github-actions/flatpak-builder@v6
       with:

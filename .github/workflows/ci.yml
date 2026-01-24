@@ -78,8 +78,6 @@ jobs:
 
   build-windows:
     runs-on: windows-latest
-    env:
-      vcpkg-prereqs: nlohmann-json:x64-windows spdlog:x64-windows sdl2:x64-windows freetype[core]:x64-windows zlib:x64-windows
     steps:
     - uses: actions/checkout@v4
       with:
@@ -90,38 +88,31 @@ jobs:
       uses: actions/cache/restore@v4
       with:
         path: C:\vcpkg
-        key: ${{env.vcpkg-prereqs}}
-    - name: Install prerequisites
-      if: ${{ steps.restore-cache-vcpkg.outputs.cache-hit != 'true' }}
-      run: vcpkg install ${{env.vcpkg-prereqs}}
+        key: vcpkg-${{ hashFiles('vcpkg.json') }}
+    - name: Configure CMake
+      run: cmake --preset windows-x64
+      env:
+        MC_COMMIT_SHA: ${{github.sha}}
+        MC_BUILD_NUMBER: ${{github.run_number}}
     - name: Save vcpkg prerequisites cache
       if: ${{ steps.restore-cache-vcpkg.outputs.cache-hit != 'true' }}
       uses: actions/cache/save@v4
       with:
         path: C:\vcpkg
-        key: ${{env.vcpkg-prereqs}}
-    - name: Configure CMake
-      run: cmake
-        -B ${{github.workspace}}/build
-        -D MC_COMMIT_SHA=${{github.sha}}
-        -D MC_BUILD_NUMBER=${{github.run_number}}
-        -D MC_CHECK_FOR_UPDATES=ON
-        -D CMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake
-        -D CMAKE_CXX_FLAGS="/await /EHsc"
-        -D X_VCPKG_APPLOCAL_DEPS_INSTALL=ON
-        -T host=x64
-        -A x64
-    - name: Build
-      run: cmake --build ${{github.workspace}}/build --target midiconn --config Release
+        key: vcpkg-${{ hashFiles('vcpkg.json') }}
+    - name: Build (Debug)
+      run: cmake --build --preset windows-x64-debug
+    - name: Build (Release)
+      run: cmake --build --preset windows-x64-release
     - name: Build installer
-      run: cd ${{github.workspace}}\build; cpack -C Release
+      run: cpack --preset x64-release-msi
     - name: Upload Artifacts
       uses: actions/upload-artifact@v4
       with:
         name: windows
         path: |
-          ${{github.workspace}}\build\Release\*.exe
-          ${{github.workspace}}\build\Release\*.dll
+          ${{github.workspace}}\build\Debug\*.exe
+          ${{github.workspace}}\build\Debug\*.dll
           ${{github.workspace}}\build\*.msi
 
   release:

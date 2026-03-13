@@ -21,15 +21,18 @@ namespace mc
 
 Application::Application(SDL_Window*                  window,
                          SDL_Renderer*                renderer,
+                         ConfigFile&                  config,
                          const std::filesystem::path& path_to_preset)
-    : m_theme_control(m_config, window), m_node_factory(m_theme_control, m_port_name_display),
+    : m_config(&config), m_theme_control(*m_config, window),
+      m_node_factory(m_theme_control, m_port_name_display),
       m_preset{NodeEditor(m_node_factory, m_port_name_display, m_theme_control)},
-      m_preset_manager(m_preset, m_node_factory, m_config, m_port_name_display, m_theme_control),
-      m_port_name_display(m_config.get_show_full_port_names()),
-      m_welcome_enabled(m_config.get_show_welcome() && path_to_preset.empty()),
+      m_preset_manager(m_preset, m_node_factory, *m_config, m_port_name_display, m_theme_control),
+      m_port_name_display(m_config->get_show_full_port_names()),
+      m_welcome_enabled(m_config->get_show_welcome() && path_to_preset.empty()),
       m_logo_texture(ResourceLoader::load_texture(renderer, "graphics/mc_logo.png"))
 #ifdef MC_BUILD_WITH_TRANSLATIONS
-      , m_locale(m_config)
+      ,
+      m_locale(m_config)
 #endif
 {
     spdlog::info("Starting " MIDI_APPLICATION_NAME " version {}", g_current_version);
@@ -116,8 +119,8 @@ void Application::new_preset(bool create_nodes)
     if (new_preset)
     {
         m_preset = {NodeEditor(m_node_factory, m_port_name_display, m_theme_control, create_nodes)};
-        m_preset_manager =
-            PresetManager(m_preset, m_node_factory, m_config, m_port_name_display, m_theme_control);
+        m_preset_manager = PresetManager(
+            m_preset, m_node_factory, *m_config, m_port_name_display, m_theme_control);
     }
 }
 
@@ -295,7 +298,7 @@ void Application::render_main_menu()
             if (ImGui::MenuItem(gettext("Show full port names"), nullptr, &show_full_port_names))
             {
                 m_port_name_display.set_show_full_port_names(show_full_port_names);
-                m_config.set_show_port_full_names(show_full_port_names);
+                m_config->set_show_port_full_names(show_full_port_names);
             }
             ImGui::EndMenu();
         }
@@ -412,11 +415,11 @@ void Application::render_welcome_window()
                    },
                    latest_version);
 
-        bool show_on_startup = m_config.get_show_welcome();
+        bool show_on_startup = m_config->get_show_welcome();
         // Translators: Checkbox on the welcome window
         if (ImGui::Checkbox(gettext("Show this window on application startup"), &show_on_startup))
         {
-            m_config.set_show_welcome(show_on_startup);
+            m_config->set_show_welcome(show_on_startup);
         }
         // Translators: Button on the welcome window to create a new empty preset
         if (ImGui::Button(gettext("New preset - empty")))
@@ -439,7 +442,7 @@ void Application::render_welcome_window()
             open_preset();
             ImGui::CloseCurrentPopup();
         }
-        const auto last_preset_opt = m_config.get_last_preset_path();
+        const auto last_preset_opt = m_config->get_last_preset_path();
         ImGui::BeginDisabled(!last_preset_opt);
         ImGui::SameLine();
         // Translators: Button on the welcome window to open the last opened preset

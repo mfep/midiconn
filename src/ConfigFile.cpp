@@ -55,6 +55,9 @@ ConfigFile::ConfigFile()
         try_load_item(m_theme, Theme::Default, "theme");
         try_load_item(m_show_welcome, true, "show_welcome");
         try_load_item(m_locale, std::string(), "locale");
+        try_load_item(m_window_width, 1280, "window_width");
+        try_load_item(m_window_height, 800, "window_height");
+        try_load_item(m_window_maximized, false, "window_maximized");
         if (j.contains("last_preset_path"))
         {
             m_last_preset_path = std::filesystem::u8path(j["last_preset_path"].get<std::string>());
@@ -107,6 +110,14 @@ void ConfigFile::set_locale(std::string_view value)
     save_config_file();
 }
 
+void ConfigFile::set_window_size(int width, int height, bool maximized)
+{
+    m_window_width = width;
+    m_window_height = height;
+    m_window_maximized = maximized;
+    save_config_file();
+}
+
 void ConfigFile::save_config_file() const
 {
     spdlog::info("Saving config file to: \"{}\"", utils::path_to_utf8str(m_config_json_path));
@@ -117,6 +128,9 @@ void ConfigFile::save_config_file() const
     j["show_full_port_names"] = m_show_full_port_names;
     j["show_welcome"]         = m_show_welcome;
     j["locale"]               = m_locale;
+    j["window_width"]         = m_window_width;
+    j["window_height"]        = m_window_height;
+    j["window_maximized"]     = m_window_maximized;
     if (m_last_preset_path)
     {
         j["last_preset_path"] = utils::path_to_utf8str(*m_last_preset_path);

@@ -23,12 +23,16 @@ public:
     bool               get_show_full_port_names() const { return m_show_full_port_names; }
     bool               get_show_welcome() const { return m_show_welcome; }
     const std::string& get_locale() const { return m_locale; }
+    int                get_window_width() const { return m_window_width; }
+    int                get_window_height() const { return m_window_height; }
+    bool               get_window_maximized() const { return m_window_maximized; }
     void               set_last_preset_path(const std::filesystem::path& path);
     void               set_theme(const Theme theme);
     void               set_scale(const InterfaceScale scale);
     void               set_show_port_full_names(const bool value);
     void               set_show_welcome(const bool value);
     void               set_locale(std::string_view value);
+    void               set_window_size(int width, int height, bool maximized);
 
 private:
     void save_config_file() const;
@@ -40,6 +44,9 @@ private:
     bool                                 m_show_full_port_names;
     bool                                 m_show_welcome;
     std::string                          m_locale;
+    int                                  m_window_width;
+    int                                  m_window_height;
+    bool                                 m_window_maximized;
 };
 
 } // namespace mc

@@ -26,6 +26,7 @@ class Application final
 public:
     Application(SDL_Window*                  window,
                 SDL_Renderer*                renderer,
+                ConfigFile&                  config,
                 const std::filesystem::path& path_to_preset);
     ~Application();
     void        render();
@@ -46,7 +47,7 @@ private:
     bool query_save();
 
     bool            m_is_done{};
-    ConfigFile      m_config;
+    ConfigFile*     m_config;
     ThemeControl    m_theme_control;
     NodeFactory     m_node_factory;
     Preset          m_preset;

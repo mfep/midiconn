@@ -13,6 +13,7 @@
 #include "spdlog/spdlog.h"
 
 #include "Application.hpp"
+#include "ConfigFile.hpp"
 #include "ErrorHandler.hpp"
 #include "Intl.hpp"
 #include "KeyboardShortcutAggregator.hpp"
@@ -23,6 +24,19 @@
 #if !SDL_VERSION_ATLEAST(2, 0, 17)
 #error This backend requires SDL 2.0.17+ because of SDL_RenderGeometry() function
 #endif
+
+namespace
+{
+
+void save_window_state(SDL_Window* window, mc::ConfigFile& config_file)
+{
+    int width{}, height{};
+    SDL_GetWindowSize(window, &width, &height);
+    const auto flags = SDL_GetWindowFlags(window);
+    config_file.set_window_size(width, height, flags & SDL_WINDOW_MAXIMIZED);
+}
+
+} // namespace
 
 MC_MAIN
 {
@@ -80,11 +94,21 @@ MC_MAIN
         return -1;
     }
 
+    mc::ConfigFile config_file;
+
     // Setup window
     SDL_WindowFlags window_flags =
         (SDL_WindowFlags)(SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
-    SDL_Window* window = SDL_CreateWindow(
-        "", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 800, window_flags);
+    if (config_file.get_window_maximized())
+    {
+        window_flags = (SDL_WindowFlags)((int)window_flags | SDL_WINDOW_MAXIMIZED);
+    }
+    SDL_Window* window = SDL_CreateWindow("",
+                                          SDL_WINDOWPOS_CENTERED,
+                                          SDL_WINDOWPOS_CENTERED,
+                                          config_file.get_window_width(),
+                                          config_file.get_window_height(),
+                                          window_flags);
 
     // Setup SDL_Renderer instance
     SDL_Renderer* renderer =
@@ -133,7 +157,7 @@ MC_MAIN
 
     // Main loop
     { // scope to cleanup Application instance before cleaning up SDL and ImGui
-        mc::Application app(window, renderer, file_to_open);
+        mc::Application app(window, renderer, config_file, file_to_open);
         bool            done = false;
         size_t          frame_idx{};
         while (!done)
@@ -160,11 +184,6 @@ MC_MAIN
                     event.window.windowID == SDL_GetWindowID(window))
                 {
                     done = true;
-                }
-                if (event.type == SDL_WINDOWEVENT &&
-                    event.window.event == SDL_WINDOWEVENT_RESIZED &&
-                    event.window.windowID == SDL_GetWindowID(window))
-                {
                 }
             }
 
@@ -199,6 +218,8 @@ MC_MAIN
     ImGui_ImplSDL2_Shutdown();
     ImNodes::DestroyContext();
     ImGui::DestroyContext();
+
+    save_window_state(window, config_file);
 
     SDL_DestroyWindow(window);
     SDL_Quit();

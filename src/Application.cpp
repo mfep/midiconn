@@ -6,12 +6,14 @@
 // for some unknown reason, SDL must be included first
 #include "IconsForkAwesome.h"
 #include "imgui.h"
+#include "imgui_internal.h"
 #include "portable-file-dialogs.h"
 #include "spdlog/spdlog.h"
 
 #include "ErrorHandler.hpp"
 #include "Intl.hpp"
 #include "Licenses.hpp"
+#include "Node.hpp"
 #include "PlatformUtils.hpp"
 #include "Utils.hpp"
 #include "Version.hpp"
@@ -52,21 +54,41 @@ Application::~Application()
 
 void Application::render()
 {
-    auto* viewport = ImGui::GetMainViewport();
-    ImGui::SetNextWindowPos(viewport->Pos);
-    ImGui::SetNextWindowSize(viewport->Size);
-    ImGui::Begin("Another Window",
-                 nullptr,
-                 ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoSavedSettings |
-                     ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
-                     ImGuiWindowFlags_MenuBar);
+    ImGuiID        dockspace_id = ImGui::GetID("My Dockspace");
+    ImGuiViewport* viewport     = ImGui::GetMainViewport();
+
+    if (ImGui::DockBuilderGetNode(dockspace_id) == nullptr)
+    {
+        ImGui::DockBuilderAddNode(dockspace_id, ImGuiDockNodeFlags_DockSpace);
+        ImGui::DockBuilderSetNodeSize(dockspace_id, viewport->Size);
+        ImGuiID dock_id_right = 0;
+        ImGuiID dock_id_left  = 0;
+        ImGui::DockBuilderSplitNode(
+            dockspace_id, ImGuiDir_Right, 0.33f, &dock_id_right, &dock_id_left);
+        ImGui::DockBuilderDockWindow("Inspector", dock_id_right);
+        ImGui::DockBuilderDockWindow("Node Editor", dock_id_left);
+        ImGui::DockBuilderFinish(dockspace_id);
+    }
+
+    ImGui::DockSpaceOverViewport(dockspace_id, viewport, ImGuiDockNodeFlags_PassthruCentralNode);
 
     wrap_exception([this]() {
         render_welcome_window();
         render_main_menu();
-        m_preset.m_node_editor.render();
     });
 
+    ImGui::Begin("Node Editor");
+    wrap_exception([this]() {
+        m_preset.m_node_editor.render();
+    });
+    ImGui::End();
+
+    ImGui::Begin("Inspector");
+    Node* selected_node = m_preset.m_node_editor.get_selected_node();
+    if (selected_node)
+    {
+        selected_node->render_inspector();
+    }
     ImGui::End();
 #ifndef NDEBUG
     ImGui::ShowDemoWindow();
@@ -168,7 +190,7 @@ void Application::exit()
 
 void Application::render_main_menu()
 {
-    if (ImGui::BeginMenuBar())
+    if (ImGui::BeginMainMenuBar())
     {
         // Translators: File menu label
         static auto begin_menu_label = fmt::format("{} {}", ICON_FK_FILE_O, gettext("File"));
@@ -329,8 +351,7 @@ void Application::render_main_menu()
             {
                 SDL_OpenURL(MC_WEBSITE_URL);
             }
-            static auto donation_label =
-                fmt::format("{} {}", ICON_FK_MONEY, gettext("Donate"));
+            static auto donation_label = fmt::format("{} {}", ICON_FK_MONEY, gettext("Donate"));
             if (ImGui::MenuItem(donation_label.c_str()))
             {
                 SDL_OpenURL(MC_DONATION_URL);
@@ -344,7 +365,7 @@ void Application::render_main_menu()
             }
             ImGui::EndMenu();
         }
-        ImGui::EndMenuBar();
+        ImGui::EndMainMenuBar();
     }
 }
 

@@ -124,7 +124,8 @@ MC_MAIN
     ImGui::CreateContext();
     ImNodes::CreateContext();
     ImGuiIO& io    = ImGui::GetIO();
-    io.IniFilename = nullptr;
+    io.IniFilename = "midiconn.ini";
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
     // io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
     // io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
     ImNodes::GetIO().EmulateThreeButtonMouse.Modifier = &ImGui::GetIO().KeyCtrl;

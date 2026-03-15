@@ -94,7 +94,10 @@ else()
     list(APPEND sources src/UpdateCheckerStub.cpp)
 endif()
 
-file(GLOB FONTS RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/data/fonts/*")
+set(FONTS
+    data/fonts/MatrixSansVideo-Regular.ttf
+    data/fonts/forkawesome-webfont.ttf
+)
 cmrc_add_resource_library(midiconn_resources "${FONTS}" "${CMAKE_CURRENT_SOURCE_DIR}/data/graphics/mc_logo.png" ALIAS resources WHENCE data)
 
 add_executable(midiconn "${sources}")

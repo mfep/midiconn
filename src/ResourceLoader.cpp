@@ -158,15 +158,15 @@ void ResourceLoader::load_fonts(const float scale)
         io.Fonts->Clear();
 
         auto       embedded_fs = cmrc::midiconn_resources::get_filesystem();
-        const auto font_file   = embedded_fs.open("fonts/DroidSans.ttf");
+        const auto font_file   = embedded_fs.open("fonts/MatrixSansVideo-Regular.ttf");
 
         ImFontConfig font_config{};
         font_config.FontDataOwnedByAtlas = false;
         io.Fonts->AddFontFromMemoryTTF(const_cast<char*>(font_file.begin()),
-                                    std::distance(font_file.begin(), font_file.end()),
-                                    16,
-                                    &font_config,
-                                    droid_sans_glyph_ranges);
+                                       std::distance(font_file.begin(), font_file.end()),
+                                       20,
+                                       &font_config,
+                                       droid_sans_glyph_ranges);
 
         const auto    icons_file     = embedded_fs.open("fonts/forkawesome-webfont.ttf");
         const ImWchar icons_ranges[] = {ICON_MIN_FK, ICON_MAX_16_FK, 0};
@@ -174,15 +174,16 @@ void ResourceLoader::load_fonts(const float scale)
         icons_config.MergeMode            = true;
         icons_config.PixelSnapH           = true;
         icons_config.FontDataOwnedByAtlas = false;
-        ImFont* font = io.Fonts->AddFontFromMemoryTTF(const_cast<char*>(icons_file.begin()),
-                                    std::distance(icons_file.begin(), icons_file.end()),
-                                    12,
-                                    &icons_config,
-                                    icons_ranges);
-        ImGui::PushFont(font, 16);
+        ImFont* font =
+            io.Fonts->AddFontFromMemoryTTF(const_cast<char*>(icons_file.begin()),
+                                           std::distance(icons_file.begin(), icons_file.end()),
+                                           18,
+                                           &icons_config,
+                                           icons_ranges);
+        ImGui::PushFont(font, 20);
         return font;
     }();
-    ImGui::PushFont(nullptr, 16 * scale);
+    ImGui::PushFont(nullptr, 20 * scale);
 }
 
 } // namespace mc

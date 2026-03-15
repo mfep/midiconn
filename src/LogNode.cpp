@@ -1,7 +1,7 @@
 #include "LogNode.hpp"
 
-#include "NodeSerializer.hpp"
 #include "Intl.hpp"
+#include "NodeSerializer.hpp"
 
 #include "midi/MessageView.hpp"
 #include "midi/Note.hpp"
@@ -16,7 +16,7 @@ std::string_view mc::LogNode::LogMidiNode::name()
     return "Log Node";
 }
 
-mc::LogNode::LogNode(const ScaleProvider& scale_provider) : m_scale_provider(&scale_provider)
+mc::LogNode::LogNode(const ScaleProvider& scale_provider) : Node(scale_provider)
 {
     m_log_midi_node.add_observer(this);
 }

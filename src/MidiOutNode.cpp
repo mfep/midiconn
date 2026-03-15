@@ -1,5 +1,6 @@
 #include "MidiOutNode.hpp"
 
+#include "IconsForkAwesome.h"
 #include "imgui.h"
 #include "imnodes.h"
 
@@ -14,8 +15,9 @@ namespace mc
 
 MidiOutNode::MidiOutNode(std::string_view                  output_name,
                          std::shared_ptr<midi::OutputNode> midi_output_node,
-                         const PortNameDisplay&            port_name_display)
-    : m_output_name(output_name), m_midi_output_node(midi_output_node),
+                         const PortNameDisplay&            port_name_display,
+                         const ScaleProvider&              scale_provider)
+    : Node(scale_provider), m_output_name(output_name), m_midi_output_node(midi_output_node),
       m_port_name_display(&port_name_display)
 {
     if (m_midi_output_node)
@@ -37,6 +39,11 @@ void MidiOutNode::accept_serializer(nlohmann::json& j, const NodeSerializer& ser
     serializer.serialize_node(j, *this);
 }
 
+void MidiOutNode::render_inspector()
+{
+    ImGui::SeparatorText(m_port_name_display->get_port_name(m_output_name).c_str());
+}
+
 midi::Node* MidiOutNode::get_midi_node()
 {
     return m_midi_output_node.get();
@@ -45,25 +52,12 @@ midi::Node* MidiOutNode::get_midi_node()
 void MidiOutNode::render_internal()
 {
     check_midi_node_connected();
-
-    ImNodes::BeginNodeTitleBar();
     const std::string node_title = m_port_name_display->get_port_name(m_output_name);
-    ImGui::TextUnformatted(node_title.c_str());
-    ImNodes::EndNodeTitleBar();
     ImNodes::BeginInputAttribute(in_id());
-
-    if (m_midi_output_node)
-    {
-        m_midi_activity.render();
-        ImGui::SameLine();
-        ImGui::TextUnformatted(gettext("all channels"));
-    }
-    else
-    {
-        ImGui::TextUnformatted(gettext("disconnected"));
-    }
-
-    ImNodes::EndInputAttribute();
+    m_midi_activity.render();
+    ImGui::SameLine();
+    ImGui::Text(ICON_FK_ARROW_CIRCLE_O_RIGHT " %s", node_title.c_str());
+    ImNodes::EndOutputAttribute();
 }
 
 void MidiOutNode::message_received(std::span<const unsigned char> /*message_bytes*/)

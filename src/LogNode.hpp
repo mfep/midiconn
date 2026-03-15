@@ -83,7 +83,6 @@ private:
     LogMidiNode               m_log_midi_node;
     ActivityIndicator         m_input_indicator;
     std::size_t               m_max_buffer_size = default_max_buffer_size;
-    const ScaleProvider*      m_scale_provider;
 
     friend class NodeSerializer;
 };

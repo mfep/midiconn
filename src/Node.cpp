@@ -1,6 +1,7 @@
 #include "Node.hpp"
 
 #include "midi/MidiGraph.hpp"
+#include "ScaleProvider.hpp"
 
 #include "imgui.h"
 #include "imnodes.h"
@@ -22,7 +23,9 @@ std::vector<Node::node_ptr> get_connections(const std::map<int, Node::node_ptr>&
 
 } // namespace
 
-Node::Node() : m_id(sm_next_id++)
+Node::Node(const ScaleProvider& scale_provider)
+    : m_scale_provider(&scale_provider)
+    , m_id(sm_next_id++)
 {
 }
 
@@ -44,11 +47,15 @@ void Node::render()
     purge(m_input_connections);
     purge(m_output_connections);
 
+    ImNodes::SnapNodeToGrid(m_id);
+    const auto text_size = ImGui::CalcTextSize("a");
+    ImNodes::PushStyleVar(ImNodesStyleVar_NodePadding, { m_scale_provider->get_scale_value() * 15.F, (m_scale_provider->get_scale_value() * 60.F - text_size.y) * 0.5F});
     push_style();
     ImNodes::BeginNode(m_id);
     render_internal();
     ImNodes::EndNode();
     pop_style();
+    ImNodes::PopStyleVar(1);
 
     for (const auto& [link_id, node] : m_output_connections)
     {

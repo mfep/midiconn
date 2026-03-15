@@ -15,6 +15,7 @@ class Node;
 }
 
 class NodeSerializer;
+class ScaleProvider;
 
 class Node
 {
@@ -22,7 +23,7 @@ public:
     using node_ptr = std::weak_ptr<Node>;
     using conn     = std::pair<node_ptr, int>;
 
-    Node();
+    explicit Node(const ScaleProvider& scale_provider);
     virtual ~Node() = default;
     void render();
     void connect_output(node_ptr to_node, node_ptr this_node);
@@ -43,9 +44,11 @@ public:
     virtual void        render_inspector() {}
 
 protected:
-    virtual void        render_internal() = 0;
-    virtual void        push_style() const {}
-    virtual void        pop_style() const {}
+    virtual void render_internal() = 0;
+    virtual void push_style() const {}
+    virtual void pop_style() const {}
+
+    const ScaleProvider* m_scale_provider;
 
 private:
     void connect_input(node_ptr from_node, int link_id);

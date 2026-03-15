@@ -83,7 +83,8 @@ std::shared_ptr<MidiInNode> NodeFactory::build_midi_in_node(std::string_view inp
         }
     }();
 
-    return std::make_shared<MidiInNode>(input_name, std::move(midi_node), *m_port_name_display);
+    return std::make_shared<MidiInNode>(
+        input_name, std::move(midi_node), *m_port_name_display, *m_theme_control);
 }
 
 std::shared_ptr<MidiOutNode> NodeFactory::build_midi_out_node(std::string_view output_name)
@@ -100,7 +101,8 @@ std::shared_ptr<MidiOutNode> NodeFactory::build_midi_out_node(std::string_view o
         }
     }();
 
-    return std::make_shared<MidiOutNode>(output_name, std::move(midi_node), *m_port_name_display);
+    return std::make_shared<MidiOutNode>(
+        output_name, std::move(midi_node), *m_port_name_display, *m_theme_control);
 }
 
 std::shared_ptr<MidiChannelNode> NodeFactory::build_midi_channel_node()

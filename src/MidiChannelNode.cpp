@@ -10,6 +10,7 @@
 #include "imnodes.h"
 
 #include "NodeSerializer.hpp"
+#include "ScaleProvider.hpp"
 
 const char* mc::MidiChannelNode::sm_combo_items[] = {gettext("None"),
                                                      "1",
@@ -29,8 +30,7 @@ const char* mc::MidiChannelNode::sm_combo_items[] = {gettext("None"),
                                                      "15",
                                                      "16"};
 
-mc::MidiChannelNode::MidiChannelNode(const ScaleProvider& scale_provider)
-    : m_scale_provider(&scale_provider)
+mc::MidiChannelNode::MidiChannelNode(const ScaleProvider& scale_provider) : Node(scale_provider)
 {
     m_midi_channel_map_node.add_observer(this);
 }

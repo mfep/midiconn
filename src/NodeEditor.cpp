@@ -57,10 +57,12 @@ NodeEditor::NodeEditor(NodeFactory&           node_factory,
     {
         instantiate_available_inputs_and_outputs();
     }
+    ImNodes::GetStyle().Flags |= ImNodesStyleFlags_GridSnapping;
 }
 
 void NodeEditor::render()
 {
+    ImNodes::PushStyleVar(ImNodesStyleVar_GridSpacing, m_theme_control->get_scale_value() * 60.F);
     ImNodes::BeginNodeEditor();
 
     // Render right click context menu
@@ -70,12 +72,9 @@ void NodeEditor::render()
     }
     renderContextMenu();
     renderNodes();
-    if (m_nodes.size() > 1)
-    {
-        ImNodes::MiniMap();
-    }
     renderHelpText();
     ImNodes::EndNodeEditor();
+    ImNodes::PopStyleVar(1);
 
     handleLinkDropped();
     handleDelete();
@@ -139,6 +138,25 @@ NodeEditor NodeEditor::from_json(NodeFactory&           node_factory,
     }
 
     return editor;
+}
+
+Node* NodeEditor::get_selected_node()
+{
+    if (ImNodes::NumSelectedNodes() != 1)
+    {
+        return nullptr;
+    }
+    int id = -1;
+    ImNodes::GetSelectedNodes(&id);
+    const auto it = std::find_if(m_nodes.begin(), m_nodes.end(), [id](const auto& node) {
+        return node->id() == id;
+    });
+    if (it == m_nodes.end())
+    {
+        // can happen if the node has just been removed
+        return nullptr;
+    }
+    return it->get();
 }
 
 std::shared_ptr<Node> NodeEditor::renderContextMenu(bool show_outputting_nodes,

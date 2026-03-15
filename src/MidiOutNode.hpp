@@ -12,17 +12,20 @@ class OutputNode;
 }
 
 class PortNameDisplay;
+class ScaleProvider;
 
 class MidiOutNode final : public Node, private midi::GraphObserver
 {
 public:
     MidiOutNode(std::string_view                  output_name,
                 std::shared_ptr<midi::OutputNode> midi_output_node,
-                const PortNameDisplay&            port_name_display);
+                const PortNameDisplay&            port_name_display,
+                const ScaleProvider&              scale_provider);
 
     ~MidiOutNode();
 
     void accept_serializer(nlohmann::json& j, const NodeSerializer& serializer) const override;
+    void render_inspector() override;
 
 protected:
     midi::Node* get_midi_node() override;

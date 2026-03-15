@@ -27,6 +27,7 @@ public:
                                 const PortNameDisplay& port_name_display,
                                 const ThemeControl&    theme_control,
                                 const nlohmann::json&  j);
+    Node*             get_selected_node();
 
 private:
     std::shared_ptr<Node> renderContextMenu(bool show_outputting_nodes = true,

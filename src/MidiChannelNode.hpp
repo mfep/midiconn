@@ -4,11 +4,12 @@
 
 #include "ActivityIndicator.hpp"
 #include "Node.hpp"
-#include "ScaleProvider.hpp"
 #include "midi/ChannelMapNode.hpp"
 
 namespace mc
 {
+
+class ScaleProvider;
 
 class MidiChannelNode final : public Node, private midi::GraphObserver
 {
@@ -34,7 +35,6 @@ private:
     static inline constexpr size_t sm_num_combo_items = 17;
     static const char*             sm_combo_items[sm_num_combo_items];
 
-    const ScaleProvider* m_scale_provider;
     midi::ChannelMapNode m_midi_channel_map_node;
 
     ActivityIndicator m_input_indicator;

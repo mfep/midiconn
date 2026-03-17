@@ -5,6 +5,8 @@
 
 #include "nlohmann/json_fwd.hpp"
 
+#include "Time.hpp"
+#include "midi/GraphObserver.hpp"
 #include "midi/MidiInfo.hpp"
 
 namespace mc
@@ -17,14 +19,14 @@ class Node;
 class NodeSerializer;
 class ScaleProvider;
 
-class Node
+class Node : private midi::GraphObserver
 {
 public:
     using node_ptr = std::weak_ptr<Node>;
     using conn     = std::pair<node_ptr, int>;
 
-    explicit Node(const ScaleProvider& scale_provider);
-    virtual ~Node() = default;
+    Node(const ScaleProvider& scale_provider, midi::Node* midi_node);
+    virtual ~Node();
     void render();
     void connect_output(node_ptr to_node, node_ptr this_node);
     void disconnect_output(int link_id);
@@ -40,7 +42,7 @@ public:
     static bool is_in_id(int id) { return id % 2 == 0; }
     static bool is_out_id(int id) { return !is_in_id(id); }
 
-    virtual midi::Node* get_midi_node() = 0;
+    virtual midi::Node* get_midi_node() const { return m_midi_node; }
     virtual void        render_inspector() {}
 
 protected:
@@ -48,11 +50,20 @@ protected:
     virtual void push_style() const {}
     virtual void pop_style() const {}
 
+    void message_processed(std::span<const unsigned char> message_bytes) override;
+    void message_received(std::span<const unsigned char> message_bytes) override;
+
+    void begin_input_attribute() const;
+    void end_input_attribute() const;
+    void begin_output_attribute() const;
+    void end_output_attribute() const;
+
     const ScaleProvider* m_scale_provider;
 
 private:
-    void connect_input(node_ptr from_node, int link_id);
-    void disconnect_input(int link_id);
+    void            connect_input(node_ptr from_node, int link_id);
+    void            disconnect_input(int link_id);
+    static uint32_t get_pin_color(time_point_t last_activity);
 
     static inline int sm_next_id{};
     static inline int sm_next_link_id{};
@@ -65,6 +76,11 @@ private:
 
     // maps link id received from connecting node to node
     std::map<int, node_ptr> m_input_connections;
+
+    midi::Node* m_midi_node;
+
+    time_point_t m_last_input_activity{};
+    time_point_t m_last_output_activity{};
 
     friend class NodeSerializer;
 };

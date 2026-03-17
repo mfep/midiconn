@@ -1,6 +1,5 @@
 #pragma once
 
-#include "ActivityIndicator.hpp"
 #include "Node.hpp"
 #include "ScaleProvider.hpp"
 #include "midi/MidiGraph.hpp"
@@ -24,7 +23,7 @@ template <bool>
 class SystemMessageView;
 } // namespace midi
 
-class LogNode final : public Node, private midi::GraphObserver
+class LogNode final : public Node
 {
 private:
     class LogMidiNode final : public midi::Node
@@ -35,14 +34,12 @@ private:
 
 public:
     explicit LogNode(const ScaleProvider& scale_provider);
-    ~LogNode();
 
     void accept_serializer(nlohmann::json& j, const NodeSerializer& serializer) const override;
 
     static const char* name();
 
 protected:
-    midi::Node* get_midi_node() override;
     void        render_internal() override;
 
 private:
@@ -81,7 +78,6 @@ private:
     std::mutex                m_buffer_mutex;
     std::deque<BufferElement> m_message_buffer;
     LogMidiNode               m_log_midi_node;
-    ActivityIndicator         m_input_indicator;
     std::size_t               m_max_buffer_size = default_max_buffer_size;
 
     friend class NodeSerializer;

@@ -13,7 +13,8 @@ namespace mc
 ThemeControl::ThemeControl(ConfigFile& config, SDL_Window* window)
     : m_config(&config), m_window(window)
 {
-    m_original_nodes_style = ImNodes::GetStyle();
+    m_original_nodes_style             = ImNodes::GetStyle();
+    m_original_nodes_style.GridSpacing = 60.F;
     set_theme_internal(m_config->get_theme());
 
     m_new_scale = m_config->get_scale();

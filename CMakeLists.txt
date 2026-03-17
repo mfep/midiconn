@@ -58,7 +58,6 @@ set(sources
     external/imgui/backends/imgui_impl_sdlrenderer2.cpp
     external/imgui/misc/freetype/imgui_freetype.cpp
     external/imnodes/imnodes.cpp
-    src/ActivityIndicator.cpp
     src/Application.cpp
     src/ConfigFile.cpp
     src/KeyboardShortcutAggregator.cpp

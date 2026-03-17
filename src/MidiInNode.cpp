@@ -2,7 +2,6 @@
 
 #include <numeric>
 
-#include "IconsForkAwesome.h"
 #include "imgui.h"
 #include "imnodes.h"
 
@@ -19,21 +18,12 @@ MidiInNode::MidiInNode(std::string_view                 input_name,
                        std::shared_ptr<midi::InputNode> midi_input_node,
                        const PortNameDisplay&           port_name_display,
                        const ScaleProvider&             scale_provider)
-    : Node(scale_provider), m_input_name(input_name), m_midi_input_node(midi_input_node),
-      m_port_name_display(&port_name_display)
+    : Node(scale_provider, midi_input_node.get()), m_input_name(input_name),
+      m_midi_input_node(midi_input_node), m_port_name_display(&port_name_display)
 {
     if (m_midi_input_node)
     {
         m_midi_input_node->enable_message_types(m_message_type_mask);
-        m_midi_input_node->add_observer(this);
-    }
-}
-
-MidiInNode::~MidiInNode()
-{
-    if (m_midi_input_node)
-    {
-        m_midi_input_node->remove_observer(this);
     }
 }
 
@@ -52,25 +42,13 @@ void MidiInNode::render_inspector()
     set_message_type_mask(new_message_type_mask);
 }
 
-midi::Node* MidiInNode::get_midi_node()
-{
-    return m_midi_input_node.get();
-}
-
 void MidiInNode::render_internal()
 {
     check_midi_node_connected();
     const std::string node_title = m_port_name_display->get_port_name(m_input_name);
-    ImNodes::BeginOutputAttribute(out_id());
-    ImGui::Text(ICON_FK_ARROW_CIRCLE_O_RIGHT " %s", node_title.c_str());
-    ImGui::SameLine();
-    m_midi_activity.render();
-    ImNodes::EndOutputAttribute();
-}
-
-void MidiInNode::message_processed(std::span<const unsigned char> /*message_bytes*/)
-{
-    m_midi_activity.trigger();
+    Node::begin_output_attribute();
+    ImGui::TextUnformatted(node_title.c_str());
+    Node::end_output_attribute();
 }
 
 void MidiInNode::check_midi_node_connected()
@@ -80,7 +58,6 @@ void MidiInNode::check_midi_node_connected()
     {
         m_midi_input_node = std::make_shared<midi::InputNode>(*input_opt);
         m_midi_input_node->enable_message_types(m_message_type_mask);
-        m_midi_input_node->add_observer(this);
         for (auto output_connected_node : get_output_connections())
         {
             if (auto node = output_connected_node.lock(); node != nullptr)
@@ -94,7 +71,6 @@ void MidiInNode::check_midi_node_connected()
     }
     else if (!input_opt && m_midi_input_node != nullptr)
     {
-        m_midi_input_node->remove_observer(this);
         m_midi_input_node = nullptr;
     }
 }

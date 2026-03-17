@@ -62,7 +62,6 @@ NodeEditor::NodeEditor(NodeFactory&           node_factory,
 
 void NodeEditor::render()
 {
-    ImNodes::PushStyleVar(ImNodesStyleVar_GridSpacing, m_theme_control->get_scale_value() * 60.F);
     ImNodes::BeginNodeEditor();
 
     // Render right click context menu
@@ -74,7 +73,6 @@ void NodeEditor::render()
     renderNodes();
     renderHelpText();
     ImNodes::EndNodeEditor();
-    ImNodes::PopStyleVar(1);
 
     handleLinkDropped();
     handleDelete();

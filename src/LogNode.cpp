@@ -16,14 +16,8 @@ std::string_view mc::LogNode::LogMidiNode::name()
     return "Log Node";
 }
 
-mc::LogNode::LogNode(const ScaleProvider& scale_provider) : Node(scale_provider)
+mc::LogNode::LogNode(const ScaleProvider& scale_provider) : Node(scale_provider, &m_log_midi_node)
 {
-    m_log_midi_node.add_observer(this);
-}
-
-mc::LogNode::~LogNode()
-{
-    m_log_midi_node.remove_observer(this);
 }
 
 void mc::LogNode::accept_serializer(nlohmann::json& j, const NodeSerializer& serializer) const
@@ -37,19 +31,12 @@ const char* mc::LogNode::name()
     return gettext("Message log");
 }
 
-mc::midi::Node* mc::LogNode::get_midi_node()
-{
-    return &m_log_midi_node;
-}
-
 void mc::LogNode::render_internal()
 {
     ImNodes::BeginNodeTitleBar();
     ImGui::TextUnformatted(name());
     ImNodes::EndNodeTitleBar();
     ImNodes::BeginInputAttribute(in_id());
-    m_input_indicator.render();
-    ImGui::SameLine();
     // Translators: The caption of the MIDI input pin on the node
     ImGui::TextUnformatted(gettext("MIDI in"));
     ImNodes::EndInputAttribute();
@@ -151,9 +138,10 @@ void mc::LogNode::render_internal()
 
 void mc::LogNode::message_received(std::span<const unsigned char> message_bytes)
 {
+    Node::message_received(message_bytes);
+
     using namespace std::string_literals;
 
-    m_input_indicator.trigger();
     midi::MessageView   message(message_bytes);
     midi::tag_overloads message_visitor{
         [](midi::ChannelMessageViewTag, auto channel_message) -> BufferElement {

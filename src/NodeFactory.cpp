@@ -107,7 +107,8 @@ std::shared_ptr<MidiOutNode> NodeFactory::build_midi_out_node(std::string_view o
 
 std::shared_ptr<MidiChannelNode> NodeFactory::build_midi_channel_node()
 {
-    return std::make_shared<MidiChannelNode>(*m_theme_control);
+    return std::make_shared<MidiChannelNode>(*m_theme_control,
+                                             std::make_shared<midi::ChannelMapNode>());
 }
 
 std::shared_ptr<LogNode> NodeFactory::build_log_node()

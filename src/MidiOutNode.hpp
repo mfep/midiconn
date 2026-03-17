@@ -1,6 +1,5 @@
 #pragma once
 
-#include "ActivityIndicator.hpp"
 #include "Node.hpp"
 #include "midi/GraphObserver.hpp"
 
@@ -14,7 +13,7 @@ class OutputNode;
 class PortNameDisplay;
 class ScaleProvider;
 
-class MidiOutNode final : public Node, private midi::GraphObserver
+class MidiOutNode final : public Node
 {
 public:
     MidiOutNode(std::string_view                  output_name,
@@ -22,23 +21,15 @@ public:
                 const PortNameDisplay&            port_name_display,
                 const ScaleProvider&              scale_provider);
 
-    ~MidiOutNode();
-
     void accept_serializer(nlohmann::json& j, const NodeSerializer& serializer) const override;
     void render_inspector() override;
 
-protected:
-    midi::Node* get_midi_node() override;
-
 private:
     void render_internal() override;
-    void message_received(std::span<const unsigned char> message_bytes) override;
-
     void check_midi_node_connected();
 
     std::string                       m_output_name;
     std::shared_ptr<midi::OutputNode> m_midi_output_node;
-    ActivityIndicator                 m_midi_activity;
     const PortNameDisplay*            m_port_name_display;
 
     friend class NodeSerializer;

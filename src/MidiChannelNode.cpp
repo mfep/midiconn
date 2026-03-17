@@ -30,14 +30,11 @@ const char* mc::MidiChannelNode::sm_combo_items[] = {gettext("None"),
                                                      "15",
                                                      "16"};
 
-mc::MidiChannelNode::MidiChannelNode(const ScaleProvider& scale_provider) : Node(scale_provider)
+mc::MidiChannelNode::MidiChannelNode(const ScaleProvider&                  scale_provider,
+                                     std::shared_ptr<midi::ChannelMapNode> midi_channel_map_node)
+    : Node(scale_provider, midi_channel_map_node.get()),
+      m_midi_channel_map_node(midi_channel_map_node)
 {
-    m_midi_channel_map_node.add_observer(this);
-}
-
-mc::MidiChannelNode::~MidiChannelNode()
-{
-    m_midi_channel_map_node.remove_observer(this);
 }
 
 void mc::MidiChannelNode::accept_serializer(nlohmann::json&       j,
@@ -52,34 +49,25 @@ const char* mc::MidiChannelNode::name()
     return gettext("Channel map");
 }
 
-mc::midi::Node* mc::MidiChannelNode::get_midi_node()
-{
-    return &m_midi_channel_map_node;
-}
-
 void mc::MidiChannelNode::render_internal()
 {
     ImNodes::BeginNodeTitleBar();
     ImGui::TextUnformatted(name());
     ImNodes::EndNodeTitleBar();
-    ImNodes::BeginInputAttribute(in_id());
-    m_input_indicator.render();
-    ImGui::SameLine();
+    Node::begin_input_attribute();
     ImGui::TextUnformatted(gettext("MIDI in"));
-    ImNodes::EndInputAttribute();
+    Node::end_input_attribute();
     ImGui::SameLine(100 * m_scale_provider->get_scale_value());
-    ImNodes::BeginOutputAttribute(out_id());
+    Node::begin_output_attribute();
     ImGui::TextUnformatted(gettext("MIDI out"));
-    ImGui::SameLine();
-    m_output_indicator.render();
-    ImNodes::EndOutputAttribute();
+    Node::end_output_attribute();
 
     std::array<int, midi::ChannelMap::num_channels> channels;
     {
         std::size_t idx = 0;
         for (auto& channel_item : channels)
         {
-            const auto channel = m_midi_channel_map_node.map().get(idx++);
+            const auto channel = m_midi_channel_map_node->map().get(idx++);
             if (channel == midi::ChannelMap::no_channel)
             {
                 channel_item = 0;
@@ -140,25 +128,15 @@ void mc::MidiChannelNode::render_internal()
         {
             if (channel_item == 0)
             {
-                m_midi_channel_map_node.map().set(idx, midi::ChannelMap::no_channel);
+                m_midi_channel_map_node->map().set(idx, midi::ChannelMap::no_channel);
             }
             else
             {
-                m_midi_channel_map_node.map().set(idx, channel_item - 1);
+                m_midi_channel_map_node->map().set(idx, channel_item - 1);
             }
             ++idx;
         }
     }
-}
-
-void mc::MidiChannelNode::message_processed(std::span<const unsigned char> /*message_bytes*/)
-{
-    m_output_indicator.trigger();
-}
-
-void mc::MidiChannelNode::message_received(std::span<const unsigned char> /*message_bytes*/)
-{
-    m_input_indicator.trigger();
 }
 
 const char* mc::MidiChannelNode::get_label(size_t index)

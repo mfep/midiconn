@@ -73,8 +73,8 @@ void NodeSerializer::serialize_node(nlohmann::json& j, const LogNode& node) cons
 void NodeSerializer::serialize_node(json& j, const MidiChannelNode& node) const
 {
     j = json{
-        {"type",     "midi_channel"                           },
-        {"channels", node.m_midi_channel_map_node.map().data()}
+        {"type",     "midi_channel"                            },
+        {"channels", node.m_midi_channel_map_node->map().data()}
     };
 }
 
@@ -101,7 +101,7 @@ std::shared_ptr<Node> NodeSerializer::deserialize_node(const json& j) const
     else if (node_type == "midi_channel")
     {
         auto channel_node = m_node_factory->build_midi_channel_node();
-        channel_node->m_midi_channel_map_node.map().data() =
+        channel_node->m_midi_channel_map_node->map().data() =
             j.at("channels").get<midi::ChannelMap::data_t>();
         node = channel_node;
     }

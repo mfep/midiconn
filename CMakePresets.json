@@ -7,22 +7,44 @@
     },
     "configurePresets": [
         {
+            "name": "common",
+            "hidden": true,
+            "binaryDir": "${sourceDir}/build/",
+            "cacheVariables": {
+                "MC_COMMIT_SHA": "$env{MC_COMMIT_SHA}",
+                "MC_BUILD_NUMBER": "$env{MC_BUILD_NUMBER}",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+            }
+        },
+        {
             "name": "windows-x64",
             "displayName": "Windows x64 (Visual Studio 2022)",
             "generator": "Visual Studio 17 2022",
-            "binaryDir": "${sourceDir}/build/",
+            "inherits": "common",
             "cacheVariables": {
                 "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
                 "CMAKE_GENERATOR_PLATFORM": "x64",
                 "X_VCPKG_APPLOCAL_DEPS_INSTALL": "ON",
-                "MC_COMMIT_SHA": "$env{MC_COMMIT_SHA}",
-                "MC_BUILD_NUMBER": "$env{MC_BUILD_NUMBER}",
                 "MC_CHECK_FOR_UPDATES": "ON"
             },
             "condition": {
                 "type": "equals",
                 "lhs": "${hostSystemName}",
                 "rhs": "Windows"
+            }
+        },
+        {
+            "name": "linux",
+            "displayName": "Linux Multi-Config",
+            "generator": "Ninja Multi-Config",
+            "inherits": "common",
+            "cacheVariables": {
+                "MC_CHECK_FOR_UPDATES": "OFF"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Linux"
             }
         }
     ],
@@ -37,6 +59,18 @@
             "name": "windows-x64-release",
             "displayName": "Windows x64 Release",
             "configurePreset": "windows-x64",
+            "configuration": "Release"
+        },
+        {
+            "name": "linux-debug",
+            "displayName": "Linux Debug",
+            "configurePreset": "linux",
+            "configuration": "Debug"
+        },
+        {
+            "name": "linux-release",
+            "displayName": "Linux Release",
+            "configurePreset": "linux",
             "configuration": "Release"
         }
     ],

@@ -143,12 +143,12 @@ uint32_t Node::get_pin_color(time_point_t last_activity)
     return current_color;
 }
 
-void Node::message_processed(std::span<const unsigned char> message_bytes)
+void Node::message_processed(std::span<const unsigned char> /*message_bytes*/)
 {
     m_last_output_activity = clock_t::now();
 }
 
-void Node::message_received(std::span<const unsigned char> message_bytes)
+void Node::message_received(std::span<const unsigned char> /*message_bytes*/)
 {
     m_last_input_activity = clock_t::now();
 }

@@ -8,7 +8,6 @@ include(GNUInstallDirs)
 project(midiconn VERSION 0.3.4 LANGUAGES CXX)
 
 option(MC_CHECK_FOR_UPDATES "Build ${PROJECT_NAME} to check for updates on start" OFF)
-option(MC_BUILD_WITH_TRANSLATIONS "Build ${PROJECT_NAME} with translations support" OFF)
 
 find_package(fmt REQUIRED)
 find_package(spdlog REQUIRED)
@@ -23,16 +22,6 @@ if(NOT WIN32 AND MC_CHECK_FOR_UPDATES)
     find_package(CURL REQUIRED)
 endif()
 
-if (MC_BUILD_WITH_TRANSLATIONS)
-    find_package(Intl REQUIRED)
-    if (NOT TARGET Intl::Intl)
-        add_library(Intl::Intl UNKNOWN IMPORTED)
-        target_include_directories(Intl::Intl PUBLIC "${Intl_INCLUDE_DIRS}")
-        target_link_libraries(Intl::Intl PUBLIC "${Intl_LIBRARIES}")
-    endif()
-endif()
-
-set(MC_LOCALE_DIR "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LOCALEDIR}")
 configure_file(
     src/Version.hpp.in
     ${CMAKE_CURRENT_BINARY_DIR}/src/Version.hpp
@@ -62,7 +51,6 @@ set(sources
     src/ConfigFile.cpp
     src/KeyboardShortcutAggregator.cpp
     src/Licenses.cpp
-    $<$<BOOL:${MC_BUILD_WITH_TRANSLATIONS}>:src/Locale.cpp>
     src/LogNode.cpp
     src/MidiChannelNode.cpp
     src/MidiInNode.cpp
@@ -119,7 +107,6 @@ target_link_libraries(midiconn PRIVATE
     freetype
     resources
     midi
-    $<$<BOOL:${MC_BUILD_WITH_TRANSLATIONS}>:Intl::Intl>
 )
 if(NOT WIN32 AND MC_CHECK_FOR_UPDATES)
     target_link_libraries(midiconn PRIVATE curl)
@@ -127,7 +114,6 @@ endif()
 target_compile_definitions(midiconn PRIVATE
     SPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_DEBUG
     IMGUI_ENABLE_FREETYPE
-    $<$<BOOL:${MC_BUILD_WITH_TRANSLATIONS}>:MC_BUILD_WITH_TRANSLATIONS>
 )
 
 set(CPACK_PACKAGE_NAME "midiconn")
@@ -175,46 +161,3 @@ endif()
 install(TARGETS midiconn
     RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
 include(CPack)
-
-find_program(XGETTEXT xgettext)
-find_package(Gettext)
-if (MC_BUILD_WITH_TRANSLATIONS AND XGETTEXT AND ${GETTEXT_FOUND})
-    set(POT_FILE "${PROJECT_SOURCE_DIR}/po/midiconn.pot")
-    add_custom_command(
-        OUTPUT "${POT_FILE}"
-        COMMAND "${XGETTEXT}" "--add-comments" "--output=${POT_FILE}" "--output-dir=${PROJECT_SOURCE_DIR}/po" ${sources}
-        WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
-        DEPENDS ${sources}
-    )
-    add_custom_target(update-pot DEPENDS "${POT_FILE}")
-
-    file(GLOB PO_FILES "${PROJECT_SOURCE_DIR}/po/*.po")
-    if(PO_FILES)
-        foreach(PO_FILE ${PO_FILES})
-            add_custom_command(
-                OUTPUT "${PO_FILE}"
-                COMMAND "${GETTEXT_MSGMERGE_EXECUTABLE}" "--update" "--backup=off" "${PO_FILE}" "${POT_FILE}"
-                WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
-                DEPENDS "${POT_FILE}"
-            )
-        endforeach()
-
-        add_custom_target(update-po DEPENDS ${PO_FILES})
-
-        foreach(PO_FILE ${PO_FILES})
-            cmake_path(GET PO_FILE STEM LANG)
-            set(MO_FILE "${CMAKE_BINARY_DIR}/${LANG}/midiconn.mo")
-            add_custom_command(
-                OUTPUT "${MO_FILE}"
-                COMMAND "${GETTEXT_MSGFMT_EXECUTABLE}" "--output-file=${MO_FILE}" "${PO_FILE}"
-                WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
-                DEPENDS "${PO_FILE}"
-            )
-            add_custom_target(generate-mo-${LANG} ALL DEPENDS ${MO_FILE})
-            install(
-                FILES "${MO_FILE}"
-                DESTINATION "${MC_LOCALE_DIR}/${LANG}/LC_MESSAGES"
-            )
-        endforeach()
-    endif()
-endif()

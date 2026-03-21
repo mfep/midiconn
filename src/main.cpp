@@ -15,7 +15,6 @@
 #include "Application.hpp"
 #include "ConfigFile.hpp"
 #include "ErrorHandler.hpp"
-#include "Intl.hpp"
 #include "KeyboardShortcutAggregator.hpp"
 #include "PlatformUtils.hpp"
 #include "Utils.hpp"
@@ -54,30 +53,6 @@ MC_MAIN
     spdlog::set_default_logger(rotating_logger);
     spdlog::flush_every(3s);
 
-#ifdef MC_BUILD_WITH_TRANSLATIONS
-    if (setlocale(LC_ALL, "") == nullptr)
-    {
-        spdlog::error("Cannot set locale");
-        return -1;
-    }
-    if (bindtextdomain(MIDI_APPLICATION_NAME_SNAKE, MC_LOCALE_DIR) == nullptr)
-    {
-        spdlog::error("Cannot bind text domain");
-        return -1;
-    }
-#ifdef _WIN32
-    if (bind_textdomain_codeset(MIDI_APPLICATION_NAME_SNAKE, "utf-8") == nullptr)
-    {
-        spdlog::error("Cannot bind text domain codeset");
-        return -1;
-    }
-#endif
-    if (textdomain(MIDI_APPLICATION_NAME_SNAKE) == nullptr)
-    {
-        spdlog::error("Cannot set text domain");
-        return -1;
-    }
-#endif
     mc::platform::set_process_dpi_aware();
 
     const auto file_to_open = mc::wrap_exception([&]() {

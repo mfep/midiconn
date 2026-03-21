@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Intl.hpp"
-
 #include <array>
 #include <string_view>
 
@@ -30,8 +28,7 @@ get_interface_scale_labels()
         "1.5"sv,
         "1.75"sv,
         "2.0"sv,
-        // Translators: Automatic scaling of the interface
-        gettext("Auto")};
+        "Auto"};
 }
 
 class ScaleProvider

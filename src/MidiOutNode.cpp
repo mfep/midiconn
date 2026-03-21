@@ -3,7 +3,6 @@
 #include "imgui.h"
 #include "imnodes.h"
 
-#include "Intl.hpp"
 #include "NodeSerializer.hpp"
 #include "PortNameDisplay.hpp"
 #include "midi/MidiProbe.hpp"

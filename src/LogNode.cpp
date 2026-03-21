@@ -1,6 +1,5 @@
 #include "LogNode.hpp"
 
-#include "Intl.hpp"
 #include "NodeSerializer.hpp"
 
 #include "midi/MessageView.hpp"
@@ -27,8 +26,7 @@ void mc::LogNode::accept_serializer(nlohmann::json& j, const NodeSerializer& ser
 
 const char* mc::LogNode::name()
 {
-    // Translators: The name of the log node
-    return gettext("Message log");
+    return "Message log";
 }
 
 void mc::LogNode::render_internal()
@@ -37,21 +35,18 @@ void mc::LogNode::render_internal()
     ImGui::TextUnformatted(name());
     ImNodes::EndNodeTitleBar();
     ImNodes::BeginInputAttribute(in_id());
-    // Translators: The caption of the MIDI input pin on the node
-    ImGui::TextUnformatted(gettext("MIDI in"));
+    ImGui::TextUnformatted("MIDI in");
     ImNodes::EndInputAttribute();
 
     bool clear = false;
-    // Translators: The button to clear the buffer of the log node
-    if (ImGui::Button(gettext("Clear")))
+    if (ImGui::Button("Clear"))
     {
         clear = true;
     }
     ImGui::SameLine();
     int new_buffer_size = static_cast<int>(m_max_buffer_size);
     ImGui::SetNextItemWidth(100.0F * m_scale_provider->get_scale_value());
-    // Translators: The input field to set the buffer size of the log node
-    if (ImGui::InputInt(gettext("Buffer Size"), &new_buffer_size))
+    if (ImGui::InputInt("Buffer Size", &new_buffer_size))
     {
         if (new_buffer_size > 0 && new_buffer_size < 100000)
         {
@@ -76,20 +71,14 @@ void mc::LogNode::render_internal()
                           ImVec2{530.F * m_scale_provider->get_scale_value(),
                                  200.F * m_scale_provider->get_scale_value()}))
     {
-        // Translators: The header of the message arrive time column
-        ImGui::TableSetupColumn(gettext("Time"),
-                                ImGuiTableColumnFlags_WidthFixed,
-                                100.F * m_scale_provider->get_scale_value());
-        // Translators: The header of the message type column
-        ImGui::TableSetupColumn(gettext("Type"));
-        // Translators: The header of the message channel column
-        ImGui::TableSetupColumn(gettext("Channel"),
+        ImGui::TableSetupColumn(
+            "Time", ImGuiTableColumnFlags_WidthFixed, 100.F * m_scale_provider->get_scale_value());
+        ImGui::TableSetupColumn("Type");
+        ImGui::TableSetupColumn("Channel",
                                 ImGuiTableColumnFlags_WidthFixed,
                                 50.F * m_scale_provider->get_scale_value());
-        // Translators: The header of the first message data column
-        ImGui::TableSetupColumn(gettext("Data #0"));
-        // Translators: The header of the second message data column
-        ImGui::TableSetupColumn(gettext("Data #1"));
+        ImGui::TableSetupColumn("Data #0");
+        ImGui::TableSetupColumn("Data #1");
         ImGui::TableHeadersRow();
 
         lock.lock();
@@ -154,8 +143,7 @@ void mc::LogNode::message_received(std::span<const unsigned char> message_bytes)
             Tag, auto) -> std::enable_if_t<!std::is_base_of_v<midi::ChannelMessageViewTag, Tag> &&
                                                !std::is_base_of_v<midi::SystemMessageViewTag, Tag>,
                                            BufferElement> {
-            // Translators: Name of an unrecognized MIDI message
-            return BufferElement{gettext("Unknown")};
+            return BufferElement{"Unknown"};
         }};
     const BufferElement new_element = std::visit(message_visitor, message.parse());
 
@@ -169,85 +157,77 @@ mc::LogNode::BufferElement mc::LogNode::parse_channel_message(
     using namespace std::string_literals;
     midi::tag_overloads message_visitor{
         [](midi::NoteOnMessageViewTag, auto note_on) -> BufferElement {
-            return BufferElement{
-                gettext("Note On"),
-                note_on.get_channel_human(),
-                fmt::format("{}", midi::Note(note_on.get_note())),
-                fmt::format("{}: {}", gettext("Velocity"), note_on.get_velocity())};
+            return BufferElement{"Note On",
+                                 note_on.get_channel_human(),
+                                 fmt::format("{}", midi::Note(note_on.get_note())),
+                                 fmt::format("Velocity: {}", note_on.get_velocity())};
         },
         [](midi::NoteOffMessageViewTag, auto note_off) -> BufferElement {
-            return BufferElement{
-                gettext("Note Off"),
-                note_off.get_channel_human(),
-                fmt::format("{}", midi::Note(note_off.get_note())),
-                fmt::format("{}: {}", gettext("Velocity"), note_off.get_velocity())};
+            return BufferElement{"Note Off",
+                                 note_off.get_channel_human(),
+                                 fmt::format("{}", midi::Note(note_off.get_note())),
+                                 fmt::format("Velocity: {}", note_off.get_velocity())};
         },
         [](midi::PolyKeyPressureMessageViewTag, auto poly_key_pressure) -> BufferElement {
-            return BufferElement{
-                gettext("Poly Aftertouch"),
-                poly_key_pressure.get_channel_human(),
-                fmt::format("{}", midi::Note(poly_key_pressure.get_note())),
-                fmt::format("{}: {}", gettext("Pressure"), poly_key_pressure.get_pressure())};
+            return BufferElement{"Poly Aftertouch",
+                                 poly_key_pressure.get_channel_human(),
+                                 fmt::format("{}", midi::Note(poly_key_pressure.get_note())),
+                                 fmt::format("Pressure: {}", poly_key_pressure.get_pressure())};
         },
         [](midi::AllSoundOffMessageViewTag, auto all_sound_off) -> BufferElement {
-            return BufferElement{gettext("All Sound Off"), all_sound_off.get_channel_human()};
+            return BufferElement{"All Sound Off", all_sound_off.get_channel_human()};
         },
         [](midi::ResetAllControllersMessageViewTag, auto reset_all_controllers) -> BufferElement {
-            return BufferElement{gettext("Reset All Controllers"),
+            return BufferElement{"Reset All Controllers",
                                  reset_all_controllers.get_channel_human()};
         },
         [](midi::LocalControlMessageViewTag, auto local_control) -> BufferElement {
-            return BufferElement{gettext("Local Control"),
+            return BufferElement{"Local Control",
                                  local_control.get_channel_human(),
-                                 local_control.get_value() ? gettext("On") : gettext("Off")};
+                                 local_control.get_value() ? "On" : "Off"};
         },
         [](midi::AllNotesOffMessageViewTag, auto all_notes_off) -> BufferElement {
-            return BufferElement{gettext("All Notes Off"), all_notes_off.get_channel_human()};
+            return BufferElement{"All Notes Off", all_notes_off.get_channel_human()};
         },
         [](midi::OmniModeOffMessageViewTag, auto omni_off) -> BufferElement {
-            return BufferElement{gettext("Omni Mode Off"), omni_off.get_channel_human()};
+            return BufferElement{"Omni Mode Off", omni_off.get_channel_human()};
         },
         [](midi::OmniModeOnMessageViewTag, auto omni_on) -> BufferElement {
-            return BufferElement{gettext("Omni Mode On"), omni_on.get_channel_human()};
+            return BufferElement{"Omni Mode On", omni_on.get_channel_human()};
         },
         [](midi::MonoModeOnMessageViewTag, auto mono_mode) -> BufferElement {
-            return BufferElement{
-                gettext("Mono Mode On"),
-                mono_mode.get_channel_human(),
-                fmt::format("{}: {}", gettext("Channels"), mono_mode.get_num_channels())};
+            return BufferElement{"Mono Mode On",
+                                 mono_mode.get_channel_human(),
+                                 fmt::format("Channels: {}", mono_mode.get_num_channels())};
         },
         [](midi::PolyModeOnMessageViewTag, auto poly_mode) -> BufferElement {
-            return BufferElement{gettext("Poly Mode On"), poly_mode.get_channel_human()};
+            return BufferElement{"Poly Mode On", poly_mode.get_channel_human()};
         },
         [](midi::ControlChangeMessageViewTag, auto control_change) -> BufferElement {
-            return BufferElement{
-                gettext("Control Change"),
-                control_change.get_channel_human(),
-                fmt::format("CC {} ({})",
-                            control_change.get_controller(),
-                            control_change.get_function_name()),
-                fmt::format("{}: {}", gettext("Value"), control_change.get_value())};
+            return BufferElement{"Control Change",
+                                 control_change.get_channel_human(),
+                                 fmt::format("CC {} ({})",
+                                             control_change.get_controller(),
+                                             control_change.get_function_name()),
+                                 fmt::format("Value: {}", control_change.get_value())};
         },
         [](midi::ProgramChangeMessageViewTag, auto program_change) -> BufferElement {
-            return BufferElement{
-                gettext("Program Change"),
-                program_change.get_channel_human(),
-                fmt::format("{}: {}", gettext("Program"), program_change.get_program_number())};
+            return BufferElement{"Program Change",
+                                 program_change.get_channel_human(),
+                                 fmt::format("Program: {}", program_change.get_program_number())};
         },
         [](midi::ChannelPressureMessageViewTag, auto channel_pressure) -> BufferElement {
-            return BufferElement{
-                gettext("Channel Aftertouch"),
-                channel_pressure.get_channel_human(),
-                fmt::format("{}: {}", gettext("Pressure"), channel_pressure.get_pressure())};
+            return BufferElement{"Channel Aftertouch",
+                                 channel_pressure.get_channel_human(),
+                                 fmt::format("Pressure: {}", channel_pressure.get_pressure())};
         },
         [](midi::PitchBendMessageViewTag, auto pitch_bend) -> BufferElement {
-            return BufferElement{
-                gettext("Pitch bend"),
-                pitch_bend.get_channel_human(),
-                fmt::format("{}: {}", gettext("Value"), pitch_bend.get_value_human())};
+            return BufferElement{"Pitch bend",
+                                 pitch_bend.get_channel_human(),
+                                 fmt::format("Value: {}", pitch_bend.get_value_human())};
         },
         [](auto, auto) -> BufferElement {
-            return BufferElement{gettext("Unknown channel message")};
+            return BufferElement{"Unknown channel message"};
         }};
     return std::visit(message_visitor, message_view.parse());
 }
@@ -258,47 +238,44 @@ mc::LogNode::BufferElement mc::LogNode::parse_system_message(
     using namespace std::string_literals;
     midi::tag_overloads message_visitor{
         [](midi::SystemExclusiveMessageViewTag, auto system_exclusive) -> BufferElement {
-            return BufferElement{
-                gettext("System Exclusive"),
-                fmt::format("ID: {}", system_exclusive.get_manufacturer_id()),
-                fmt::format("{} {}", system_exclusive.get_length(), gettext("bytes"))};
+            return BufferElement{"System Exclusive",
+                                 fmt::format("ID: {}", system_exclusive.get_manufacturer_id()),
+                                 fmt::format("{} bytes", system_exclusive.get_length())};
         },
         [](midi::TimeCodeQuarterFrameMessageViewTag, auto timecode_quarter) -> BufferElement {
-            return BufferElement{
-                gettext("Timecode Quarter Frame"),
-                fmt::format("{}: {}", gettext("Type"), timecode_quarter.get_type()),
-                fmt::format("{}: {}", gettext("Values"), timecode_quarter.get_values())};
+            return BufferElement{"Timecode Quarter Frame",
+                                 fmt::format("Type: {}", timecode_quarter.get_type()),
+                                 fmt::format("Values: {}", timecode_quarter.get_values())};
         },
         [](midi::SongPositionPointerMessageViewTag, auto song_position) -> BufferElement {
-            return BufferElement{gettext("Song Position"),
-                                 std::to_string(song_position.get_position())};
+            return BufferElement{"Song Position", std::to_string(song_position.get_position())};
         },
         [](midi::SongSelectMessageViewTag, auto song_select) -> BufferElement {
-            return BufferElement{gettext("Song Select"), std::to_string(song_select.get_song())};
+            return BufferElement{"Song Select", std::to_string(song_select.get_song())};
         },
         [](midi::TuneRequestMessageViewTag, auto) -> BufferElement {
-            return BufferElement{gettext("Tune Request")};
+            return BufferElement{"Tune Request"};
         },
         [](midi::TimingClockMessageViewTag, auto) -> BufferElement {
-            return BufferElement{gettext("Timing Clock")};
+            return BufferElement{"Timing Clock"};
         },
         [](midi::StartSequenceMessageViewTag, auto) -> BufferElement {
-            return BufferElement{gettext("Start Sequence")};
+            return BufferElement{"Start Sequence"};
         },
         [](midi::ContinueSequenceMessageViewTag, auto) -> BufferElement {
-            return BufferElement{gettext("Continue Sequence")};
+            return BufferElement{"Continue Sequence"};
         },
         [](midi::StopSequenceMessageViewTag, auto) -> BufferElement {
-            return BufferElement{gettext("Stop Sequence")};
+            return BufferElement{"Stop Sequence"};
         },
         [](midi::ActiveSensingMessageViewTag, auto) -> BufferElement {
-            return BufferElement{gettext("Active Sensing")};
+            return BufferElement{"Active Sensing"};
         },
         [](midi::ResetMessageViewTag, auto) -> BufferElement {
-            return BufferElement{gettext("Reset everything")};
+            return BufferElement{"Reset everything"};
         },
         [](auto, auto) -> BufferElement {
-            return BufferElement{gettext("Unknown system message")};
+            return BufferElement{"Unknown system message"};
         }};
     return std::visit(message_visitor, message_view.parse());
 }

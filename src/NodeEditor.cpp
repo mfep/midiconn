@@ -7,7 +7,6 @@
 #include "imnodes.h"
 #include "nlohmann/json.hpp"
 
-#include "Intl.hpp"
 #include "LogNode.hpp"
 #include "MidiChannelNode.hpp"
 #include "MidiInNode.hpp"
@@ -225,14 +224,12 @@ std::shared_ptr<Node> NodeEditor::renderContextMenu(bool show_outputting_nodes,
                 },
                 LogNode::name());
         }
-        // Translators: Context menu entry for listing the MIDI input devices
-        if (!node && show_outputting_nodes && ImGui::TreeNode(gettext("MIDI inputs")))
+        if (!node && show_outputting_nodes && ImGui::TreeNode("MIDI inputs"))
         {
             node = render_midi_inout_list(m_input_infos);
             ImGui::TreePop();
         }
-        // Translators: Context menu entry for listing the MIDI output devices
-        if (!node && show_inputting_nodes && ImGui::TreeNode(gettext("MIDI outputs")))
+        if (!node && show_inputting_nodes && ImGui::TreeNode("MIDI outputs"))
         {
             node = render_midi_inout_list(m_output_infos);
             ImGui::TreePop();
@@ -253,9 +250,8 @@ void NodeEditor::renderNodes()
 
 void NodeEditor::renderHelpText()
 {
-    // Translators: Help text in the bottom of the node editor
-    const std::string_view help_text = gettext("Left click to select. Right click to create nodes. "
-                                               "Middle click (or Ctrl + left click) to pan view.");
+    const std::string_view help_text = "Left click to select. Right click to create nodes. "
+                                       "Middle click (or Ctrl + left click) to pan view.";
 
     const auto text_size           = ImGui::CalcTextSize(help_text.data());
     const auto window_size         = ImGui::GetWindowSize();

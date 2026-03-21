@@ -1,7 +1,5 @@
 #include "MidiChannelNode.hpp"
 
-#include "Intl.hpp"
-
 #include <iomanip>
 #include <numeric>
 #include <sstream>
@@ -12,7 +10,7 @@
 #include "NodeSerializer.hpp"
 #include "ScaleProvider.hpp"
 
-const char* mc::MidiChannelNode::sm_combo_items[] = {gettext("None"),
+const char* mc::MidiChannelNode::sm_combo_items[] = {"None",
                                                      "1",
                                                      "2",
                                                      "3",
@@ -45,8 +43,7 @@ void mc::MidiChannelNode::accept_serializer(nlohmann::json&       j,
 
 const char* mc::MidiChannelNode::name()
 {
-    // Translators: The name of the channel map node
-    return gettext("Channel map");
+    return "Channel map";
 }
 
 void mc::MidiChannelNode::render_internal()
@@ -55,11 +52,11 @@ void mc::MidiChannelNode::render_internal()
     ImGui::TextUnformatted(name());
     ImNodes::EndNodeTitleBar();
     Node::begin_input_attribute();
-    ImGui::TextUnformatted(gettext("MIDI in"));
+    ImGui::TextUnformatted("MIDI in");
     Node::end_input_attribute();
     ImGui::SameLine(100 * m_scale_provider->get_scale_value());
     Node::begin_output_attribute();
-    ImGui::TextUnformatted(gettext("MIDI out"));
+    ImGui::TextUnformatted("MIDI out");
     Node::end_output_attribute();
 
     std::array<int, midi::ChannelMap::num_channels> channels;
@@ -108,14 +105,12 @@ void mc::MidiChannelNode::render_internal()
         }
         ImGui::EndTable();
     }
-    // Translators: Button to set the default channel map
-    if (ImGui::Button(gettext("Default")))
+    if (ImGui::Button("Default"))
     {
         std::iota(updated_channels.begin(), updated_channels.end(), 1);
     }
     ImGui::SameLine();
-    // Translators: Button to disable all channels in the channel map
-    if (ImGui::Button(gettext("Disable all")))
+    if (ImGui::Button("Disable all"))
     {
         std::fill(updated_channels.begin(), updated_channels.end(), 0);
     }

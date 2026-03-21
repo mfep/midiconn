@@ -5,7 +5,6 @@
 #include "imgui.h"
 #include "imnodes.h"
 
-#include "Intl.hpp"
 #include "NodeSerializer.hpp"
 #include "PortNameDisplay.hpp"
 #include "midi/InputNode.hpp"
@@ -36,9 +35,9 @@ void MidiInNode::render_inspector()
 {
     ImGui::SeparatorText(m_port_name_display->get_port_name(m_input_name).c_str());
     midi::MessageTypeMask new_message_type_mask = m_message_type_mask;
-    ImGui::Checkbox(gettext("Receive SysEx"), &new_message_type_mask.m_sysex_enabled);
-    ImGui::Checkbox(gettext("Receive MIDI Clock"), &new_message_type_mask.m_time_enabled);
-    ImGui::Checkbox(gettext("Receive Active Sensing"), &new_message_type_mask.m_sensing_enabled);
+    ImGui::Checkbox("Receive SysEx", &new_message_type_mask.m_sysex_enabled);
+    ImGui::Checkbox("Receive MIDI Clock", &new_message_type_mask.m_time_enabled);
+    ImGui::Checkbox("Receive Active Sensing", &new_message_type_mask.m_sensing_enabled);
     set_message_type_mask(new_message_type_mask);
 }
 

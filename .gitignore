@@ -1,5 +1,5 @@
 .vscode
 build
 *.ini
-.flatpak-builder
+/.flatpak-builder
 .cache

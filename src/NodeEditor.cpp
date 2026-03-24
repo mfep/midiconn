@@ -137,23 +137,29 @@ NodeEditor NodeEditor::from_json(NodeFactory&           node_factory,
     return editor;
 }
 
-Node* NodeEditor::get_selected_node()
+std::vector<Node*> NodeEditor::get_selected_nodes() const
 {
-    if (ImNodes::NumSelectedNodes() != 1)
+    std::vector<Node*> ret;
+    const auto         count = ImNodes::NumSelectedNodes();
+    if (!count)
     {
-        return nullptr;
+        return ret;
     }
-    int id = -1;
-    ImNodes::GetSelectedNodes(&id);
-    const auto it = std::find_if(m_nodes.begin(), m_nodes.end(), [id](const auto& node) {
-        return node->id() == id;
-    });
-    if (it == m_nodes.end())
+    ret.reserve(count);
+    std::vector<int> selected_node_ids(count);
+    ImNodes::GetSelectedNodes(selected_node_ids.data());
+    for (auto id : selected_node_ids)
     {
-        // can happen if the node has just been removed
-        return nullptr;
+        const auto it = std::find_if(m_nodes.begin(), m_nodes.end(), [id](const auto& node) {
+            return node->id() == id;
+        });
+        if (it != m_nodes.end())
+        {
+            // can happen if the node has just been removed
+            ret.push_back(it->get());
+        }
     }
-    return it->get();
+    return ret;
 }
 
 std::shared_ptr<Node> NodeEditor::renderContextMenu(bool show_outputting_nodes,

@@ -79,8 +79,7 @@ void Application::render()
     ImGui::End();
 
     ImGui::Begin("Inspector");
-    Node* selected_node = m_preset.m_node_editor.get_selected_node();
-    if (selected_node)
+    for (auto* selected_node : m_preset.m_node_editor.get_selected_nodes())
     {
         selected_node->render_inspector();
     }
@@ -119,8 +118,7 @@ std::string Application::get_window_title() const
 {
     auto prefix = m_preset_manager.is_dirty(m_preset) ? "* " : "";
     return prefix +
-           utils::path_to_utf8str(
-               m_preset_manager.get_opened_path().value_or("Untitled")) +
+           utils::path_to_utf8str(m_preset_manager.get_opened_path().value_or("Untitled")) +
            " - " MIDI_APPLICATION_NAME;
 }
 

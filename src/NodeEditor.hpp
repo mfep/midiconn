@@ -21,13 +21,13 @@ public:
                const ThemeControl&    theme_control,
                bool                   create_nodes = false);
 
-    void              render();
-    void              to_json(nlohmann::json& j) const;
-    static NodeEditor from_json(NodeFactory&           node_factory,
-                                const PortNameDisplay& port_name_display,
-                                const ThemeControl&    theme_control,
-                                const nlohmann::json&  j);
-    Node*             get_selected_node();
+    void               render();
+    void               to_json(nlohmann::json& j) const;
+    static NodeEditor  from_json(NodeFactory&           node_factory,
+                                 const PortNameDisplay& port_name_display,
+                                 const ThemeControl&    theme_control,
+                                 const nlohmann::json&  j);
+    std::vector<Node*> get_selected_nodes() const;
 
 private:
     std::shared_ptr<Node> renderContextMenu(bool show_outputting_nodes = true,

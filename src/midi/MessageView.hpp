@@ -782,17 +782,17 @@ public:
 
     std::uint16_t get_value() const
     {
-        return this->m_message_data[1] + std::uint16_t{127} * this->m_message_data[2];
+        return this->m_message_data[1] + std::uint16_t{128} * this->m_message_data[2];
     }
 
-    int get_value_human() const { return get_value() - 8128; }
+    int get_value_human() const { return get_value() - 8192; }
 
     template <bool M = Mutable>
     auto set_value(std::uint16_t val) -> std::enable_if_t<M>
     {
-        assert(val < 127 * 127);
-        this->m_message_data[1] = static_cast<unsigned char>(val % 127);
-        this->m_message_data[2] = static_cast<unsigned char>(val / 127);
+        assert(val < 16384);
+        this->m_message_data[1] = static_cast<unsigned char>(val % 128);
+        this->m_message_data[2] = static_cast<unsigned char>(val / 128);
     }
 };
 
@@ -937,7 +937,7 @@ public:
     {
         const unsigned char lsb = this->m_message_data[1] & 0x7f;
         const unsigned char msb = this->m_message_data[2] & 0x7f;
-        return static_cast<unsigned short>(127) * msb + lsb;
+        return static_cast<unsigned short>(128) * msb + lsb;
     }
 };
 

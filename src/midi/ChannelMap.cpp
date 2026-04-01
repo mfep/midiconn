@@ -10,13 +10,14 @@ mc::midi::ChannelMap::ChannelMap()
 
 mc::midi::ChannelMap::channel_t mc::midi::ChannelMap::get(channel_t ch) const
 {
-    assert(ch < num_channels || ch == no_channel);
+    assert(ch < num_channels);
     return m_map[ch];
 }
 
 void mc::midi::ChannelMap::set(channel_t ch, channel_t val)
 {
-    assert(ch < num_channels || ch == no_channel);
+    assert(ch < num_channels);
+    assert(val == no_channel || val < num_channels);
     m_map[ch] = val;
 }
 

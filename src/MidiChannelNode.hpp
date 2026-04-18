@@ -22,6 +22,7 @@ public:
 
 private:
     void render_internal() override;
+    void render_inspector() override;
 
     static const char* get_label(size_t index);
     static const char* get_hidden_label(size_t index);

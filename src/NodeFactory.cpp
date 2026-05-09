@@ -1,6 +1,5 @@
 #include "NodeFactory.hpp"
 
-#include "LogNode.hpp"
 #include "MidiChannelNode.hpp"
 #include "MidiInNode.hpp"
 #include "MidiOutNode.hpp"
@@ -109,11 +108,6 @@ std::shared_ptr<MidiChannelNode> NodeFactory::build_midi_channel_node()
 {
     return std::make_shared<MidiChannelNode>(*m_theme_control,
                                              std::make_shared<midi::ChannelMapNode>());
-}
-
-std::shared_ptr<LogNode> NodeFactory::build_log_node()
-{
-    return std::make_shared<LogNode>(*m_theme_control);
 }
 
 bool NodeFactory::is_node_instantiated(const midi::InputInfo& input_info)

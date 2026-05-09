@@ -17,7 +17,7 @@ const char* mc::MidiChannelNode::sm_combo_items[] = {
 
 mc::MidiChannelNode::MidiChannelNode(const ScaleProvider&                  scale_provider,
                                      std::shared_ptr<midi::ChannelMapNode> midi_channel_map_node)
-    : Node(scale_provider, midi_channel_map_node.get()),
+    : Node(scale_provider, midi_channel_map_node.get(), true, true),
       m_midi_channel_map_node(midi_channel_map_node)
 {
 }
@@ -28,25 +28,8 @@ void mc::MidiChannelNode::accept_serializer(nlohmann::json&       j,
     serializer.serialize_node(j, *this);
 }
 
-const char* mc::MidiChannelNode::name()
+void mc::MidiChannelNode::render_inspector_internal()
 {
-    return "Channel map";
-}
-
-void mc::MidiChannelNode::render_internal()
-{
-    Node::begin_input_attribute();
-    ImGui::TextUnformatted(name());
-    Node::end_input_attribute();
-    ImGui::SameLine();
-    Node::begin_output_attribute();
-    Node::end_output_attribute();
-}
-
-void mc::MidiChannelNode::render_inspector()
-{
-    ImGui::SeparatorText(name());
-
     std::array<int, midi::ChannelMap::num_channels> channels;
     {
         std::size_t idx = 0;
@@ -113,6 +96,11 @@ void mc::MidiChannelNode::render_inspector()
             ++idx;
         }
     }
+}
+
+std::string mc::MidiChannelNode::get_name()
+{
+    return "Channel map";
 }
 
 const char* mc::MidiChannelNode::get_label(size_t index)

@@ -24,8 +24,12 @@ std::vector<Node::node_ptr> get_connections(const std::map<int, Node::node_ptr>&
 
 } // namespace
 
-Node::Node(const ScaleProvider& scale_provider, midi::Node* midi_node)
-    : m_scale_provider(&scale_provider), m_id(sm_next_id++), m_midi_node(midi_node)
+Node::Node(const ScaleProvider& scale_provider,
+           midi::Node*          midi_node,
+           bool                 has_input,
+           bool                 has_output)
+    : m_scale_provider(&scale_provider), m_id(sm_next_id++), m_has_input(has_input),
+      m_has_output(has_output), m_midi_node(midi_node)
 {
     if (m_midi_node)
     {
@@ -67,7 +71,27 @@ void Node::render()
 
     push_style();
     ImNodes::BeginNode(m_id);
-    render_internal();
+
+    if (m_has_input)
+    {
+        begin_input_attribute();
+        ImGui::TextUnformatted(get_name().c_str());
+        end_input_attribute();
+
+        if (m_has_output)
+        {
+            ImGui::SameLine();
+            begin_output_attribute();
+            end_output_attribute();
+        }
+    }
+    else if (m_has_output)
+    {
+        begin_output_attribute();
+        ImGui::TextUnformatted(get_name().c_str());
+        end_output_attribute();
+    }
+
     ImNodes::EndNode();
     pop_style();
     ImNodes::PopStyleVar(1);
@@ -103,6 +127,15 @@ std::vector<Node::node_ptr> Node::get_output_connections() const
 std::vector<Node::node_ptr> Node::get_input_connections() const
 {
     return get_connections(m_input_connections);
+}
+
+void Node::render_inspector()
+{
+    ImGui::SeparatorText(get_name().c_str());
+    ImGui::SameLine();
+    ImGui::Button("Monitor in");
+    ImGui::SameLine();
+    ImGui::Button("Monitor out");
 }
 
 void Node::connect_input(node_ptr from_node, int link_id)

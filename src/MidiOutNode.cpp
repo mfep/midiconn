@@ -15,7 +15,7 @@ MidiOutNode::MidiOutNode(std::string_view                  output_name,
                          std::shared_ptr<midi::OutputNode> midi_output_node,
                          const PortNameDisplay&            port_name_display,
                          const ScaleProvider&              scale_provider)
-    : Node(scale_provider, midi_output_node.get()), m_output_name(output_name),
+    : Node(scale_provider, midi_output_node.get(), true, false), m_output_name(output_name),
       m_midi_output_node(midi_output_node), m_port_name_display(&port_name_display)
 {
 }
@@ -25,18 +25,14 @@ void MidiOutNode::accept_serializer(nlohmann::json& j, const NodeSerializer& ser
     serializer.serialize_node(j, *this);
 }
 
-void MidiOutNode::render_inspector()
+void MidiOutNode::render_inspector_internal()
 {
-    ImGui::SeparatorText(m_port_name_display->get_port_name(m_output_name).c_str());
 }
 
-void MidiOutNode::render_internal()
+std::string MidiOutNode::get_name()
 {
     check_midi_node_connected();
-    const std::string node_title = m_port_name_display->get_port_name(m_output_name);
-    Node::begin_input_attribute();
-    ImGui::TextUnformatted(node_title.c_str());
-    Node::end_input_attribute();
+    return m_port_name_display->get_port_name(m_output_name);
 }
 
 void MidiOutNode::check_midi_node_connected()

@@ -15,7 +15,6 @@ struct OutputInfo;
 class OutputNode;
 } // namespace midi
 
-class LogNode;
 class MidiChannelNode;
 class MidiInNode;
 class MidiOutNode;
@@ -37,7 +36,6 @@ public:
     std::shared_ptr<MidiInNode>      build_midi_in_node(std::string_view input_name);
     std::shared_ptr<MidiOutNode>     build_midi_out_node(std::string_view output_name);
     std::shared_ptr<MidiChannelNode> build_midi_channel_node();
-    std::shared_ptr<LogNode>         build_log_node();
 
     bool is_node_instantiated(const midi::InputInfo& input_info);
     bool is_node_instantiated(const midi::OutputInfo& output_info);

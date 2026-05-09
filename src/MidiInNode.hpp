@@ -26,10 +26,10 @@ public:
                const ScaleProvider&             scale_provider);
 
     void accept_serializer(nlohmann::json& j, const NodeSerializer& serializer) const override;
-    void render_inspector() override;
 
 private:
-    void render_internal() override;
+    void        render_inspector_internal() override;
+    std::string get_name() override;
 
     void check_midi_node_connected();
     void set_message_type_mask(midi::MessageTypeMask new_value);

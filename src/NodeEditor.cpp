@@ -7,7 +7,6 @@
 #include "imnodes.h"
 #include "nlohmann/json.hpp"
 
-#include "LogNode.hpp"
 #include "MidiChannelNode.hpp"
 #include "MidiInNode.hpp"
 #include "MidiOutNode.hpp"
@@ -92,8 +91,8 @@ void NodeEditor::to_json(nlohmann::json& j) const
     }
     const ImVec2 panning = ImNodes::EditorContextGetPanning();
     j                    = json{
-                           {"nodes",   node_array},
-                           {"panning", panning   }
+        {"nodes",   node_array},
+        {"panning", panning   }
     };
 }
 
@@ -210,7 +209,7 @@ std::shared_ptr<Node> NodeEditor::renderContextMenu(bool show_outputting_nodes,
         if (ImGui::IsWindowAppearing())
         {
             m_input_infos  = filter_to_non_instantiated_midi_infos(*m_node_factory,
-                                                                  midi::MidiProbe::get_inputs());
+                                                                   midi::MidiProbe::get_inputs());
             m_output_infos = filter_to_non_instantiated_midi_infos(*m_node_factory,
                                                                    midi::MidiProbe::get_outputs());
         }
@@ -220,15 +219,7 @@ std::shared_ptr<Node> NodeEditor::renderContextMenu(bool show_outputting_nodes,
                 [this] {
                     return m_node_factory->build_midi_channel_node();
                 },
-                MidiChannelNode::name());
-        }
-        if (!node && show_inputting_nodes)
-        {
-            node = render_add_node(
-                [this] {
-                    return m_node_factory->build_log_node();
-                },
-                LogNode::name());
+                "Channel map");
         }
         if (!node && show_outputting_nodes && ImGui::TreeNode("MIDI inputs"))
         {

@@ -18,11 +18,9 @@ public:
 
     void accept_serializer(nlohmann::json& j, const NodeSerializer& serializer) const override;
 
-    static const char* name();
-
 private:
-    void render_internal() override;
-    void render_inspector() override;
+    void        render_inspector_internal() override;
+    std::string get_name() override;
 
     static const char* get_label(size_t index);
     static const char* get_hidden_label(size_t index);

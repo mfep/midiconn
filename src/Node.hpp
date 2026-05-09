@@ -25,7 +25,10 @@ public:
     using node_ptr = std::weak_ptr<Node>;
     using conn     = std::pair<node_ptr, int>;
 
-    Node(const ScaleProvider& scale_provider, midi::Node* midi_node);
+    Node(const ScaleProvider& scale_provider,
+         midi::Node*          midi_node,
+         bool                 has_input,
+         bool                 has_output);
     virtual ~Node();
     void render();
     void connect_output(node_ptr to_node, node_ptr this_node);
@@ -43,12 +46,13 @@ public:
     static bool is_out_id(int id) { return !is_in_id(id); }
 
     virtual midi::Node* get_midi_node() const { return m_midi_node; }
-    virtual void        render_inspector() {}
+    void                render_inspector();
 
 protected:
-    virtual void render_internal() = 0;
-    virtual void push_style() const {}
-    virtual void pop_style() const {}
+    virtual void        render_inspector_internal() = 0;
+    virtual std::string get_name()                  = 0;
+    virtual void        push_style() const {}
+    virtual void        pop_style() const {}
 
     void message_processed(std::span<const unsigned char> message_bytes) override;
     void message_received(std::span<const unsigned char> message_bytes) override;
@@ -70,6 +74,9 @@ private:
 
     // self generated node id
     int m_id;
+
+    bool m_has_input;
+    bool m_has_output;
 
     // maps self generated link id to node
     std::map<int, node_ptr> m_output_connections;

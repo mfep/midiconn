@@ -4,8 +4,8 @@
 
 #include "imnodes.h"
 #include "nlohmann/json.hpp"
+#include "spdlog/spdlog.h"
 
-#include "LogNode.hpp"
 #include "MidiChannelNode.hpp"
 #include "MidiInNode.hpp"
 #include "MidiOutNode.hpp"
@@ -62,14 +62,6 @@ void NodeSerializer::serialize_node(json& j, const MidiOutNode& node) const
     };
 }
 
-void NodeSerializer::serialize_node(nlohmann::json& j, const LogNode& node) const
-{
-    j = json{
-        {"type",            "log"                 },
-        {"max_buffer_size", node.m_max_buffer_size},
-    };
-}
-
 void NodeSerializer::serialize_node(json& j, const MidiChannelNode& node) const
 {
     j = json{
@@ -107,9 +99,7 @@ std::shared_ptr<Node> NodeSerializer::deserialize_node(const json& j) const
     }
     else if (node_type == "log")
     {
-        auto log_node = m_node_factory->build_log_node();
-        j["max_buffer_size"].get_to(log_node->m_max_buffer_size);
-        node = log_node;
+        spdlog::info("Skipping the serialization of obsoleted log node");
     }
     else
     {
